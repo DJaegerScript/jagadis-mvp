@@ -1,10 +1,8 @@
 package auth
 
 import (
-	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofrs/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"jagadis/src/modules/common"
 )
@@ -48,7 +46,7 @@ func (h *HandlerStruct) Registration(ctx *fiber.Ctx) error {
 	return ctx.Status(statusCode).JSON(fiber.Map{
 		"isSuccess":  true,
 		"statusCode": statusCode,
-		"message":    message,
+		"message":    "User successfully registered!",
 		"content":    nil,
 	})
 }
@@ -75,13 +73,12 @@ func (h *HandlerStruct) Login(ctx *fiber.Ctx) error {
 }
 
 func (h *HandlerStruct) Logout(ctx *fiber.Ctx) error {
-	userId := fmt.Sprintf("%s", ctx.Locals("userId"))
-	id, err := uuid.FromString(userId)
+	userId, err := common.GetSession(ctx)
 	if err != nil {
 		return common.HandleException(ctx, fiber.StatusInternalServerError, "Oops! Something went wrong")
 	}
 
-	err, statusCode, message := h.Service.Logout(id)
+	err, statusCode, message := h.Service.Logout(userId)
 	if err != nil {
 		return common.HandleException(ctx, statusCode, message)
 	}
