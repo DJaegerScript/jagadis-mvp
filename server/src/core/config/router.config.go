@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"jagadis/src/core/middleware"
 	"jagadis/src/modules/auth"
+	"jagadis/src/modules/sos"
 	"os"
 	"time"
 )
@@ -41,6 +42,7 @@ func (s *Server) SetupRouter() {
 	})
 
 	s.Router.Mount("/auth", s.AuthRouter(authenticator))
+	s.Router.Mount("/sos", s.SOSRouter(authenticator))
 }
 
 func (s *Server) AuthRouter(authenticator *middleware.Authenticator) *fiber.App {
@@ -53,4 +55,14 @@ func (s *Server) AuthRouter(authenticator *middleware.Authenticator) *fiber.App 
 	authRouter.Post("/logout", authenticator.TokenAuthenticator, authHandler.Logout)
 
 	return authRouter
+}
+
+func (s *Server) SOSRouter(authenticator *middleware.Authenticator) *fiber.App {
+	sosHandler := sos.NewHandler(s.DB)
+
+	sosRouter := fiber.New()
+
+	sosRouter.Post("/:userId/guardian", authenticator.TokenAuthenticator, sosHandler.GuardianRegistration)
+
+	return sosRouter
 }
