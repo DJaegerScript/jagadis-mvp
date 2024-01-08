@@ -9,6 +9,7 @@ import (
 
 type Handler interface {
 	GuardianRegistration(ctx *fiber.Ctx) error
+	GetAllGuardians(ctx *fiber.Ctx)
 }
 
 type HandlerStruct struct {
@@ -54,5 +55,32 @@ func (h *HandlerStruct) GuardianRegistration(ctx *fiber.Ctx) error {
 		"statusCode": statusCode,
 		"message":    "Guardian successfully registered!",
 		"content":    nil,
+	})
+}
+
+func (h *HandlerStruct) GetAllGuardians(ctx *fiber.Ctx) error {
+	userId, err := common.GetSession(ctx)
+	if err != nil {
+		return common.HandleException(ctx, fiber.StatusInternalServerError, "Oops! Something went wrong")
+	}
+
+	if !common.GetRequestAuthenticity(ctx, userId) {
+		return common.HandleException(ctx, fiber.StatusForbidden, "Compromised request")
+	}
+
+	err, statusCode, guardians, message := h.Service.GetAllGuardians(userId)
+	if err != nil {
+		return common.HandleException(ctx, statusCode, message)
+	}
+
+	statusCode = fiber.StatusOK
+
+	return ctx.Status(statusCode).JSON(fiber.Map{
+		"isSuccess":  true,
+		"statusCode": statusCode,
+		"message":    "Guardians successfully retrieved!",
+		"content": fiber.Map{
+			"guardians": guardians,
+		},
 	})
 }

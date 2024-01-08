@@ -62,6 +62,7 @@ func (s *Server) SOSRouter(authenticator *middleware.Authenticator) *fiber.App {
 
 	sosRouter := fiber.New()
 
+	sosRouter.Get("/:userId/guardian", authenticator.TokenAuthenticator, sosHandler.GetAllGuardians)
 	sosRouter.Post("/:userId/guardian", authenticator.TokenAuthenticator, sosHandler.GuardianRegistration)
 
 	return sosRouter

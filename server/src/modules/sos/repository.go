@@ -11,6 +11,7 @@ import (
 
 type Repo interface {
 	Save(phoneNumber string, uuid uuid.UUID) (err error, statusCode int, message string)
+	FindAllByUserId(userId uuid.UUID) (err error, statusCode int, guardians []Guardians, message string)
 }
 
 type RepoStruct struct {
@@ -45,4 +46,42 @@ func (r *RepoStruct) Save(phoneNumber string, userId uuid.UUID) (err error, stat
 	}
 
 	return nil, fiber.StatusCreated, ""
+}
+
+func (r *RepoStruct) FindAllByUserId(userId uuid.UUID) (err error, statusCode int, guardians []Guardians, message string) {
+	query, args, err := r.psql.Select("id", "contact_number").From("guardians").
+		Where(sq.Eq{
+			"user_id": userId,
+		},
+		).ToSql()
+	if err != nil {
+		zap.L().Error("Error building query", zap.Error(err))
+		return err, fiber.StatusInternalServerError, guardians, "Oops! Something went wrong"
+	}
+
+	ctx := context.Background()
+
+	rows, err := r.DB.Query(ctx, query, args...)
+	if err != nil {
+		zap.L().Error("Error executing query", zap.Error(err))
+		statusCode = fiber.StatusInternalServerError
+		return err, fiber.StatusInternalServerError, guardians, "Oops! Something went wrong"
+	}
+
+	for rows.Next() {
+		var guardian Guardians
+
+		err = rows.Scan(
+			&guardian.ID,
+			&guardian.ContactNumber,
+		)
+		if err != nil {
+			zap.L().Error("Error scanning row data", zap.Error(err))
+			return
+		}
+
+		guardians = append(guardians, guardian)
+	}
+
+	return nil, fiber.StatusOK, guardians, ""
 }

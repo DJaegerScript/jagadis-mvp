@@ -9,6 +9,7 @@ import (
 
 type Service interface {
 	RegisterGuardian(contactNumbers string, userId uuid.UUID) (err error, statusCode int, message string)
+	GetAllGuardians(userId uuid.UUID) (err error, statusCode int, guardians []GetAllGuardiansResponseDTO, message string)
 }
 
 type ServiceStruct struct {
@@ -45,4 +46,20 @@ func (s *ServiceStruct) RegisterGuardian(contactNumbers string, userId uuid.UUID
 	}
 
 	return err, statusCode, message
+}
+
+func (s *ServiceStruct) GetAllGuardians(userId uuid.UUID) (err error, statusCode int, guardians []GetAllGuardiansResponseDTO, message string) {
+	err, statusCode, results, message := s.GuardianRepo.FindAllByUserId(userId)
+	if err != nil {
+		return err, statusCode, guardians, message
+	}
+
+	for _, result := range results {
+		guardians = append(guardians, GetAllGuardiansResponseDTO{
+			ID:            result.ID,
+			ContactNumber: result.ContactNumber,
+		})
+	}
+
+	return err, statusCode, guardians, message
 }
