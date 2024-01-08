@@ -11,6 +11,7 @@ type Service interface {
 	RegisterGuardian(contactNumbers string, userId uuid.UUID) (err error, statusCode int, message string)
 	GetAllGuardians(userId uuid.UUID) (err error, statusCode int, guardians []GetAllGuardiansResponseDTO, message string)
 	RemoveGuardian(guardianId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string)
+	ResetGuardian(userId uuid.UUID) (err error, statusCode int, message string)
 }
 
 type ServiceStruct struct {
@@ -67,4 +68,8 @@ func (s *ServiceStruct) GetAllGuardians(userId uuid.UUID) (err error, statusCode
 
 func (s *ServiceStruct) RemoveGuardian(guardianId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string) {
 	return s.GuardianRepo.DeleteById(guardianId, userId)
+}
+
+func (s *ServiceStruct) ResetGuardian(userId uuid.UUID) (err error, statusCode int, message string) {
+	return s.GuardianRepo.DeleteByUserId(userId)
 }

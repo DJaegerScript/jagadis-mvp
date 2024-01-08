@@ -12,6 +12,7 @@ type Handler interface {
 	GuardianRegistration(ctx *fiber.Ctx) error
 	GetAllGuardians(ctx *fiber.Ctx) error
 	RemoveGuardian(ctx *fiber.Ctx) error
+	ResetGuardian(ctx *fiber.Ctx) error
 }
 
 type HandlerStruct struct {
@@ -110,6 +111,31 @@ func (h *HandlerStruct) RemoveGuardian(ctx *fiber.Ctx) error {
 		"isSuccess":  true,
 		"statusCode": statusCode,
 		"message":    "Guardian successfully removed!",
+		"content":    nil,
+	})
+}
+
+func (h *HandlerStruct) ResetGuardian(ctx *fiber.Ctx) error {
+	userId, err := common.GetSession(ctx)
+	if err != nil {
+		return common.HandleException(ctx, fiber.StatusInternalServerError, "Oops! Something went wrong")
+	}
+
+	if !common.GetRequestAuthenticity(ctx, userId) {
+		return common.HandleException(ctx, fiber.StatusForbidden, "Compromised request")
+	}
+
+	err, statusCode, message := h.Service.ResetGuardian(userId)
+	if err != nil {
+		return common.HandleException(ctx, statusCode, message)
+	}
+
+	statusCode = fiber.StatusOK
+
+	return ctx.Status(statusCode).JSON(fiber.Map{
+		"isSuccess":  true,
+		"statusCode": statusCode,
+		"message":    "Guardian successfully reset!",
 		"content":    nil,
 	})
 }
