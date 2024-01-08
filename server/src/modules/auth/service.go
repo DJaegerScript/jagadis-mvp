@@ -58,6 +58,11 @@ func (s *ServiceStruct) Login(loginBody *LoginRequestDTO) (err error, statusCode
 		return err, fiber.StatusForbidden, nil, "Email or password didn't match!"
 	}
 
+	err, statusCode, message = s.Repo.InvalidateAllSession(user.ID)
+	if err != nil {
+		return err, statusCode, nil, message
+	}
+
 	token, err, statusCode, message := s.generateToken()
 	if err != nil {
 		return err, statusCode, nil, message
