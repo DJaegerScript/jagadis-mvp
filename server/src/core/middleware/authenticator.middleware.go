@@ -23,6 +23,10 @@ func New(db *pgxpool.Pool) *Authenticator {
 
 func (a *Authenticator) TokenAuthenticator(ctx *fiber.Ctx) error {
 	authorization := ctx.Get("Authorization")
+	if authorization == "" {
+		return common.HandleException(ctx, fiber.StatusUnauthorized, "Unauthorized request!")
+	}
+
 	token := strings.Split(authorization, " ")[1]
 
 	err, statusCode, session, message := a.Repo.FindSessionByToken(token)
