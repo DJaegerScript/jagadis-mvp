@@ -13,6 +13,7 @@ import (
 type Repo interface {
 	Save(phoneNumber string, uuid uuid.UUID) (err error, statusCode int, message string)
 	FindAllByUserId(userId uuid.UUID) (err error, statusCode int, guardians []Guardians, message string)
+	DeleteById(guardianId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string)
 }
 
 type RepoStruct struct {
@@ -90,4 +91,26 @@ func (r *RepoStruct) FindAllByUserId(userId uuid.UUID) (err error, statusCode in
 	}
 
 	return nil, fiber.StatusOK, guardians, ""
+}
+
+func (r *RepoStruct) DeleteById(guardianId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string) {
+	query, args, err := r.psql.Delete("guardians").
+		Where(sq.Eq{
+			"id":      guardianId,
+			"user_id": userId,
+		},
+		).ToSql()
+	if err != nil {
+		zap.L().Error("Error building query", zap.Error(err))
+		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+	}
+
+	ctx := context.Background()
+
+	if _, err = r.DB.Exec(ctx, query, args...); err != nil {
+		zap.L().Error("Error executing query", zap.Error(err))
+		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+	}
+
+	return nil, fiber.StatusOK, ""
 }
