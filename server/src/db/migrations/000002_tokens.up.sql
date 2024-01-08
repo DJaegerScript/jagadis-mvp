@@ -2,10 +2,10 @@ BEGIN;
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE IF NOT EXISTS tokens (
+CREATE TABLE IF NOT EXISTS sessions (
      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
      user_id UUID NOT NULL,
-     content TEXT NOT NULL UNIQUE ,
+     token TEXT NOT NULL UNIQUE ,
      is_expired BOOLEAN DEFAULT false,
      expired_at TIMESTAMP NOT NULL,
      created_at TIMESTAMP DEFAULT NOW(),
@@ -24,8 +24,8 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER set_tokens_updated_at
-    AFTER UPDATE ON tokens
+CREATE TRIGGER set_sessions_updated_at
+    AFTER UPDATE ON sessions
     FOR EACH ROW
 EXECUTE PROCEDURE set_updated_at();
 

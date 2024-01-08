@@ -16,10 +16,10 @@ import (
 type Repo interface {
 	Save(data *RegistrationRequestDTO, password string) (err error, statusCode int, message string)
 	FindByEmail(email string) (err error, statusCode int, user Users, message string)
-	SaveToken(userId uuid.UUID, token string, expiredAt time.Time) (err error, statusCode int, message string)
-	FindTokenByContent(content string) (err error, statusCode int, token Tokens, message string)
-	UpdateTokenExpiry(tokenId uuid.UUID) (err error, statusCode int, message string)
-	InvalidateAllToken(userId uuid.UUID) (err error, statusCode int, message string)
+	SaveSession(userId uuid.UUID, token string, expiredAt time.Time) (err error, statusCode int, message string)
+	FindSessionByToken(content string) (err error, statusCode int, token Tokens, message string)
+	UpdateSessionExpiry(tokenId uuid.UUID) (err error, statusCode int, message string)
+	InvalidateAllSession(userId uuid.UUID) (err error, statusCode int, message string)
 }
 
 type RepoStruct struct {
@@ -107,8 +107,8 @@ func (r *RepoStruct) FindByEmail(email string) (err error, statusCode int, user 
 	return nil, fiber.StatusOK, user, ""
 }
 
-func (r *RepoStruct) SaveToken(userId uuid.UUID, token string, expiredAt time.Time) (err error, statusCode int, message string) {
-	queryStatement := r.psql.Insert("tokens").Columns("user_id", "content", "expired_at")
+func (r *RepoStruct) SaveSession(userId uuid.UUID, token string, expiredAt time.Time) (err error, statusCode int, message string) {
+	queryStatement := r.psql.Insert("sessions").Columns("user_id", "content", "expired_at")
 
 	queryStatement = queryStatement.Values(
 		userId,
@@ -132,10 +132,10 @@ func (r *RepoStruct) SaveToken(userId uuid.UUID, token string, expiredAt time.Ti
 	return nil, fiber.StatusCreated, ""
 }
 
-func (r *RepoStruct) FindTokenByContent(content string) (err error, statusCode int, token Tokens, message string) {
+func (r *RepoStruct) FindSessionByToken(content string) (err error, statusCode int, token Tokens, message string) {
 	query, args, err := r.psql.
 		Select("id", "user_id", "is_expired", "expired_at").
-		From("tokens").
+		From("sessions").
 		Where(sq.Eq{
 			"content":    content,
 			"is_expired": false,
@@ -166,8 +166,8 @@ func (r *RepoStruct) FindTokenByContent(content string) (err error, statusCode i
 	return nil, fiber.StatusOK, token, ""
 }
 
-func (r *RepoStruct) UpdateTokenExpiry(tokenId uuid.UUID) (err error, statusCode int, message string) {
-	query, args, err := r.psql.Update("tokens").Where(sq.Eq{
+func (r *RepoStruct) UpdateSessionExpiry(tokenId uuid.UUID) (err error, statusCode int, message string) {
+	query, args, err := r.psql.Update("sessions").Where(sq.Eq{
 		"id": tokenId,
 	}).SetMap(map[string]interface{}{
 		"is_expired": true,
@@ -187,8 +187,8 @@ func (r *RepoStruct) UpdateTokenExpiry(tokenId uuid.UUID) (err error, statusCode
 	return nil, fiber.StatusUnauthorized, "Session expired!"
 }
 
-func (r *RepoStruct) InvalidateAllToken(userId uuid.UUID) (err error, statusCode int, message string) {
-	query, args, err := r.psql.Update("tokens").Where(sq.Eq{
+func (r *RepoStruct) InvalidateAllSession(userId uuid.UUID) (err error, statusCode int, message string) {
+	query, args, err := r.psql.Update("sessions").Where(sq.Eq{
 		"user_id":    userId,
 		"is_expired": false,
 	}).SetMap(map[string]interface{}{

@@ -64,7 +64,7 @@ func (s *ServiceStruct) Login(loginBody *LoginRequestDTO) (err error, statusCode
 	}
 
 	expiredAt := time.Now().Add(7 * 24 * time.Hour)
-	if err, statusCode, message = s.Repo.SaveToken(user.ID, token, expiredAt); err != nil {
+	if err, statusCode, message = s.Repo.SaveSession(user.ID, token, expiredAt); err != nil {
 		return err, statusCode, nil, message
 	}
 
@@ -85,7 +85,7 @@ func (s *ServiceStruct) Login(loginBody *LoginRequestDTO) (err error, statusCode
 }
 
 func (s *ServiceStruct) Logout(userId uuid.UUID) (err error, statusCode int, message string) {
-	err, statusCode, message = s.Repo.InvalidateAllToken(userId)
+	err, statusCode, message = s.Repo.InvalidateAllSession(userId)
 
 	return err, statusCode, message
 }
