@@ -1,0 +1,5 @@
+BEGIN;
+
+DROP TABLE IF EXISTS personal_guard_vendors CASCADE;
+
+COMMIT;

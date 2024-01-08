@@ -1,0 +1,7 @@
+BEGIN;
+
+DROP TABLE IF EXISTS alerts CASCADE;
+
+DROP TYPE IF EXISTS alert_statuses;
+
+COMMIT;
