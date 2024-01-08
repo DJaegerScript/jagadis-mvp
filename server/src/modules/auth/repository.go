@@ -20,7 +20,7 @@ type Repo interface {
 	FindSessionByToken(token string) (err error, statusCode int, session Sessions, message string)
 	UpdateSessionExpiry(tokenId uuid.UUID) (err error, statusCode int, message string)
 	InvalidateAllSession(userId uuid.UUID) (err error, statusCode int, message string)
-	FindUserByPhoneNumber(phoneNumber string) (err error, statusCode int, userId uuid.NullUUID, message string)
+	FindUserByPhoneNumber(phoneNumber string) (err error, statusCode int, user Users, message string)
 }
 
 type RepoStruct struct {
@@ -133,31 +133,40 @@ func (r *RepoStruct) SaveSession(userId uuid.UUID, token string, expiredAt time.
 	return nil, fiber.StatusCreated, ""
 }
 
-func (r *RepoStruct) FindUserByPhoneNumber(phoneNumber string) (err error, statusCode int, userId uuid.NullUUID, message string) {
-	query, args, err := r.psql.Select("id").From("users").Where(sq.Eq{
+func (r *RepoStruct) FindUserByPhoneNumber(phoneNumber string) (err error, statusCode int, user Users, message string) {
+	query, args, err := r.psql.Select("*").From("users").Where(sq.Eq{
 		"phone_number": phoneNumber,
 	}).ToSql()
 	if err != nil {
 		zap.L().Error("Error building query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, userId, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, user, "Oops! Something went wrong"
 	}
 
 	ctx := context.Background()
 
 	err = r.DB.QueryRow(ctx, query, args...).Scan(
-		&userId,
+		&user.ID,
+		&user.Name,
+		&user.Email,
+		&user.PhoneNumber,
+		&user.Password,
+		&user.Gender,
+		&user.City,
+		&user.BirthDate,
+		&user.CreatedAt,
+		&user.UpdatedAt,
 	)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			zap.L().Error("User not found", zap.Error(err))
-			return err, fiber.StatusNotFound, userId, "User not found!"
+			return err, fiber.StatusNotFound, user, "User not found!"
 		}
 		zap.L().Error("Error executing query", zap.Error(err))
 		statusCode = fiber.StatusInternalServerError
-		return err, fiber.StatusInternalServerError, userId, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, user, "Oops! Something went wrong"
 	}
 
-	return nil, fiber.StatusOK, userId, ""
+	return nil, fiber.StatusOK, user, ""
 }
 
 func (r *RepoStruct) FindSessionByToken(token string) (err error, statusCode int, session Sessions, message string) {
