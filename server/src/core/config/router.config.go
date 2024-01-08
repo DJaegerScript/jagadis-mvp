@@ -67,5 +67,7 @@ func (s *Server) SOSRouter(authenticator *middleware.Authenticator) *fiber.App {
 	sosRouter.Delete("/:userId/guardian/:guardianId", authenticator.TokenAuthenticator, sosHandler.RemoveGuardian)
 	sosRouter.Delete("/:userId/guardian", authenticator.TokenAuthenticator, sosHandler.ResetGuardian)
 
+	sosRouter.Post("/:userId/alert", authenticator.TokenAuthenticator, sosHandler.EnterStandbyMode)
+
 	return sosRouter
 }
