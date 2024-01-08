@@ -33,7 +33,3 @@ type VendorDTO struct {
 	Address string `json:"address"`
 	Contact string `json:"contact"`
 }
-
-type GetAllSupportDTO struct {
-	Supports []*SupportDTO `json:"supports"`
-}

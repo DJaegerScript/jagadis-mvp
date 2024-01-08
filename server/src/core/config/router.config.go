@@ -1,15 +1,17 @@
 package config
 
 import (
+	"jagadis/src/core/middleware"
+	"jagadis/src/modules/auth"
+	"jagadis/src/modules/sos"
+	"jagadis/src/modules/support"
+	"os"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	"jagadis/src/core/middleware"
-	"jagadis/src/modules/auth"
-	"jagadis/src/modules/sos"
-	"os"
-	"time"
 )
 
 func (s *Server) SetupRouter() {
@@ -43,6 +45,7 @@ func (s *Server) SetupRouter() {
 
 	s.Router.Mount("/auth", s.AuthRouter(authenticator))
 	s.Router.Mount("/sos", s.SOSRouter(authenticator))
+	s.Router.Mount("/support", s.SupportRouter(authenticator))
 }
 
 func (s *Server) AuthRouter(authenticator *middleware.Authenticator) *fiber.App {
@@ -70,4 +73,14 @@ func (s *Server) SOSRouter(authenticator *middleware.Authenticator) *fiber.App {
 	sosRouter.Post("/:userId/alert", authenticator.TokenAuthenticator, sosHandler.EnterStandbyMode)
 
 	return sosRouter
+}
+
+func (s *Server) SupportRouter(authenticator *middleware.Authenticator) *fiber.App {
+	supportHandler := support.NewHandler(s.DB)
+
+	supportRouter := fiber.New()
+
+	supportRouter.Get("/", authenticator.TokenAuthenticator, supportHandler.GetAllSupportDTO)
+
+	return supportRouter
 }
