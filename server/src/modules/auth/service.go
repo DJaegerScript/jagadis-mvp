@@ -77,7 +77,7 @@ func (s *ServiceStruct) Login(loginBody *LoginRequestDTO) (err error, statusCode
 			Name:        user.Name.String,
 			City:        user.City.String,
 			Gender:      user.Gender.String,
-			Birthdate:   user.BirthDate.Time,
+			BirthDate:   user.BirthDate.Time,
 		},
 	}
 

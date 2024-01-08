@@ -17,7 +17,7 @@ type Repo interface {
 	Save(data *RegistrationRequestDTO, password string) (err error, statusCode int, message string)
 	FindByEmail(email string) (err error, statusCode int, user Users, message string)
 	SaveSession(userId uuid.UUID, token string, expiredAt time.Time) (err error, statusCode int, message string)
-	FindSessionByToken(content string) (err error, statusCode int, token Tokens, message string)
+	FindSessionByToken(token string) (err error, statusCode int, session Sessions, message string)
 	UpdateSessionExpiry(tokenId uuid.UUID) (err error, statusCode int, message string)
 	InvalidateAllSession(userId uuid.UUID) (err error, statusCode int, message string)
 }
@@ -108,7 +108,7 @@ func (r *RepoStruct) FindByEmail(email string) (err error, statusCode int, user 
 }
 
 func (r *RepoStruct) SaveSession(userId uuid.UUID, token string, expiredAt time.Time) (err error, statusCode int, message string) {
-	queryStatement := r.psql.Insert("sessions").Columns("user_id", "content", "expired_at")
+	queryStatement := r.psql.Insert("sessions").Columns("user_id", "token", "expired_at")
 
 	queryStatement = queryStatement.Values(
 		userId,
@@ -132,38 +132,38 @@ func (r *RepoStruct) SaveSession(userId uuid.UUID, token string, expiredAt time.
 	return nil, fiber.StatusCreated, ""
 }
 
-func (r *RepoStruct) FindSessionByToken(content string) (err error, statusCode int, token Tokens, message string) {
+func (r *RepoStruct) FindSessionByToken(token string) (err error, statusCode int, session Sessions, message string) {
 	query, args, err := r.psql.
 		Select("id", "user_id", "is_expired", "expired_at").
 		From("sessions").
 		Where(sq.Eq{
-			"content":    content,
+			"token":      token,
 			"is_expired": false,
 		}).ToSql()
 	if err != nil {
 		zap.L().Error("Error building query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, token, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, session, "Oops! Something went wrong"
 	}
 
 	ctx := context.Background()
 
 	err = r.DB.QueryRow(ctx, query, args...).Scan(
-		&token.ID,
-		&token.UserId,
-		&token.IsExpired,
-		&token.ExpiredAt,
+		&session.ID,
+		&session.UserId,
+		&session.IsExpired,
+		&session.ExpiredAt,
 	)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			zap.L().Error("Session not found", zap.Error(err))
-			return err, fiber.StatusForbidden, token, "No active session"
+			return err, fiber.StatusForbidden, session, "No active session"
 		}
 		zap.L().Error("Error executing query", zap.Error(err))
 		statusCode = fiber.StatusInternalServerError
-		return err, fiber.StatusInternalServerError, token, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, session, "Oops! Something went wrong"
 	}
 
-	return nil, fiber.StatusOK, token, ""
+	return nil, fiber.StatusOK, session, ""
 }
 
 func (r *RepoStruct) UpdateSessionExpiry(tokenId uuid.UUID) (err error, statusCode int, message string) {

@@ -18,16 +18,16 @@ type LoginRequestDTO struct {
 }
 
 type UserDTO struct {
-	ID          uuid.UUID
-	Name        string
-	Email       string
-	PhoneNumber string
-	Gender      string
-	City        string
-	Birthdate   time.Time
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Email       string    `json:"email"`
+	PhoneNumber string    `json:"phoneNumber"`
+	Gender      string    `json:"gender"`
+	City        string    `json:"city"`
+	BirthDate   time.Time `json:"birthdate"`
 }
 
 type LoginResponseDTO struct {
-	Token string
-	User  *UserDTO
+	Token string   `json:"token"`
+	User  *UserDTO `json:"user"`
 }

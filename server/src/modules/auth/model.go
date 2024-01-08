@@ -19,7 +19,7 @@ type Users struct {
 	UpdatedAt   time.Time      `json:"updated_at"`
 }
 
-type Tokens struct {
+type Sessions struct {
 	ID        uuid.UUID `json:"id"`
 	UserId    uuid.UUID `json:"user_id"`
 	Content   string    `json:"content"`
