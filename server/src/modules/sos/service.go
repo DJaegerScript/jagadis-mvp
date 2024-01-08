@@ -15,6 +15,7 @@ type Service interface {
 	RemoveGuardian(guardianId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string)
 	ResetGuardian(userId uuid.UUID) (err error, statusCode int, message string)
 	EnterStandbyMode(location *EnterStandByModeRequestDTO, userId uuid.UUID) (err error, statusCode int, message string)
+	UpdateAlert(action string, alertId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string)
 }
 
 type ServiceStruct struct {
@@ -118,4 +119,8 @@ func (s *ServiceStruct) EnterStandbyMode(location *EnterStandByModeRequestDTO, u
 	}
 
 	return err, statusCode, message
+}
+
+func (s *ServiceStruct) UpdateAlert(action string, alertId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string) {
+	return s.SOSRepo.UpdateAlert(action, userId, alertId)
 }
