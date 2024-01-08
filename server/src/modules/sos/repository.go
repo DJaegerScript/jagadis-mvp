@@ -5,6 +5,7 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofrs/uuid"
+	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"go.uber.org/zap"
 )
@@ -42,6 +43,11 @@ func (r *RepoStruct) Save(phoneNumber string, userId uuid.UUID) (err error, stat
 
 	if _, err = r.DB.Exec(ctx, query, args...); err != nil {
 		zap.L().Error("Error executing query", zap.Error(err))
+		if pge, pgok := err.(*pgconn.PgError); pgok {
+			if pge.Code == "23505" {
+				return err, fiber.StatusConflict, "Contact number already registered!"
+			}
+		}
 		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
 	}
 
