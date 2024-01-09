@@ -60,52 +60,77 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   
                   const SizedBox(
-                    height: 120,
+                    height: 6,
                   ),
-
-                  Container(
-                    alignment: Alignment.topLeft,
-                    margin: const EdgeInsets.only(left: 20, right: 20),
-                    child: RichText(
-                      text: const TextSpan(
-                        text: "Selamat datang di ",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold
-                        ),
+                  
+                  Stack(
+                    children: [
+                      const Column(
                         children: [
-                          TextSpan(
-                            text: "JaGadis",
-                            style: TextStyle(
-                              color: Colors.pinkAccent,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold
+                          Align(
+                            alignment: AlignmentDirectional.topStart,
+                            child: Image(
+                              image: AssetImage("assets/images/logo_jagadis.png"), 
+                              width: 250, 
+                              height: 250, 
+                              fit: BoxFit.cover
                             ),
-                          )
-                        ]
+                          ),
+                        ],
+                      ),
+
+                      Column(
+                        children: [
+                          const SizedBox(
+                            height: 170,
+                          ),
+                          Container(
+                            alignment: Alignment.topLeft,
+                            margin: const EdgeInsets.only(left: 20, right: 20),
+                            child: RichText(
+                              text: const TextSpan(
+                                text: "Selamat datang di ",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: "JaGadis",
+                                    style: TextStyle(
+                                      color: Colors.pinkAccent,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold
+                                    ),
+                                  )
+                                ]
+                              )
+                            )
+                          ),
+
+                          const SizedBox(
+                            height: 2,
+                          ),
+
+                          Container(
+                            alignment: Alignment.topLeft,
+                            margin: const EdgeInsets.only(left: 20, right: 20),
+                            child: const Text(
+                              "Bersiaplah melindungi diri Anda. Atur tombol darurat dan gunakan fitur preventif!",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                              )
+                            )
+                          ),
+                        ],
                       )
-                    )
+                    ],
                   ),
 
                   const SizedBox(
-                    height: 10,
-                  ),
-
-                  Container(
-                    alignment: Alignment.topLeft,
-                    margin: const EdgeInsets.only(left: 20, right: 20),
-                    child: const Text(
-                      "Bersiaplah melindungi diri Anda. Atur tombol darurat dan gunakan fitur preventif!",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                      )
-                    )
-                  ),
-
-                  const SizedBox(
-                    height: 32,
+                    height: 24,
                   ),
 
                   Container(
@@ -218,7 +243,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           height: 16,
                         ),
 
-                        ElevatedButton(
+                        ElevatedButton.icon(
                           onPressed: _login,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
@@ -230,13 +255,22 @@ class _LoginScreenState extends State<LoginScreen> {
                               )
                             )
                           ),
-                          child: const Text(
+                          icon: const Image(
+                            image: AssetImage("assets/images/google_PNG19635.png"), 
+                            width: 24, 
+                            height: 24
+                          ),
+                          label: const Text(
                             "Google",
                             style: TextStyle(
                               color: Colors.black,
                             ),
-                          )
-                        )
+                          ),
+                        ),
+
+                        const SizedBox(
+                          height: 16,
+                        ),
                       ],
                     ),
                   )

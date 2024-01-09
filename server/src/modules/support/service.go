@@ -43,29 +43,45 @@ func (s *ServiceStruct) GetSupportDetail(supportId uuid.UUID) (err error, status
 			return err, statusCode, supportDTO, message
 		}
 
-		statusCode, vendor, message, err := s.Repo.GetPersonalGuardVendorByID(personalGuard.VendorID)
-		if err != nil {
-			return err, statusCode, supportDTO, message
-		}
+		if personalGuard.VendorID != nil {
+			statusCode, vendor, message, err := s.Repo.GetPersonalGuardVendorByID(personalGuard.VendorID)
+			if err != nil {
+				return err, statusCode, supportDTO, message
+			}
 
-		return err, statusCode, SupportDTO{
-			ID:               support.ID,
-			Name:             support.Name,
-			ImageURL:         support.ImageURL,
-			Gender:           support.Gender,
-			YearOfExperience: support.YearOfExperience,
-			Fee:              support.Fee,
-			PersonalGuard: &PersonalGuardDTO{
-				Profession:   personalGuard.Profession,
-				Domicile:     personalGuard.City,
-				EmployerType: personalGuard.Type,
-			},
-			Vendor: &VendorDTO{
-				Name:    vendor.Name,
-				Address: vendor.Address,
-				Contact: vendor.Contact,
-			},
-		}, message
+			return err, statusCode, SupportDTO{
+				ID:               support.ID,
+				Name:             support.Name,
+				ImageURL:         support.ImageURL,
+				Gender:           support.Gender,
+				YearOfExperience: support.YearOfExperience,
+				Fee:              support.Fee,
+				PersonalGuard: &PersonalGuardDTO{
+					Profession:   personalGuard.Profession,
+					Domicile:     personalGuard.City,
+					EmployerType: personalGuard.Type,
+				},
+				Vendor: &VendorDTO{
+					Name:    vendor.Name,
+					Address: vendor.Address,
+					Contact: vendor.Contact,
+				},
+			}, message
+		} else {
+			return err, statusCode, SupportDTO{
+				ID:               support.ID,
+				Name:             support.Name,
+				ImageURL:         support.ImageURL,
+				Gender:           support.Gender,
+				YearOfExperience: support.YearOfExperience,
+				Fee:              support.Fee,
+				PersonalGuard: &PersonalGuardDTO{
+					Profession:   personalGuard.Profession,
+					Domicile:     personalGuard.City,
+					EmployerType: personalGuard.Type,
+				},
+			}, message
+		}
 	case "THERAPIST":
 		statusCode, therapist, message, err := s.Repo.GetTherapistBySupportID(supportId)
 		if err != nil {

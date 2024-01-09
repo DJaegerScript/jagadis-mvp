@@ -26,14 +26,14 @@ type SupportType struct {
 }
 
 type PersonalGuard struct {
-	ID         uuid.UUID `json:"id"`
-	SupportID  uuid.UUID `json:"support_id"`
-	Profession string    `json:"profession"`
-	City       string    `json:"city"`
-	VendorID   uuid.UUID `json:"vendor_id"`
-	Type       string    `json:"type"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
+	ID         uuid.UUID  `json:"id"`
+	SupportID  uuid.UUID  `json:"support_id"`
+	Profession string     `json:"profession"`
+	City       string     `json:"city"`
+	VendorID   *uuid.UUID `json:"vendor_id"`
+	Type       string     `json:"type"`
+	CreatedAt  time.Time  `json:"created_at"`
+	UpdatedAt  time.Time  `json:"updated_at"`
 }
 
 type PersonalGuardVendor struct {

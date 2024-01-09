@@ -15,7 +15,7 @@ type Repo interface {
 	GetAllPersonalGuard() (statusCode int, personalGuards []PersonalGuard, message string, err error)
 	GetAllTherapist() (statusCode int, therapists []Therapist, message string, err error)
 	GetSupportByID(supportId uuid.UUID) (statusCode int, support Support, message string, err error)
-	GetPersonalGuardVendorByID(vendorId uuid.UUID) (statusCode int, vendor PersonalGuardVendor, message string, err error)
+	GetPersonalGuardVendorByID(vendorId *uuid.UUID) (statusCode int, vendor PersonalGuardVendor, message string, err error)
 	GetTherapistVendorByID(vendorId uuid.UUID) (statusCode int, vendor TherapistVendor, message string, err error)
 	GetSupportTypeByID(supportTypeId uuid.UUID) (statusCode int, supportType SupportType, message string, err error)
 	GetPersonalGuardBySupportID(supportId uuid.UUID) (statusCode int, personalGuard PersonalGuard, message string, err error)
@@ -153,7 +153,7 @@ func (r *RepoStruct) GetAllPersonalGuard() (statusCode int, personalGuards []Per
 	return fiber.StatusOK, personalGuards, "Success", nil
 }
 
-func (r *RepoStruct) GetPersonalGuardVendorByID(vendorId uuid.UUID) (statusCode int, vendor PersonalGuardVendor, message string, err error) {
+func (r *RepoStruct) GetPersonalGuardVendorByID(vendorId *uuid.UUID) (statusCode int, vendor PersonalGuardVendor, message string, err error) {
 	query, args, err := r.psql.Select("id", "name", "address", "contact").From("personal_guard_vendors").Where(sq.Eq{"id": vendorId}).ToSql()
 	if err != nil {
 		zap.L().Error("Error building query", zap.Error(err))
