@@ -27,117 +27,202 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [Container(
-                decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: const Offset(0, 5),                  )
-                    ]
-                ),
-                margin: const EdgeInsets.all(12.0),
-                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 24.0),
-                child: Form(
-                  key: _loginFormKey,
-                  child: Column(
-                    children: [
-                      const Center(child: Text("JaGadis", style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green
-                      ),),),
-                      const SizedBox(
-                        height: 25,
-                      ),
-                      TextFieldComponent(
-                          keyboardType: TextInputType.emailAddress,
-                          labelText: "Email or Username",
-                          hintText: "john.doe@mail.com",
-                          action: (String? value) {
-                            setState(() {
-                              _email = value!;
-                            });
-                          },
-                          validator: (String? value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Email or username cannot be empty!';
-                            }
-                            return null;
-                          }),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      TextFieldComponent(
-                        isTextObscured: true,
-                        labelText: "Password",
-                        action: (String? value) {
-                          setState(() {
-                            _password = value!;
-                          });
-                        },
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Password cannot be empty!';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      ElevatedButton(
-                          onPressed: _login,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
-                            minimumSize: const Size.fromHeight(50),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15)),
+      body: Container(
+        alignment: Alignment.center,
+        child: Stack(
+          children: [
+            Form(
+              key: _loginFormKey,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      alignment: Alignment.topLeft,
+                      margin: const EdgeInsets.only(left: 20, right: 20),
+                      child: RichText(
+                        text: const TextSpan(
+                          text: "Selamat datang di ",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold
                           ),
-                          child: const Text(
-                            'Login',
-                            style: TextStyle(fontSize: 20),
-                          )),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text("Doesn't have an account?",
+                          children: [
+                            TextSpan(
+                              text: "JaGadis", 
                               style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
-                          const SizedBox(
-                            width: 10,
+                                color: Colors.pink, 
+                                fontSize: 22, 
+                                fontWeight: FontWeight.bold
+                              )
+                            )
+                          ]
+                        )
+                      )
+                    ),
+
+                    const SizedBox(
+                      height: 8,
+                    ),
+
+                    Container(
+                      alignment: Alignment.topLeft,
+                      margin: const EdgeInsets.only(left: 20, right: 20),
+                      child: const Text(
+                        "Bersiaplah melindungi diri Anda. Atur tombol darurat dan gunakan fitur preventif!",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                        )
+                      )
+                    ),
+
+                    const SizedBox(
+                      height: 32,
+                    ),
+
+                    Container(
+                      margin: const EdgeInsets.only(left: 20, right: 20),
+                      child: Column(
+                        children: [
+                          Container(
+                            alignment: Alignment.topLeft,
+                            child: const Text(
+                              "Email/Username",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold
+                              )
+                            )
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                      const RegistrationScreen()));
-                            },
-                            child: const Text("Create One!",
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.green)),
+
+                          const SizedBox(
+                            height: 8,
+                          ),
+
+                          TextFieldComponent(
+                            keyboardType: TextInputType.emailAddress,
+                            labelText: "Email/Username",
+                            hintText: "Email/Username",
+                            action: (String? value) {
+                              setState(() {
+                                _email = value!;
+                              });
+                            }, 
+                            validator: (String? value) {
+                              if (value == null || value.isEmpty) {
+                                return "Email or username cannot be empty";
+                              }
+                              return null;
+                            }
+                          ),
+
+                          const SizedBox(
+                            height: 24,
+                          ),
+
+                          Container(
+                            alignment: Alignment.topLeft,
+                            child: const Text(
+                              "Password",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold
+                              )
+                            )
+                          ),
+
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          
+                          TextFieldComponent(
+                            isTextObscured: true,
+                            labelText: "Password", 
+                            action: (String? value) {
+                              setState(() {
+                                _password = value!;
+                              });
+                            }, 
+                            validator: (String? value) {
+                              if (value == null || value.isEmpty) {
+                                return "Password cannot be empty";
+                              }
+                              return null;
+                            }
+                          ),
+                          
+                          const SizedBox(
+                            height: 32,
+                          ),
+
+                          ElevatedButton(
+                            onPressed: _login, 
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.pink,
+                              minimumSize: const Size(double.infinity, 50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)
+                              )
+                            ),
+                            child: const Text(
+                              "Masuk",
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            )
+                          ),
+
+                          const SizedBox(
+                            height: 16,
+                          ),
+
+                          const Text(
+                            "Atau masuk dengan",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                            )
+                          ),
+
+                          const SizedBox(
+                            height: 16,
+                          ),
+
+                          ElevatedButton(
+                            onPressed: _login,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              minimumSize: const Size(double.infinity, 50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                side: const BorderSide(
+                                  color: Colors.black54
+                                )
+                              )
+                            ),
+                            child: const Text(
+                              "Google",
+                              style: TextStyle(
+                                color: Colors.black,
+                              ),
+                            )
                           )
                         ],
-                      )
-                    ],
-                  ),
+                      ),
+                    )
+                  ],
                 ),
-              )],
-            )
-        ));
+              ),
+            ),
+          ],
+        ),
+      )
+    );
   }
 
   void _login() async {
