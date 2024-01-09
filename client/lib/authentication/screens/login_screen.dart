@@ -27,199 +27,223 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        alignment: Alignment.center,
-        child: Stack(
-          children: [
-            Form(
+      body: SingleChildScrollView(
+        child: Container(
+          alignment: Alignment.center,
+          child: Center(
+            child: Form(
               key: _loginFormKey,
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      alignment: Alignment.topLeft,
-                      margin: const EdgeInsets.only(left: 20, right: 20),
-                      child: RichText(
-                        text: const TextSpan(
-                          text: "Selamat datang di ",
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Container(
+                      margin: const EdgeInsets.all(32),
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const RegistrationScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          "Daftar",
                           style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold
+                            color: Colors.pinkAccent,
+                            fontSize: 16,
                           ),
-                          children: [
-                            TextSpan(
-                              text: "JaGadis", 
-                              style: TextStyle(
-                                color: Colors.pink, 
-                                fontSize: 22, 
-                                fontWeight: FontWeight.bold
-                              )
-                            )
-                          ]
                         )
-                      )
-                    ),
+                      ),
+                    )
+                  ),
+                  
+                  const SizedBox(
+                    height: 120,
+                  ),
 
-                    const SizedBox(
-                      height: 8,
-                    ),
-
-                    Container(
-                      alignment: Alignment.topLeft,
-                      margin: const EdgeInsets.only(left: 20, right: 20),
-                      child: const Text(
-                        "Bersiaplah melindungi diri Anda. Atur tombol darurat dan gunakan fitur preventif!",
+                  Container(
+                    alignment: Alignment.topLeft,
+                    margin: const EdgeInsets.only(left: 20, right: 20),
+                    child: RichText(
+                      text: const TextSpan(
+                        text: "Selamat datang di ",
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: 16,
-                        )
-                      )
-                    ),
-
-                    const SizedBox(
-                      height: 32,
-                    ),
-
-                    Container(
-                      margin: const EdgeInsets.only(left: 20, right: 20),
-                      child: Column(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold
+                        ),
                         children: [
-                          Container(
-                            alignment: Alignment.topLeft,
-                            child: const Text(
-                              "Email/Username",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold
-                              )
-                            )
-                          ),
-
-                          const SizedBox(
-                            height: 8,
-                          ),
-
-                          TextFieldComponent(
-                            keyboardType: TextInputType.emailAddress,
-                            labelText: "Email/Username",
-                            hintText: "Email/Username",
-                            action: (String? value) {
-                              setState(() {
-                                _email = value!;
-                              });
-                            }, 
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return "Email or username cannot be empty";
-                              }
-                              return null;
-                            }
-                          ),
-
-                          const SizedBox(
-                            height: 24,
-                          ),
-
-                          Container(
-                            alignment: Alignment.topLeft,
-                            child: const Text(
-                              "Password",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold
-                              )
-                            )
-                          ),
-
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          
-                          TextFieldComponent(
-                            isTextObscured: true,
-                            labelText: "Password", 
-                            action: (String? value) {
-                              setState(() {
-                                _password = value!;
-                              });
-                            }, 
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return "Password cannot be empty";
-                              }
-                              return null;
-                            }
-                          ),
-                          
-                          const SizedBox(
-                            height: 32,
-                          ),
-
-                          ElevatedButton(
-                            onPressed: _login, 
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.pink,
-                              minimumSize: const Size(double.infinity, 50),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15)
-                              )
+                          TextSpan(
+                            text: "JaGadis",
+                            style: TextStyle(
+                              color: Colors.pinkAccent,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold
                             ),
-                            child: const Text(
-                              "Masuk",
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            )
-                          ),
+                          )
+                        ]
+                      )
+                    )
+                  ),
 
-                          const SizedBox(
-                            height: 16,
-                          ),
+                  const SizedBox(
+                    height: 10,
+                  ),
 
-                          const Text(
-                            "Atau masuk dengan",
+                  Container(
+                    alignment: Alignment.topLeft,
+                    margin: const EdgeInsets.only(left: 20, right: 20),
+                    child: const Text(
+                      "Bersiaplah melindungi diri Anda. Atur tombol darurat dan gunakan fitur preventif!",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                      )
+                    )
+                  ),
+
+                  const SizedBox(
+                    height: 32,
+                  ),
+
+                  Container(
+                    margin: const EdgeInsets.only(left: 20, right: 20),
+                    child: Column(
+                      children: [
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: const Text(
+                            "Email/Username",
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
-                            )
-                          ),
-
-                          const SizedBox(
-                            height: 16,
-                          ),
-
-                          ElevatedButton(
-                            onPressed: _login,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              minimumSize: const Size(double.infinity, 50),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                side: const BorderSide(
-                                  color: Colors.black54
-                                )
-                              )
-                            ),
-                            child: const Text(
-                              "Google",
-                              style: TextStyle(
-                                color: Colors.black,
-                              ),
+                              fontWeight: FontWeight.bold
                             )
                           )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
+                        ),
+
+                        const SizedBox(
+                          height: 8,
+                        ),
+
+                        TextFieldComponent(
+                          keyboardType: TextInputType.emailAddress,
+                          labelText: "Email/Username",
+                          hintText: "Email/Username",
+                          action: (String? value) {
+                            setState(() {
+                              _email = value!;
+                            });
+                          }, 
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return "Email or username cannot be empty";
+                            }
+                            return null;
+                          }
+                        ),
+
+                        const SizedBox(
+                          height: 24,
+                        ),
+
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: const Text(
+                            "Password",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold
+                            )
+                          )
+                        ),
+
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        
+                        TextFieldComponent(
+                          isTextObscured: true,
+                          labelText: "Password", 
+                          action: (String? value) {
+                            setState(() {
+                              _password = value!;
+                            });
+                          }, 
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return "Password cannot be empty";
+                            }
+                            return null;
+                          }
+                        ),
+                        
+                        const SizedBox(
+                          height: 32,
+                        ),
+
+                        ElevatedButton(
+                          onPressed: _login, 
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.pink,
+                            minimumSize: const Size(double.infinity, 50),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)
+                            )
+                          ),
+                          child: const Text(
+                            "Masuk",
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          )
+                        ),
+
+                        const SizedBox(
+                          height: 16,
+                        ),
+
+                        const Text(
+                          "Atau masuk dengan",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                          )
+                        ),
+
+                        const SizedBox(
+                          height: 16,
+                        ),
+
+                        ElevatedButton(
+                          onPressed: _login,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            minimumSize: const Size(double.infinity, 50),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                              side: const BorderSide(
+                                color: Colors.black54
+                              )
+                            )
+                          ),
+                          child: const Text(
+                            "Google",
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          )
+                        )
+                      ],
+                    ),
+                  )
+                ],
               ),
             ),
-          ],
+          ),
         ),
       )
     );
