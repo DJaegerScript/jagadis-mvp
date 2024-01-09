@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Align(
                     alignment: Alignment.topRight,
                     child: Container(
-                      margin: const EdgeInsets.all(32),
+                      margin: const EdgeInsets.all(20),
                       child: TextButton(
                         onPressed: () {
                           Navigator.push(
@@ -60,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   
                   const SizedBox(
-                    height: 6,
+                    height: 4,
                   ),
                   
                   Stack(
@@ -213,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ElevatedButton(
                           onPressed: _login, 
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.pink,
+                            backgroundColor: Colors.pinkAccent,
                             minimumSize: const Size(double.infinity, 50),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15)

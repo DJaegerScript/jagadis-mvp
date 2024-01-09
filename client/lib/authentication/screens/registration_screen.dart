@@ -22,156 +22,291 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Center(child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [Container(
-              decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(20)),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 3,
-                      blurRadius: 7,
-                      offset: const Offset(0, 5),                  )
-                  ]
-              ),
-              margin: const EdgeInsets.all(12.0),
-              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 24.0),
-              child: Form(
-                key: _registrationFormKey,
-                child: Column(
-                  children: [
-                    const Center(child: Text("JaGadis", style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green
-                    ),),),
-                    const SizedBox(
-                      height: 25,
-                    ),
-                    TextFieldComponent(
-                        keyboardType: TextInputType.emailAddress,
-                        labelText: "Email",
-                        hintText: "john.doe@mail.com",
-                        action: (String? value) {
-                          setState(() {
-                            _email = value!;
-                          });
+      body: SingleChildScrollView(
+        child: Container(
+          alignment: Alignment.center,
+          child: Center(
+            child: Form(
+              key: _registrationFormKey,
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Container(
+                      margin: const EdgeInsets.all(20),
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LoginScreen(),
+                            ),
+                          );
                         },
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Email cannot be empty!';
-                          }
-                          return null;
-                        }),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    TextFieldComponent(
-                        keyboardType: TextInputType.phone,
-                        labelText: "Phone Number",
-                        hintText: "+6285156217864",
-                        action: (String? value) {
-                          setState(() {
-                            _phoneNumber = value!;
-                          });
-                        },
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Phone number cannot be empty!';
-                          }
-                          return null;
-                        }),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    TextFieldComponent(
-                      isTextObscured: true,
-                      labelText: "Password",
-                      action: (String? value) {
-                        setState(() {
-                          _password = value!;
-                        });
-                      },
-                      validator: (String? value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Password cannot be empty!';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    TextFieldComponent(
-                      isTextObscured: true,
-                      labelText: "Confirmation Password",
-                      action: (String? value) {
-                        setState(() {
-                          _confirmationPassword = value!;
-                        });
-                      },
-                      validator: (String? value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Confirmation password cannot be empty!';
-                        } else if (value != _confirmationPassword) {
-                          return "Password didn't match";
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    ElevatedButton(
-                        onPressed: _register,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          minimumSize: const Size.fromHeight(50),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                        ),
                         child: const Text(
-                          'Register',
-                          style: TextStyle(fontSize: 20),
-                        )),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("Already have one?",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                    const LoginScreen()));
-                          },
-                          child: const Text("Login!",
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.green)),
+                          "Masuk",
+                          style: TextStyle(
+                            color: Colors.pinkAccent,
+                            fontSize: 16,
+                          ),
                         )
-                      ],
+                      ),
                     )
-                  ],
-                ),
+                  ),
+                  
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  
+                  Stack(
+                    children: [
+                      const Column(
+                        children: [
+                          Align(
+                            alignment: AlignmentDirectional.topStart,
+                            child: Image(
+                              image: AssetImage("assets/images/logo_jagadis.png"), 
+                              width: 250, 
+                              height: 250, 
+                              fit: BoxFit.cover
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      Column(
+                        children: [
+                          const SizedBox(
+                            height: 170,
+                          ),
+                          Container(
+                            alignment: Alignment.topLeft,
+                            margin: const EdgeInsets.only(left: 20, right: 20),
+                            child: RichText(
+                              text: const TextSpan(
+                                text: "Selamat datang di ",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: "JaGadis",
+                                    style: TextStyle(
+                                      color: Colors.pinkAccent,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold
+                                    ),
+                                  )
+                                ]
+                              )
+                            )
+                          ),
+
+                          const SizedBox(
+                            height: 2,
+                          ),
+
+                          Container(
+                            alignment: Alignment.topLeft,
+                            margin: const EdgeInsets.only(left: 20, right: 20),
+                            child: const Text(
+                              "Daftar sekarang dan ambil langkah pertama menuju keamanan!",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                              )
+                            )
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+
+                  const SizedBox(
+                    height: 14,
+                  ),
+
+                  Container(
+                    margin: const EdgeInsets.only(left: 20, right: 20),
+                    child: Column(
+                      children: [
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: const Text(
+                            "Email",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold
+                            )
+                          )
+                        ),
+
+                        const SizedBox(
+                          height: 8,
+                        ),
+
+                        TextFieldComponent(
+                          keyboardType: TextInputType.emailAddress,
+                          labelText: "Email",
+                          hintText: "Email",
+                          action: (String? value) {
+                            setState(() {
+                              _email = value!;
+                            });
+                          }, 
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return "Email or username cannot be empty";
+                            }
+                            return null;
+                          }
+                        ),
+
+                        const SizedBox(
+                          height: 14,
+                        ),
+
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: const Text(
+                            "No. HP",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold
+                            )
+                          )
+                        ),
+
+                        const SizedBox(
+                          height: 8,
+                        ),
+
+                        TextFieldComponent(
+                          keyboardType: TextInputType.phone,
+                          labelText: "No. HP",
+                          hintText: "No. HP",
+                          action: (String? value) {
+                            setState(() {
+                              _phoneNumber = value!;
+                            });
+                          }, 
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return "Phone number cannot be empty";
+                            }
+                            return null;
+                          }
+                        ),
+
+                        const SizedBox(
+                          height: 14,
+                        ),
+
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: const Text(
+                            "Password",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold
+                            )
+                          )
+                        ),
+
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        
+                        TextFieldComponent(
+                          isTextObscured: true,
+                          labelText: "Password", 
+                          action: (String? value) {
+                            setState(() {
+                              _password = value!;
+                            });
+                          }, 
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return "Password cannot be empty";
+                            }
+                            return null;
+                          }
+                        ),
+
+                        const SizedBox(
+                          height: 14,
+                        ),
+
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: const Text(
+                            "Konfirmasi Password",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold
+                            )
+                          )
+                        ),
+
+                        const SizedBox(
+                          height: 8,
+                        ),
+
+                        TextFieldComponent(
+                          isTextObscured: true,
+                          labelText: "Konfirmasi Password", 
+                          action: (String? value) {
+                            setState(() {
+                              _confirmationPassword = value!;
+                            });
+                          }, 
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty || _confirmationPassword != _password) {
+                              return "Enter the same password as before, for verification";
+                            }
+                            return null;
+                          }
+                        ),
+                        
+                        const SizedBox(
+                          height: 20,
+                        ),
+
+                        ElevatedButton(
+                          onPressed: _register, 
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.pinkAccent,
+                            minimumSize: const Size(double.infinity, 50),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)
+                            )
+                          ),
+                          child: const Text(
+                            "Daftar",
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          )
+                        ),
+
+                        const SizedBox(
+                          height: 16,
+                        ),
+                      ],
+                    ),
+                  )
+                ],
               ),
-            )],
-          ),)),
-      ),
+            ),
+          ),
+        ),
+      )
     );
   }
 
