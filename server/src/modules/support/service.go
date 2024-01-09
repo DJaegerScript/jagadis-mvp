@@ -29,13 +29,13 @@ func (s *ServiceStruct) GetAllPersonalGuardSupports() (err error, statusCode int
 		return err, statusCode, supportDTOs, message
 	}
 
-	for _, perpersonalGuard := range personalGuards {
-		statusCode, support, message, err := s.Repo.GetSupportByID(perpersonalGuard.SupportID)
+	for _, personalGuard := range personalGuards {
+		statusCode, support, message, err := s.Repo.GetSupportByID(personalGuard.SupportID)
 		if err != nil {
 			return err, statusCode, supportDTOs, message
 		}
 
-		statusCode, vendor, message, err := s.Repo.GetPersonalGuardVendorByID(perpersonalGuard.VendorID)
+		statusCode, vendor, message, err := s.Repo.GetPersonalGuardVendorByID(personalGuard.VendorID)
 		if err != nil {
 			return err, statusCode, supportDTOs, message
 		}
@@ -49,9 +49,9 @@ func (s *ServiceStruct) GetAllPersonalGuardSupports() (err error, statusCode int
 			Fee:              support.Fee,
 			Gender:           support.Gender,
 			PersonalGuard: &PersonalGuardDTO{
-				Profession:   perpersonalGuard.Profession,
-				Domicile:     perpersonalGuard.City,
-				EmployerType: perpersonalGuard.Type,
+				Profession:   personalGuard.Profession,
+				Domicile:     personalGuard.City,
+				EmployerType: personalGuard.Type,
 			},
 			Vendor: &VendorDTO{
 				Name:    vendor.Name,

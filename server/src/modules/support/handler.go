@@ -29,13 +29,9 @@ func NewHandler(db *pgxpool.Pool) *HandlerStruct {
 }
 
 func (h *HandlerStruct) GetAllSupportDTO(ctx *fiber.Ctx) error {
-	userId, err := common.GetSession(ctx)
+	_, err := common.GetSession(ctx)
 	if err != nil {
 		return common.HandleException(ctx, fiber.StatusInternalServerError, "Oops! Something went wrong")
-	}
-
-	if !common.GetRequestAuthenticity(ctx, userId) {
-		return common.HandleException(ctx, fiber.StatusForbidden, "Compromised request")
 	}
 
 	supportType := ctx.Query("type")
