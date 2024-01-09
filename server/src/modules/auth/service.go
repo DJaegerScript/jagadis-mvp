@@ -8,6 +8,7 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
+	"jagadis/src/modules/user"
 	"time"
 )
 
@@ -18,14 +19,17 @@ type Service interface {
 }
 
 type ServiceStruct struct {
-	Repo Repo
+	AuthRepo Repo
+	UserRepo user.Repo
 }
 
 func NewService(db *pgxpool.Pool) (svc *ServiceStruct, err error) {
-	repo := NewRepo(db)
+	authRepo := NewRepo(db)
+	userRepo := user.NewRepo(db)
 
 	svc = &ServiceStruct{
-		Repo: repo,
+		AuthRepo: authRepo,
+		UserRepo: userRepo,
 	}
 
 	return svc, err
@@ -39,7 +43,7 @@ func (s *ServiceStruct) Register(registrationBody *RegistrationRequestDTO) (err 
 		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
 	}
 
-	err, statusCode, message = s.Repo.Save(registrationBody, string(hashedPassword))
+	err, statusCode, message = s.UserRepo.SaveUser(registrationBody.Email, registrationBody.PhoneNumber, string(hashedPassword))
 	if err != nil {
 		return err, statusCode, message
 	}
@@ -48,17 +52,17 @@ func (s *ServiceStruct) Register(registrationBody *RegistrationRequestDTO) (err 
 }
 
 func (s *ServiceStruct) Login(loginBody *LoginRequestDTO) (err error, statusCode int, loginResponseData *LoginResponseDTO, message string) {
-	err, statusCode, user, message := s.Repo.FindByEmail(loginBody.Email)
+	err, statusCode, existingUser, message := s.UserRepo.FindUserByEmail(loginBody.Email)
 	if err != nil {
 		return err, statusCode, nil, message
 	}
 
-	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginBody.Password)); err != nil {
+	if err = bcrypt.CompareHashAndPassword([]byte(existingUser.Password), []byte(loginBody.Password)); err != nil {
 		zap.L().Error("Error generating password hash", zap.Error(err))
 		return err, fiber.StatusForbidden, nil, "Email or password didn't match!"
 	}
 
-	err, statusCode, message = s.Repo.InvalidateAllSession(user.ID)
+	err, statusCode, message = s.AuthRepo.InvalidateAllSession(existingUser.ID)
 	if err != nil {
 		return err, statusCode, nil, message
 	}
@@ -69,20 +73,20 @@ func (s *ServiceStruct) Login(loginBody *LoginRequestDTO) (err error, statusCode
 	}
 
 	expiredAt := time.Now().Add(7 * 24 * time.Hour)
-	if err, statusCode, message = s.Repo.SaveSession(user.ID, token, expiredAt); err != nil {
+	if err, statusCode, message = s.AuthRepo.SaveSession(existingUser.ID, token, expiredAt); err != nil {
 		return err, statusCode, nil, message
 	}
 
 	response := &LoginResponseDTO{
 		Token: token,
-		User: &UserDTO{
-			ID:          user.ID,
-			Email:       user.Email,
-			PhoneNumber: user.PhoneNumber,
-			Name:        user.Name.String,
-			City:        user.City.String,
-			Gender:      user.Gender.String,
-			BirthDate:   user.BirthDate.Time,
+		User: user.UpdateProfileRequestDTO{
+			ID:          existingUser.ID,
+			Email:       existingUser.Email,
+			PhoneNumber: existingUser.PhoneNumber,
+			Name:        existingUser.Name.String,
+			City:        existingUser.City.String,
+			Gender:      existingUser.Gender.String,
+			BirthDate:   existingUser.BirthDate.Time,
 		},
 	}
 
@@ -90,7 +94,7 @@ func (s *ServiceStruct) Login(loginBody *LoginRequestDTO) (err error, statusCode
 }
 
 func (s *ServiceStruct) Logout(userId uuid.UUID) (err error, statusCode int, message string) {
-	err, statusCode, message = s.Repo.InvalidateAllSession(userId)
+	err, statusCode, message = s.AuthRepo.InvalidateAllSession(userId)
 
 	return err, statusCode, message
 }

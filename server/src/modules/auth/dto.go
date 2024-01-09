@@ -1,9 +1,6 @@
 package auth
 
-import (
-	"github.com/gofrs/uuid"
-	"time"
-)
+import "jagadis/src/modules/user"
 
 type RegistrationRequestDTO struct {
 	PhoneNumber          string `json:"phoneNumber" validate:"required,e164"`
@@ -17,17 +14,7 @@ type LoginRequestDTO struct {
 	Password string `json:"password" validate:"required"`
 }
 
-type UserDTO struct {
-	ID          uuid.UUID `json:"id"`
-	Name        string    `json:"name"`
-	Email       string    `json:"email"`
-	PhoneNumber string    `json:"phoneNumber"`
-	Gender      string    `json:"gender"`
-	City        string    `json:"city"`
-	BirthDate   time.Time `json:"birthdate"`
-}
-
 type LoginResponseDTO struct {
-	Token string   `json:"token"`
-	User  *UserDTO `json:"user"`
+	Token string                       `json:"token"`
+	User  user.UpdateProfileRequestDTO `json:"user"`
 }
