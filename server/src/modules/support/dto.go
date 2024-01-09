@@ -10,7 +10,7 @@ type SupportDTO struct {
 	ImageURL         string            `json:"imageURL"`
 	Gender           string            `json:"gender"`
 	YearOfExperience int               `json:"yearOfExperience"`
-	Type             string            `json:"type"`
+	Type             string            `json:"type,omitempty"`
 	Fee              int               `json:"fee"`
 	PersonalGuard    *PersonalGuardDTO `json:"personalGuard,omitempty"`
 	Therapist        *TherapistDTO     `json:"therapist,omitempty"`
@@ -24,8 +24,8 @@ type PersonalGuardDTO struct {
 }
 
 type TherapistDTO struct {
-	Speciality string `json:"speciality"`
-	Education  string `json:"education"`
+	Specialty string `json:"specialty"`
+	Education string `json:"education"`
 }
 
 type VendorDTO struct {

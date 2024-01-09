@@ -5,11 +5,13 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofrs/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 type Handler interface {
 	GetAllSupportDTO(ctx *fiber.Ctx) error
+	GetSupportDetail(ctx *fiber.Ctx) error
 }
 
 type HandlerStruct struct {
@@ -28,6 +30,29 @@ func NewHandler(db *pgxpool.Pool) *HandlerStruct {
 	}
 }
 
+func (h *HandlerStruct) GetSupportDetail(ctx *fiber.Ctx) error {
+	_, err := common.GetSession(ctx)
+	if err != nil {
+		return common.HandleException(ctx, fiber.StatusInternalServerError, "Oops! Something went wrong")
+	}
+
+	supportId := uuid.FromStringOrNil(ctx.Params("supportId"))
+
+	err, statusCode, supportDTO, message := h.Service.GetSupportDetail(supportId)
+	if err != nil {
+		return common.HandleException(ctx, statusCode, message)
+	}
+
+	statusCode = fiber.StatusOK
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"isSuccess":  true,
+		"statusCode": statusCode,
+		"message":    message,
+		"content":    supportDTO,
+	})
+}
+
 func (h *HandlerStruct) GetAllSupportDTO(ctx *fiber.Ctx) error {
 	_, err := common.GetSession(ctx)
 	if err != nil {
@@ -41,8 +66,8 @@ func (h *HandlerStruct) GetAllSupportDTO(ctx *fiber.Ctx) error {
 	}
 
 	var (
-		getAllFunc  func() (error, int, []*SupportDTO, string)
-		supportDTOs []*SupportDTO
+		getAllFunc  func() (error, int, []SupportDTO, string)
+		supportDTOs []SupportDTO
 		message     string
 		statusCode  int
 	)

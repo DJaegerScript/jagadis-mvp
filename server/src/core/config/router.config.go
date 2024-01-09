@@ -81,6 +81,7 @@ func (s *Server) SupportRouter(authenticator *middleware.Authenticator) *fiber.A
 	supportRouter := fiber.New()
 
 	supportRouter.Get("/", authenticator.TokenAuthenticator, supportHandler.GetAllSupportDTO)
+	supportRouter.Get("/:supportId", authenticator.TokenAuthenticator, supportHandler.GetSupportDetail)
 
 	return supportRouter
 }

@@ -46,13 +46,13 @@ type PersonalGuardVendor struct {
 }
 
 type Therapist struct {
-	ID         uuid.UUID `json:"id"`
-	SupportID  uuid.UUID `json:"support_id"`
-	Speciality string    `json:"speciality"`
-	Education  string    `json:"education"`
-	VendorID   uuid.UUID `json:"vendor_id"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
+	ID        uuid.UUID `json:"id"`
+	SupportID uuid.UUID `json:"support_id"`
+	Specialty string    `json:"specialty"`
+	Education string    `json:"education"`
+	VendorID  uuid.UUID `json:"vendor_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type TherapistVendor struct {

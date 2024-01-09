@@ -17,6 +17,9 @@ type Repo interface {
 	GetSupportByID(supportId uuid.UUID) (statusCode int, support Support, message string, err error)
 	GetPersonalGuardVendorByID(vendorId uuid.UUID) (statusCode int, vendor PersonalGuardVendor, message string, err error)
 	GetTherapistVendorByID(vendorId uuid.UUID) (statusCode int, vendor TherapistVendor, message string, err error)
+	GetSupportTypeByID(supportTypeId uuid.UUID) (statusCode int, supportType SupportType, message string, err error)
+	GetPersonalGuardBySupportID(supportId uuid.UUID) (statusCode int, personalGuard PersonalGuard, message string, err error)
+	GetTherapistBySupportID(supportId uuid.UUID) (statusCode int, therapist Therapist, message string, err error)
 }
 
 type RepoStruct struct {
@@ -29,6 +32,32 @@ func NewRepo(db *pgxpool.Pool) *RepoStruct {
 		DB:   db,
 		psql: sq.StatementBuilder.PlaceholderFormat(sq.Dollar),
 	}
+}
+
+func (r *RepoStruct) GetSupportTypeByID(supportTypeId uuid.UUID) (statusCode int, supportType SupportType, message string, err error) {
+	query, args, err := r.psql.Select("id", "name").From("support_types").Where(sq.Eq{"id": supportTypeId}).ToSql()
+	if err != nil {
+		zap.L().Error("Error building query", zap.Error(err))
+		return fiber.StatusInternalServerError, supportType, "Oops! Something went wrong", err
+	}
+
+	ctx := context.Background()
+
+	err = r.DB.QueryRow(ctx, query, args...).Scan(
+		&supportType.ID,
+		&supportType.Name,
+	)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			zap.L().Error("Support type not found", zap.Error(err))
+			return fiber.StatusNotFound, supportType, "Support type not found!", err
+		}
+		zap.L().Error("Error executing query", zap.Error(err))
+		statusCode = fiber.StatusInternalServerError
+		return fiber.StatusInternalServerError, supportType, "Oops! Something went wrong", err
+	}
+
+	return fiber.StatusOK, supportType, "Success", nil
 }
 
 func (r *RepoStruct) GetSupportByID(supportId uuid.UUID) (statusCode int, support Support, message string, err error) {
@@ -60,6 +89,36 @@ func (r *RepoStruct) GetSupportByID(supportId uuid.UUID) (statusCode int, suppor
 	}
 
 	return fiber.StatusOK, support, "Success", nil
+}
+
+func (r *RepoStruct) GetPersonalGuardBySupportID(supportId uuid.UUID) (statusCode int, personalGuard PersonalGuard, message string, err error) {
+	query, args, err := r.psql.Select("id", "support_id", "profession", "city", "vendor_id", "type").From("personal_guards").Where(sq.Eq{"support_id": supportId}).ToSql()
+	if err != nil {
+		zap.L().Error("Error building query", zap.Error(err))
+		return fiber.StatusInternalServerError, personalGuard, "Oops! Something went wrong", err
+	}
+
+	ctx := context.Background()
+
+	err = r.DB.QueryRow(ctx, query, args...).Scan(
+		&personalGuard.ID,
+		&personalGuard.SupportID,
+		&personalGuard.Profession,
+		&personalGuard.City,
+		&personalGuard.VendorID,
+		&personalGuard.Type,
+	)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			zap.L().Error("Personal guard not found", zap.Error(err))
+			return fiber.StatusNotFound, personalGuard, "Personal guard not found!", err
+		}
+		zap.L().Error("Error executing query", zap.Error(err))
+		statusCode = fiber.StatusInternalServerError
+		return fiber.StatusInternalServerError, personalGuard, "Oops! Something went wrong", err
+	}
+
+	return fiber.StatusOK, personalGuard, "Success", nil
 }
 
 func (r *RepoStruct) GetAllPersonalGuard() (statusCode int, personalGuards []PersonalGuard, message string, err error) {
@@ -122,6 +181,35 @@ func (r *RepoStruct) GetPersonalGuardVendorByID(vendorId uuid.UUID) (statusCode 
 	return fiber.StatusOK, vendor, "Success", nil
 }
 
+func (r *RepoStruct) GetTherapistBySupportID(supportId uuid.UUID) (statusCode int, therapist Therapist, message string, err error) {
+	query, args, err := r.psql.Select("id", "support_id", "specialty", "education", "vendor_id").From("therapists").Where(sq.Eq{"support_id": supportId}).ToSql()
+	if err != nil {
+		zap.L().Error("Error building query", zap.Error(err))
+		return fiber.StatusInternalServerError, therapist, "Oops! Something went wrong", err
+	}
+
+	ctx := context.Background()
+
+	err = r.DB.QueryRow(ctx, query, args...).Scan(
+		&therapist.ID,
+		&therapist.SupportID,
+		&therapist.Specialty,
+		&therapist.Education,
+		&therapist.VendorID,
+	)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			zap.L().Error("Therapist not found", zap.Error(err))
+			return fiber.StatusNotFound, therapist, "Therapist not found!", err
+		}
+		zap.L().Error("Error executing query", zap.Error(err))
+		statusCode = fiber.StatusInternalServerError
+		return fiber.StatusInternalServerError, therapist, "Oops! Something went wrong", err
+	}
+
+	return fiber.StatusOK, therapist, "Success", nil
+}
+
 func (r *RepoStruct) GetAllTherapist() (statusCode int, therapists []Therapist, message string, err error) {
 	query, args, err := r.psql.Select("id", "support_id", "specialty", "education", "vendor_id").From("therapists").ToSql()
 	if err != nil {
@@ -141,7 +229,7 @@ func (r *RepoStruct) GetAllTherapist() (statusCode int, therapists []Therapist, 
 	for rows.Next() {
 		var therapist Therapist
 
-		err = rows.Scan(&therapist.ID, &therapist.SupportID, &therapist.Speciality, &therapist.Education, &therapist.VendorID)
+		err = rows.Scan(&therapist.ID, &therapist.SupportID, &therapist.Specialty, &therapist.Education, &therapist.VendorID)
 
 		if err != nil {
 			zap.L().Error("Error scanning row data", zap.Error(err))
