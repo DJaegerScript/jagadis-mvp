@@ -14,9 +14,11 @@ class CommonResponse<T> {
   });
 
   factory CommonResponse.fromJson(Map<String, dynamic> json, [T Function(dynamic)? fromJsonT]) {
+    dynamic content = json["content"] !=  null ? fromJsonT?.call(json["content"]) : null;
+
     return CommonResponse(
       message: json["message"],
-      content: fromJsonT?.call(json["content"]),
+      content: content,
       isSuccess: json["isSuccess"],
       statusCode: json["statusCode"],
     );

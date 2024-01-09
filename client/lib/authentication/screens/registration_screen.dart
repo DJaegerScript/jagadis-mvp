@@ -197,6 +197,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           validator: (String? value) {
                             if (value == null || value.isEmpty) {
                               return "Phone number cannot be empty";
+                            }  else if (!_phoneNumber.startsWith("+62") &&
+                                !_phoneNumber.startsWith("62") &&
+                                !_phoneNumber.startsWith("0")) {
+                              return 'Phone number is invalid!';
                             }
                             return null;
                           }
@@ -312,8 +316,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   void _register() async {
     if (_registrationFormKey.currentState!.validate()) {
+      String formattedPhoneNumber = _phoneNumber.startsWith("62")
+          ? "+$_phoneNumber"
+          : _phoneNumber.startsWith("0")
+          ? _phoneNumber.replaceFirst("0", "+62")
+          : _phoneNumber;
+
       Map<String, String> body = {
-        "phoneNumber": _phoneNumber,
+        "phoneNumber": formattedPhoneNumber,
         "email": _email,
         "password": _password,
         "confirmationPassword": _confirmationPassword
@@ -327,8 +337,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         )));
       } else {
         Future.delayed(Duration.zero).then((value) =>
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text("Oops! Something went wrong"))));
+            ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+                content: Text(response.message))));
       }
     }
   }

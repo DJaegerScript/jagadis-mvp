@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:client/common/models/user_session.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:synchronized/synchronized.dart';
 
@@ -20,5 +23,19 @@ class SecureStorageService {
 
   static Future<bool> has(String key) async {
     return await _secureStorage.containsKey(key: key);
+  }
+
+  static Future<UserSession?> getSession() async {
+    String? userSession = await read("user");
+
+    if (userSession != null && userSession.isNotEmpty) {
+      var jsonData = jsonDecode(userSession);
+
+      UserSession session = UserSession.fromJson(jsonData);
+      return session;
+    }
+
+    await destroyAll();
+    return null;
   }
 }

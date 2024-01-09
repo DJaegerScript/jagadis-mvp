@@ -18,6 +18,7 @@ type Repo interface {
 	DeleteByUserId(userId uuid.UUID) (err error, statusCode int, message string)
 	SaveAlert(location *EnterStandByModeRequestDTO, userId uuid.UUID, alertedGuardians []byte) (err error, statusCode int, message string)
 	FindAlertByUserId(userId uuid.UUID) (err error, statusCode int, alerts []Alerts, message string)
+	UpdateAlert(action string, userId uuid.UUID, alertId uuid.UUID) (err error, statusCode int, message string)
 }
 
 type RepoStruct struct {
@@ -208,4 +209,42 @@ func (r *RepoStruct) FindAlertByUserId(userId uuid.UUID) (err error, statusCode 
 	}
 
 	return nil, fiber.StatusOK, alerts, ""
+}
+
+func (r *RepoStruct) UpdateAlert(action string, userId uuid.UUID, alertId uuid.UUID) (err error, statusCode int, message string) {
+	queryStatement := r.psql.Update("alerts").
+		Where(sq.Eq{
+			"id":      alertId,
+			"user_id": userId,
+		})
+
+	if action == "ACTIVATED" {
+		queryStatement = queryStatement.
+			SetMap(map[string]interface{}{
+				"status":       action,
+				"activated_at": time.Now(),
+			})
+	} else {
+		queryStatement = queryStatement.
+			SetMap(map[string]interface{}{
+				"status":        action,
+				"turned_off_at": time.Now(),
+			})
+	}
+
+	query, args, err := queryStatement.ToSql()
+
+	if err != nil {
+		zap.L().Error("Error building query", zap.Error(err))
+		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+	}
+
+	ctx := context.Background()
+
+	if _, err = r.DB.Exec(ctx, query, args...); err != nil {
+		zap.L().Error("Error executing query", zap.Error(err))
+		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+	}
+
+	return nil, fiber.StatusOK, ""
 }

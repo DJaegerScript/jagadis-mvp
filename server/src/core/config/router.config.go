@@ -1,17 +1,17 @@
 package config
 
 import (
-	"jagadis/src/core/middleware"
-	"jagadis/src/modules/auth"
-	"jagadis/src/modules/sos"
-	"jagadis/src/modules/support"
-	"os"
-	"time"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"jagadis/src/core/middleware"
+	"jagadis/src/modules/auth"
+	"jagadis/src/modules/sos"
+	"jagadis/src/modules/support"
+	"jagadis/src/modules/user"
+	"os"
+	"time"
 )
 
 func (s *Server) SetupRouter() {
@@ -44,6 +44,7 @@ func (s *Server) SetupRouter() {
 	})
 
 	s.Router.Mount("/auth", s.AuthRouter(authenticator))
+	s.Router.Mount("/user", s.UserRouter(authenticator))
 	s.Router.Mount("/sos", s.SOSRouter(authenticator))
 	s.Router.Mount("/support", s.SupportRouter(authenticator))
 }
@@ -58,6 +59,17 @@ func (s *Server) AuthRouter(authenticator *middleware.Authenticator) *fiber.App 
 	authRouter.Post("/logout", authenticator.TokenAuthenticator, authHandler.Logout)
 
 	return authRouter
+}
+
+func (s *Server) UserRouter(authenticator *middleware.Authenticator) *fiber.App {
+	userHandler := user.NewHandler(s.DB)
+
+	userRouter := fiber.New()
+
+	userRouter.Get("/:userId/profile", authenticator.TokenAuthenticator, userHandler.GetProfile)
+	userRouter.Put("/:userId/profile", authenticator.TokenAuthenticator, userHandler.UpdateProfile)
+
+	return userRouter
 }
 
 func (s *Server) SOSRouter(authenticator *middleware.Authenticator) *fiber.App {
