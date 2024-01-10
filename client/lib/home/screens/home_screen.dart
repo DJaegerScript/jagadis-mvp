@@ -1,40 +1,36 @@
-
-import 'package:client/common/services/secure_storage_service.dart';
-import 'package:client/guardian/screens/guardian_list_screen.dart';
-import 'package:client/home/components/logout_button_component.dart';
+import 'package:client/common/components/header_component.dart';
+import 'package:client/home/screens/contact_list_screen.dart';
+import 'package:client/home/screens/sos_screen.dart';
 import 'package:flutter/material.dart';
-
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: SecureStorageService.read("token"),
-        builder:  (BuildContext context, AsyncSnapshot<String?> snapshot) {
-          if (snapshot.data == null) {
-            return const Center(child: CircularProgressIndicator());
-          } else {
-            return  Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                      onPressed: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const GuardianListScreen(),
-                        ));
-                  }, 
-                      child: const Text("Guardians")),
-                  const LogoutButtonComponent()
-                ],
-              )
-            );
-          }
-        },
+    return SafeArea(
+      child: DefaultTabController(
+          length: 2,
+          child: Stack(
+            children: [
+              Scaffold(
+                appBar: AppBar(
+                  title: const HeaderComponent(),
+                  bottom: const TabBar(
+                    unselectedLabelColor: Color(0xFF49454f),
+                    labelColor: Color(0xFFff5c97),
+                    indicatorColor: Color(0xFFff5c97),
+                    tabs: [Tab(text: "SOS"), Tab(text: "Tracking")],
+                  ),
+                ),
+                body: const TabBarView(children: [
+                  SOSScreen(),
+                  Center(child: Text("Tracking")),
+                ]),
+              ),
+              const ContactListScreen()
+            ],
+          )),
     );
   }
 }
