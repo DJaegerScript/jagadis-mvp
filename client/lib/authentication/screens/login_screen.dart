@@ -51,8 +51,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: const Text(
                           "Daftar",
                           style: TextStyle(
-                            color: Colors.pinkAccent,
-                            fontSize: 16,
+                            color: Color(0xFFFF5C96),
+                            fontSize: 14,
                           ),
                         )
                       ),
@@ -91,16 +91,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               text: const TextSpan(
                                 text: "Selamat datang di ",
                                 style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 24,
+                                  color: Color(0xFF170015),
+                                  fontSize: 22,
                                   fontWeight: FontWeight.bold
                                 ),
                                 children: [
                                   TextSpan(
                                     text: "JaGadis",
                                     style: TextStyle(
-                                      color: Colors.pinkAccent,
-                                      fontSize: 24,
+                                      color: Color(0xFFFF5C96),
+                                      fontSize: 22,
                                       fontWeight: FontWeight.bold
                                     ),
                                   )
@@ -120,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               "Bersiaplah melindungi diri Anda. Atur tombol darurat dan gunakan fitur preventif!",
                               style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 16,
+                                fontSize: 14,
                               )
                             )
                           ),
@@ -142,8 +142,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: const Text(
                             "Email/Username",
                             style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
+                              color: Color(0xFF170015),
+                              fontSize: 14,
                               fontWeight: FontWeight.bold
                             )
                           )
@@ -179,8 +179,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: const Text(
                             "Password",
                             style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
+                              color: Color(0xFF170015),
+                              fontSize: 14,
                               fontWeight: FontWeight.bold
                             )
                           )
@@ -213,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ElevatedButton(
                           onPressed: _login, 
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.pinkAccent,
+                            backgroundColor: const Color(0xFFFF5C96),
                             minimumSize: Size(MediaQuery.of(context).size.width, 60),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(60)
@@ -223,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             "Masuk",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 16,
+                              fontSize: 14,
                             ),
                           )
                         ),
@@ -235,7 +235,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         const Text(
                           "Atau masuk dengan",
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Color(0xFF79747E),
                             fontSize: 16,
                           )
                         ),

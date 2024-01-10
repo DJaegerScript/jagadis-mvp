@@ -50,7 +50,7 @@ class TextFieldComponent extends StatelessWidget {
         // Only numbers can be entered
         decoration: InputDecoration(
           prefixIcon: isForPhone ? Padding( 
-            padding: EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.only(right: 8),
             child: Container(
             height: height,
             width: 60,

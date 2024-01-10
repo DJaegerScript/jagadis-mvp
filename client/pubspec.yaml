@@ -69,6 +69,10 @@ flutter:
   assets:
     - assets/images/logo_jagadis.png
     - assets/images/google_PNG19635.png
+    - assets/images/placeholder_avatar.png
+    - assets/images/female.png
+    - assets/images/male.png
+    - assets/images/male_placeholder_avatar.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

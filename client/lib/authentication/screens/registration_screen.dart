@@ -46,8 +46,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         child: const Text(
                           "Masuk",
                           style: TextStyle(
-                            color: Colors.pinkAccent,
-                            fontSize: 16,
+                            color: Color(0xFFFF5C96),
+                            fontSize: 14,
                           ),
                         )
                       ),
@@ -86,16 +86,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               text: const TextSpan(
                                 text: "Selamat datang di ",
                                 style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 24,
+                                  color: Color(0xFF170015),
+                                  fontSize: 22,
                                   fontWeight: FontWeight.bold
                                 ),
                                 children: [
                                   TextSpan(
                                     text: "JaGadis",
                                     style: TextStyle(
-                                      color: Colors.pinkAccent,
-                                      fontSize: 24,
+                                      color: Color(0xFFFF5C96),
+                                      fontSize: 22,
                                       fontWeight: FontWeight.bold
                                     ),
                                   )
@@ -114,8 +114,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             child: const Text(
                               "Daftar sekarang dan ambil langkah pertama menuju keamanan!",
                               style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
+                                color: Color(0xFF170015),
+                                fontSize: 14,
                               )
                             )
                           ),
@@ -137,8 +137,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           child: const Text(
                             "Email",
                             style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
+                              color: Color(0xFF170015),
+                              fontSize: 14,
                               fontWeight: FontWeight.bold
                             )
                           )
@@ -174,8 +174,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           child: const Text(
                             "No. HP",
                             style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
+                              color: Color(0xFF170015),
+                              fontSize: 14,
                               fontWeight: FontWeight.bold
                             )
                           )
@@ -216,8 +216,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           child: const Text(
                             "Password",
                             style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
+                              color: Color(0xFF170015),
+                              fontSize: 14,
                               fontWeight: FontWeight.bold
                             )
                           )
@@ -252,8 +252,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           child: const Text(
                             "Konfirmasi Password",
                             style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
+                              color: Color(0xFF170015),
+                              fontSize: 14,
                               fontWeight: FontWeight.bold
                             )
                           )
@@ -286,7 +286,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ElevatedButton(
                           onPressed: _register, 
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.pinkAccent,
+                            backgroundColor: const Color(0xFFFF5C96),
                             minimumSize: Size(MediaQuery.of(context).size.width, 60),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(60)
@@ -296,7 +296,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             "Daftar",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 16,
+                              fontSize: 14,
                             ),
                           )
                         ),

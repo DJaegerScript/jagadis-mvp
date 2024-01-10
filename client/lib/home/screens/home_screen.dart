@@ -2,6 +2,7 @@
 import 'package:client/common/services/secure_storage_service.dart';
 import 'package:client/guardian/screens/guardian_list_screen.dart';
 import 'package:client/home/components/logout_button_component.dart';
+import 'package:client/profile/screens/my_profile_screen.dart';
 import 'package:flutter/material.dart';
 
 
@@ -29,7 +30,18 @@ class HomeScreen extends StatelessWidget {
                         ));
                   }, 
                       child: const Text("Guardians")),
-                  const LogoutButtonComponent()
+                  const LogoutButtonComponent(),
+
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MyProfileScreen(),
+                          ));
+                    }, 
+                    child: const Text("Profile")
+                  )
                 ],
               )
             );
