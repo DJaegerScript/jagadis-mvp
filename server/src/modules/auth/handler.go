@@ -30,7 +30,6 @@ func NewHandler(db *pgxpool.Pool) *HandlerStruct {
 }
 
 func (h *HandlerStruct) Registration(ctx *fiber.Ctx) error {
-
 	err, requestBody := common.ParseBody(ctx, h.Validate, new(RegistrationRequestDTO))
 	if err != nil {
 		return common.HandleException(ctx, fiber.StatusBadRequest, "Invalid request body")

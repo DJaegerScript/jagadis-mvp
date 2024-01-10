@@ -14,6 +14,7 @@ type Handler interface {
 	RemoveGuardian(ctx *fiber.Ctx) error
 	ResetGuardian(ctx *fiber.Ctx) error
 	EnterStandbyMode(ctx *fiber.Ctx) error
+	UpdateAlert(ctx *fiber.Ctx) error
 }
 
 type HandlerStruct struct {
@@ -169,4 +170,38 @@ func (h *HandlerStruct) EnterStandbyMode(ctx *fiber.Ctx) error {
 		"message":    "Successfully entering standby mode!",
 		"content":    nil,
 	})
+}
+
+/*
+ * TODO:
+ * - Validate update for action that already has that action
+ * - Should create update for long/lat
+ */
+func (h *HandlerStruct) UpdateAlert(ctx *fiber.Ctx) error {
+	userId, err := common.GetSession(ctx)
+	if err != nil {
+		return common.HandleException(ctx, fiber.StatusInternalServerError, "Oops! Something went wrong")
+	}
+
+	if !common.GetRequestAuthenticity(ctx, userId) {
+		return common.HandleException(ctx, fiber.StatusForbidden, "Compromised request")
+	}
+
+	alertId := uuid.FromStringOrNil(ctx.Params("alertId"))
+	action := ctx.Query("action")
+
+	err, statusCode, message := h.Service.UpdateAlert(action, alertId, userId)
+	if err != nil {
+		return common.HandleException(ctx, statusCode, message)
+	}
+
+	statusCode = fiber.StatusOK
+
+	return ctx.Status(statusCode).JSON(fiber.Map{
+		"isSuccess":  true,
+		"statusCode": statusCode,
+		"message":    "Alert updated successfully!",
+		"content":    nil,
+	})
+
 }

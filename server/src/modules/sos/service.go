@@ -6,7 +6,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"go.uber.org/zap"
-	"jagadis/src/modules/auth"
+	"jagadis/src/modules/user"
 )
 
 type Service interface {
@@ -15,16 +15,17 @@ type Service interface {
 	RemoveGuardian(guardianId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string)
 	ResetGuardian(userId uuid.UUID) (err error, statusCode int, message string)
 	EnterStandbyMode(location *EnterStandByModeRequestDTO, userId uuid.UUID) (err error, statusCode int, message string)
+	UpdateAlert(action string, alertId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string)
 }
 
 type ServiceStruct struct {
 	SOSRepo  Repo
-	UserRepo auth.Repo
+	UserRepo user.Repo
 }
 
 func NewService(db *pgxpool.Pool) (svc *ServiceStruct, err error) {
 	guardianRepo := NewRepo(db)
-	userRepo := auth.NewRepo(db)
+	userRepo := user.NewRepo(db)
 
 	svc = &ServiceStruct{
 		SOSRepo:  guardianRepo,
@@ -59,11 +60,16 @@ func (s *ServiceStruct) GetAllGuardians(userId uuid.UUID) (err error, statusCode
 		return err, statusCode, guardians, message
 	}
 
-	for _, result := range results {
-		guardians = append(guardians, GetAllGuardiansResponseDTO{
-			ID:            result.ID,
-			ContactNumber: result.ContactNumber,
-		})
+	if len(results) <= 0 {
+		guardians = make([]GetAllGuardiansResponseDTO, 0)
+	} else {
+
+		for _, result := range results {
+			guardians = append(guardians, GetAllGuardiansResponseDTO{
+				ID:            result.ID,
+				ContactNumber: result.ContactNumber,
+			})
+		}
 	}
 
 	return err, statusCode, guardians, message
@@ -118,4 +124,8 @@ func (s *ServiceStruct) EnterStandbyMode(location *EnterStandByModeRequestDTO, u
 	}
 
 	return err, statusCode, message
+}
+
+func (s *ServiceStruct) UpdateAlert(action string, alertId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string) {
+	return s.SOSRepo.UpdateAlert(action, userId, alertId)
 }
