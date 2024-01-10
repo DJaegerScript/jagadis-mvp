@@ -199,7 +199,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               return "Phone number cannot be empty";
                             }
                             return null;
-                          }
+                          },
+                          isForPhone: true,
                         ),
 
                         const SizedBox(
@@ -275,22 +276,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ),
                         
                         const SizedBox(
-                          height: 20,
+                          height: 28,
                         ),
 
                         ElevatedButton(
                           onPressed: _register, 
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.pinkAccent,
-                            minimumSize: const Size(double.infinity, 50),
+                            minimumSize: Size(MediaQuery.of(context).size.width, 60),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15)
+                              borderRadius: BorderRadius.circular(60)
                             )
                           ),
                           child: const Text(
                             "Daftar",
                             style: TextStyle(
                               color: Colors.white,
+                              fontSize: 16,
                             ),
                           )
                         ),

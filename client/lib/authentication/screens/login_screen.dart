@@ -207,22 +207,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         
                         const SizedBox(
-                          height: 32,
+                          height: 40,
                         ),
 
                         ElevatedButton(
                           onPressed: _login, 
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.pinkAccent,
-                            minimumSize: const Size(double.infinity, 50),
+                            minimumSize: Size(MediaQuery.of(context).size.width, 60),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15)
+                              borderRadius: BorderRadius.circular(60)
                             )
                           ),
                           child: const Text(
                             "Masuk",
                             style: TextStyle(
                               color: Colors.white,
+                              fontSize: 16,
                             ),
                           )
                         ),
@@ -247,9 +248,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: _login,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            minimumSize: const Size(double.infinity, 50),
+                            minimumSize: Size(MediaQuery.of(context).size.width, 60),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
+                              borderRadius: BorderRadius.circular(60),
                               side: const BorderSide(
                                 color: Colors.black54
                               )
@@ -264,6 +265,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             "Google",
                             style: TextStyle(
                               color: Colors.black,
+                              fontSize: 16,
                             ),
                           ),
                         ),
