@@ -17,7 +17,7 @@ enum Service {
 
 class HttpService {
   // TODO: make dynamic from .env
-  static const String _baseUrl = "https://6ace-118-99-81-199.ngrok-free.app";
+  static const String _baseUrl = "https://a569-118-99-81-199.ngrok-free.app";
   static final Map<String, String> headers = {
     "Content-Type": "application/json",
   };
