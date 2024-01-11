@@ -15,4 +15,8 @@ class UtilityService {
 
     return randomColor;
   }
+
+  static String formatPhoneNumber(String phoneNumber) {
+    return "+62 ${phoneNumber.substring(2, 5)} - ${phoneNumber.substring(5, 9)} - ${phoneNumber.substring(9, 13)}";
+  }
 }

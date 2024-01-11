@@ -1,6 +1,6 @@
+import 'package:client/common/services/utility_service.dart';
 import 'package:client/home/components/card_body_component.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 
 class GuardianCardComponent extends StatelessWidget {
   const GuardianCardComponent(
@@ -13,7 +13,7 @@ class GuardianCardComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CardBodyComponent(
-        info: formatNumberSync(phoneNumber),
+        info: UtilityService.formatPhoneNumber(phoneNumber),
         name: name,
         action: IconButton(
           onPressed: () {},
