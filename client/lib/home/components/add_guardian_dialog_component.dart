@@ -25,40 +25,50 @@ class _AddGuardianDialogComponent extends State<AddGuardianDialogComponent> {
           return AlertDialog(
             title: const Text("Tambahkan Penerima Sinyal SOS",
                 style: TextStyle(color: Color(0xFF170015), fontSize: 16)),
-            content: Form(
-              key: _addContactNumberForm,
-              child: TextFieldComponent(
-                  keyboardType: TextInputType.phone,
-                  labelText: "No. Handphone",
-                  hintText: "No. Handphone",
-                  action: (String? value) =>
-                      value != null ? viewModel.setPhoneNumber(value) : null,
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return "Phone number cannot be empty";
-                    } else if (!value.startsWith("+62") &&
-                        !value.startsWith("62") &&
-                        !value.startsWith("0")) {
-                      return 'Phone number is invalid!';
-                    }
-                    return null;
-                  }),
-            ),
-            actions: [
-              TextButton(
-                  onPressed: viewModel.isLoading
-                      ? null
-                      : () {
+            content: viewModel.isLoading
+                ? const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(),
+                      )
+                    ],
+                  )
+                : Form(
+                    key: _addContactNumberForm,
+                    child: TextFieldComponent(
+                        keyboardType: TextInputType.phone,
+                        labelText: "No. Handphone",
+                        hintText: "No. Handphone",
+                        action: (String? value) => value != null
+                            ? viewModel.setPhoneNumber(value)
+                            : null,
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return "Phone number cannot be empty";
+                          } else if (!value.startsWith("+62") &&
+                              !value.startsWith("62") &&
+                              !value.startsWith("0")) {
+                            return 'Phone number is invalid!';
+                          }
+                          return null;
+                        }),
+                  ),
+            actions: viewModel.isLoading
+                ? []
+                : [
+                    TextButton(
+                        onPressed: () {
                           Navigator.of(context).pop();
                         },
-                  child: const Text(
-                    "Batalkan",
-                    style: TextStyle(color: Color(0xFFE74D5F)),
-                  )),
-              TextButton(
-                onPressed: viewModel.isLoading
-                    ? null
-                    : () async {
+                        child: const Text(
+                          "Batalkan",
+                          style: TextStyle(color: Color(0xFFE74D5F)),
+                        )),
+                    TextButton(
+                      onPressed: () async {
                         if (_addContactNumberForm.currentState?.validate() ??
                             false) {
                           Future.delayed(Duration.zero).then(
@@ -95,20 +105,20 @@ class _AddGuardianDialogComponent extends State<AddGuardianDialogComponent> {
                           viewModel.setLoading(false);
                         }
                       },
-                style: TextButton.styleFrom(
-                    backgroundColor: const Color(0xFFFF5C97)),
-                child: viewModel.isLoading
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Text("Tambahkan",
-                        style: TextStyle(color: Colors.white)),
-              )
-            ],
+                      style: TextButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF5C97)),
+                      child: viewModel.isLoading
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text("Tambahkan",
+                              style: TextStyle(color: Colors.white)),
+                    )
+                  ],
           );
         },
       ),
