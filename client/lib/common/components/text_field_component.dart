@@ -13,6 +13,7 @@ class TextFieldComponent extends StatelessWidget {
         this.maxLines = 1,
         this.isTextObscured = false,
         this.isForPhone = false,
+        this.controller,
         required this.action,
         required this.validator});
 
@@ -27,6 +28,7 @@ class TextFieldComponent extends StatelessWidget {
   final bool isTextObscured;
   final String? initialValue;
   final bool isForPhone;
+  final TextEditingController? controller;
 
   void handleAction(String? value) {
     action(value);
@@ -45,31 +47,43 @@ class TextFieldComponent extends StatelessWidget {
         keyboardType: keyboardType,
         inputFormatters: inputFormatter,
         textAlignVertical: TextAlignVertical.top,
+        controller: controller,
       
         // Only numbers can be entered,
         // Only numbers can be entered
         decoration: InputDecoration(
           prefixIcon: isForPhone ? Padding( 
-            padding: const EdgeInsets.only(right: 8),
-            child: Container(
-            height: height,
-            width: 60,
-            margin: const EdgeInsets.only(left: 1),
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
+            padding: const EdgeInsets.only(right: 8, left: 1.5),
+            child: ClipRRect(
               borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(60),
-                  bottomLeft: Radius.circular(60)
+                topLeft: Radius.circular(60),
+                bottomLeft: Radius.circular(60),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Container(
+                height: height,
+                width: 80,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(60),
+                    bottomLeft: Radius.circular(60),
+                  ),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.only(top: 15, bottom: 15),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      '+62',
+                      style: TextStyle(fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
               ),
             ),
-            child: const Padding(
-              padding: EdgeInsets.only(top: 15.5, bottom: 15.5),
-              child: Align(
-                alignment: Alignment.center,
-                child: Text('+62', style: TextStyle(fontSize: 16), textAlign: TextAlign.center,),
-              ),
-            )
-          )): null,
+          ): null,
           hintText: hintText,
           labelText: labelText,
           alignLabelWithHint: true,

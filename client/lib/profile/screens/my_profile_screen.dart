@@ -1,9 +1,11 @@
 import 'package:client/authentication/screens/login_screen.dart';
 import 'package:client/authentication/services/authentication_service.dart';
-import 'package:client/common/models/user_session.dart';
+import 'package:client/common/models/common_response.dart';
 import 'package:client/common/services/secure_storage_service.dart';
 import 'package:client/home/screens/home_screen.dart';
+import 'package:client/profile/models/get_user_detail_response.dart';
 import 'package:client/profile/screens/edit_profile_screen.dart';
+import 'package:client/profile/services/profile_service.dart';
 import 'package:flutter/material.dart';
 
 class MyProfileScreen extends StatefulWidget {
@@ -14,38 +16,8 @@ class MyProfileScreen extends StatefulWidget {
 }
 
 class _MyProfileScreenState extends State<MyProfileScreen> {
-  UserSession? _currentUser;
-  
-  @override
-  void initState() {
-    super.initState();
-    _loadCurrentUser();
-  }
-
-  Future<void> _loadCurrentUser() async {
-    UserSession? user = await SecureStorageService.getSession();
-    if (user != null) {
-      setState(() {
-        _currentUser = user;
-      });
-    } else {
-      Future.delayed(Duration.zero).then((value) =>
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const LoginScreen(),
-      )));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (_currentUser == null) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(color: Color(0xFFFF5C97),),
-        ),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
         shape: const Border(
@@ -86,68 +58,77 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(right: 10),
-                        child: Image(
-                          image: AssetImage(
-                            _currentUser!.gender == "FEMALE" ? 
-                              'assets/images/placeholder_avatar.png' : 
-                              'assets/images/male_placeholder_avatar.png'), 
-                          width: 70, 
-                          height: 70,
+              FutureBuilder(
+                future: ProfileService.getUserDetail(context), 
+                builder: (BuildContext context, AsyncSnapshot<CommonResponse<UserDetailResponse>> snapshot) {
+                  if (snapshot.hasData) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(right: 10),
+                              child: Image(
+                                image: AssetImage(
+                                  snapshot.data?.content?.user.gender == "FEMALE" ? 
+                                    'assets/images/placeholder_avatar.png' : 
+                                    'assets/images/male_placeholder_avatar.png'), 
+                                width: 70, 
+                                height: 70,
+                              ),
+                            ),
+
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  snapshot.data!.content!.user.name, 
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xFF170015),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+
+                                Text(
+                                  snapshot.data!.content!.user.phoneNumber,
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    color: Color(0xFF79747E),
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+
+                                Text(
+                                  snapshot.data!.content!.user.email,
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    color: Color(0xFF79747E),
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
                         ),
-                      ),
 
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            _currentUser!.name, 
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF170015),
-                              fontWeight: FontWeight.w700,
-                            ),
+                        SizedBox(
+                          height: 80,
+                          width: 80,
+                          child: Image.asset(
+                            snapshot.data?.content?.user.gender == "FEMALE" ? 
+                            "assets/images/female.png" : 
+                            "assets/images/male.png"
                           ),
-
-                          Text(
-                            _currentUser!.phoneNumber,
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: Color(0xFF79747E),
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-
-                          Text(
-                            _currentUser!.email,
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: Color(0xFF79747E),
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-
-                  SizedBox(
-                    height: 80,
-                    width: 80,
-                    child: Image.asset(
-                      _currentUser!.gender == "FEMALE" ? 
-                      "assets/images/female.png" : 
-                      "assets/images/male.png"
-                    ),
-                  )
-                ],
+                        )
+                      ],
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator(color: Color(0xFFFF5C96),));
+                  }
+                }
               ),
 
               const SizedBox(height: 26),
@@ -168,7 +149,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => EditProfileScreen()),
+                      builder: (context) => const EditProfileScreen()),
                     );
                 },
                 child: Container(

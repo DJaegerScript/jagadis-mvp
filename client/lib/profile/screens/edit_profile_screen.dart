@@ -1,8 +1,11 @@
 import 'package:client/authentication/screens/login_screen.dart';
 import 'package:client/common/components/text_field_component.dart';
+import 'package:client/common/models/common_response.dart';
 import 'package:client/common/models/user_session.dart';
 import 'package:client/common/services/secure_storage_service.dart';
+import 'package:client/profile/models/get_user_detail_response.dart';
 import 'package:client/profile/screens/my_profile_screen.dart';
+import 'package:client/profile/services/profile_service.dart';
 import 'package:flutter/material.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -13,40 +16,15 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  UserSession? _currentUser;
-  
-  @override
-  void initState() {
-    super.initState();
-    _loadCurrentUser();
-  }
+  final _editFormKey = GlobalKey<FormState>();
 
-  Future<void> _loadCurrentUser() async {
-    UserSession? user = await SecureStorageService.getSession();
-    if (user != null) {
-      setState(() {
-        _currentUser = user;
-      });
-    } else {
-      Future.delayed(Duration.zero).then((value) =>
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const LoginScreen(),
-      )));
-    }
-  }
-  
+  TextEditingController _dateController = TextEditingController();
   String _namaLengkap = "";
+  String _email = "";
+  String _phoneNumber = "";
 
   @override
   Widget build(BuildContext context) {
-    if (_currentUser == null) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(color: Color(0xFFFF5C97),),
-        ),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
         shape: const Border(
@@ -83,81 +61,179 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       body: SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.only(left: 20, right: 20, top: 18),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        ClipOval(
-                          child: ColorFiltered(
-                            colorFilter: ColorFilter.mode(
-                              Colors.black.withOpacity(0.5), 
-                              BlendMode.darken,
-                            ),
-                            child: Image.asset(
-                              _currentUser!.gender == "FEMALE"
-                                  ? "assets/images/placeholder_avatar.png"
-                                  : "assets/images/male_placeholder_avatar.png",
-                              width: 156,
-                              height: 156,
-                            ),
+          child: Form(
+            key: _editFormKey,
+            child: FutureBuilder(
+              future: ProfileService.getUserDetail(context), 
+              builder: (BuildContext context, AsyncSnapshot<CommonResponse<UserDetailResponse>> snapshot) {
+                if (snapshot.hasData) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                ClipOval(
+                                  child: ColorFiltered(
+                                    colorFilter: ColorFilter.mode(
+                                      Colors.black.withOpacity(0.5), 
+                                      BlendMode.darken,
+                                    ),
+                                    child: Image.asset(
+                                      snapshot.data?.content?.user.gender == "FEMALE"
+                                          ? "assets/images/placeholder_avatar.png"
+                                          : "assets/images/male_placeholder_avatar.png",
+                                      width: 156,
+                                      height: 156,
+                                    ),
+                                  ),
+                                ),
+
+                                const Icon(
+                                  Icons.edit,
+                                  color: Colors.white,
+                                  size: 45,
+                                )
+                              ],
+                            )
                           ),
-                        ),
+                        ],
+                      ),
 
-                        const Icon(
-                          Icons.edit,
-                          color: Colors.white,
-                          size: 45,
+                      const SizedBox(height: 26),
+
+                      Container(
+                        alignment: Alignment.topLeft,
+                        child: const Text(
+                          "Nama Lengkap",
+                          style: TextStyle(
+                            color: Color(0xFF170015),
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold
+                          )
                         )
-                      ],
-                    )
-                  ),
-                ],
-              ),
+                      ),
 
-              const SizedBox(height: 26),
+                      const SizedBox(height: 7),
 
-              Container(
-                alignment: Alignment.topLeft,
-                child: const Text(
-                  "Nama Lengkap",
-                  style: TextStyle(
-                    color: Color(0xFF170015),
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold
-                  )
-                )
-              ),
+                      TextFieldComponent(
+                        labelText: "Nama Lengkap", 
+                        hintText: "Masukkan nama lengkap",
+                        action: (String? value) {
+                          setState(() {
+                            _namaLengkap = value!;
+                          });
+                        },  
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return "Name cannot be empty";
+                          }
+                          return null;
+                        }
+                      ),
 
-              const SizedBox(height: 7),
+                      const SizedBox(height: 12),
 
-              TextFieldComponent(
-                labelText: "Nama Lengkap", 
-                hintText: "Masukkan nama lengkap",
-                action: (String? value) {
-                  setState(() {
-                    _namaLengkap = value!;
-                  });
-                },  
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return "Name cannot be empty";
-                  }
-                  return null;
+                      Container(
+                        alignment: Alignment.topLeft,
+                        child: const Text(
+                          "Email",
+                          style: TextStyle(
+                            color: Color(0xFF170015),
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold
+                          )
+                        )
+                      ),
+
+                      const SizedBox(height: 7),
+
+                      TextFieldComponent(
+                        labelText: "Email", 
+                        hintText: "Masukkan Email",
+                        action: (String? value) {
+                          setState(() {
+                            _namaLengkap = value!;
+                          });
+                        },  
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return "Email cannot be empty";
+                          }
+                          return null;
+                        }
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      Container(
+                        alignment: Alignment.topLeft,
+                        child: const Text(
+                          "No. Handphone",
+                          style: TextStyle(
+                            color: Color(0xFF170015),
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold
+                          )
+                        )
+                      ),
+
+                      const SizedBox(height: 7),
+
+                      TextFieldComponent(
+                        keyboardType: TextInputType.phone,
+                        labelText: "No. HP",
+                        hintText: "No. HP",
+                        action: (String? value) {
+                          setState(() {
+                            _phoneNumber = value!;
+                          });
+                        }, 
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return "Phone number cannot be empty";
+                          }  else if (!_phoneNumber.startsWith("+62") &&
+                              !_phoneNumber.startsWith("62") &&
+                              !_phoneNumber.startsWith("0")) {
+                            return 'Phone number is invalid!';
+                          }
+                          return null;
+                        },
+                        isForPhone: true,
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      Container(
+                        alignment: Alignment.topLeft,
+                        child: const Text(
+                          "Tanggal Lahir",
+                          style: TextStyle(
+                            color: Color(0xFF170015),
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold
+                          )
+                        )
+                      ),
+
+                      const SizedBox(height: 7),
+
+                      
+                    ],
+                  );
+                } else {
+                  return const Center(child: CircularProgressIndicator(color: Color(0xFFFF5C96),));
                 }
-              ),
-
-              const SizedBox(height: 12),
-            ],
-          ),
+              }
+            )
+          )
         ),
       ),
     );

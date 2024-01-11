@@ -17,7 +17,7 @@ enum Service {
 
 class HttpService {
   // TODO: make dynamic from .env
-  static const String _baseUrl = "https://cf426ab1-e1e9-4cc1-bb18-9c352be30ea4.mock.pstmn.io";
+  static const String _baseUrl = "http://localhost:3001";
   static final Map<String, String> headers = {
     "Content-Type": "application/json",
   };
