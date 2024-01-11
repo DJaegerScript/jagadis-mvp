@@ -1,5 +1,6 @@
 import 'package:client/common/components/header_component.dart';
-import 'package:client/home/screens/contact_list_screen.dart';
+import 'package:client/home/screens/alert_list_screen.dart';
+import 'package:client/home/screens/guardian_list_screen.dart';
 import 'package:client/home/screens/sos_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -44,10 +45,10 @@ class _HomeScreenState extends State<HomeScreen>
             ),
             body: TabBarView(controller: _tabController, children: const [
               SOSScreen(),
-              Center(child: Text("Tracking")),
+              AlertListScreen(),
             ]),
           ),
-          ContactListScreen(
+          GuardianListScreen(
             isHidden: _isContactListHidden,
           )
         ],
