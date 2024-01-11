@@ -14,6 +14,7 @@ class TextFieldComponent extends StatelessWidget {
         this.isTextObscured = false,
         this.isForPhone = false,
         this.controller,
+        this.onTap,
         required this.action,
         required this.validator});
 
@@ -29,6 +30,7 @@ class TextFieldComponent extends StatelessWidget {
   final String? initialValue;
   final bool isForPhone;
   final TextEditingController? controller;
+  final void Function()? onTap;
 
   void handleAction(String? value) {
     action(value);
@@ -48,7 +50,8 @@ class TextFieldComponent extends StatelessWidget {
         inputFormatters: inputFormatter,
         textAlignVertical: TextAlignVertical.top,
         controller: controller,
-      
+        onTap: onTap,
+        
         // Only numbers can be entered,
         // Only numbers can be entered
         decoration: InputDecoration(

@@ -22,6 +22,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String _namaLengkap = "";
   String _email = "";
   String _phoneNumber = "";
+  String _gender = "Perempuan";
+
+  var _listOfGenders = [
+    "Laki-laki",
+    "Perempuan"
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +72,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             child: FutureBuilder(
               future: ProfileService.getUserDetail(context), 
               builder: (BuildContext context, AsyncSnapshot<CommonResponse<UserDetailResponse>> snapshot) {
+                DateTime birthdate = snapshot.data?.content?.user.birthdate ?? DateTime.now();
+                String formattedDate = "${birthdate.day}/${birthdate.month}/${birthdate.year}";
+                _dateController.text = formattedDate;
+                if (formattedDate == "1/1/1") {
+                  _dateController.text = "";
+                } else {
+                  _dateController.text = formattedDate;
+                }
+
                 if (snapshot.hasData) {
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -124,8 +139,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       const SizedBox(height: 7),
 
                       TextFieldComponent(
-                        labelText: "Nama Lengkap", 
-                        hintText: "Masukkan nama lengkap",
+                        initialValue: snapshot.data?.content?.user.name,
+                        labelText: "Nama Lengkap",
+                        hintText: "Masukkan Nama Lengkap",
                         action: (String? value) {
                           setState(() {
                             _namaLengkap = value!;
@@ -156,6 +172,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       const SizedBox(height: 7),
 
                       TextFieldComponent(
+                        initialValue: snapshot.data?.content?.user.email,
                         labelText: "Email", 
                         hintText: "Masukkan Email",
                         action: (String? value) {
@@ -189,6 +206,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                       TextFieldComponent(
                         keyboardType: TextInputType.phone,
+                        initialValue: snapshot.data?.content?.user.phoneNumber,
                         labelText: "No. HP",
                         hintText: "No. HP",
                         action: (String? value) {
@@ -225,7 +243,63 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                       const SizedBox(height: 7),
 
-                      
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: TextFormField(
+                          controller: _dateController,
+                          maxLines: 1,
+                          keyboardType: TextInputType.datetime,
+                          textAlignVertical: TextAlignVertical.top,
+                          decoration: InputDecoration(
+                            hintText: "Tanggal Lahir",
+                            labelText: "Tanggal Lahir",
+                            alignLabelWithHint: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(60),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      Container(
+                        alignment: Alignment.topLeft,
+                        child: const Text(
+                          "Gender",
+                          style: TextStyle(
+                            color: Color(0xFF170015),
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold
+                          )
+                        )
+                      ),
+
+                      const SizedBox(height: 7),
+
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: DropdownButtonFormField<String>(
+                          value: _gender,
+                          items: _listOfGenders.map((String gender) {
+                          return DropdownMenuItem<String>(
+                            value: gender,
+                            child: Text(gender),
+                          );
+                        }).toList(),
+                          onChanged:  (String? value) {
+                            setState(() {
+                              _gender = value!;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: "Gender",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(60),
+                            ),
+                          ),
+                        ),
+                      )
                     ],
                   );
                 } else {
