@@ -1,0 +1,5 @@
+BEGIN;
+
+ALTER TABLE guardians DROP COLUMN name;
+
+COMMIT;

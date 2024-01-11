@@ -8,11 +8,12 @@ import (
 )
 
 type Guardians struct {
-	ID            uuid.UUID `json:"id"`
-	UserID        uuid.UUID `json:"user_id"`
-	ContactNumber string    `json:"contact_number"`
-	CreatedAt     time.Time `json:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
+	ID            uuid.UUID      `json:"id"`
+	UserID        uuid.UUID      `json:"user_id"`
+	ContactNumber string         `json:"contact_number"`
+	Name          sql.NullString `json:"name"`
+	CreatedAt     time.Time      `json:"created_at"`
+	UpdatedAt     time.Time      `json:"updated_at"`
 }
 
 type Alerts struct {

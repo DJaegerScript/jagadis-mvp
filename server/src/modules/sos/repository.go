@@ -12,7 +12,7 @@ import (
 )
 
 type Repo interface {
-	Save(phoneNumber string, uuid uuid.UUID) (err error, statusCode int, message string)
+	Save(phoneNumber string, uuid uuid.UUID, name string) (err error, statusCode int, message string)
 	FindAllByUserId(userId uuid.UUID) (err error, statusCode int, guardians []Guardians, message string)
 	DeleteById(guardianId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string)
 	DeleteByUserId(userId uuid.UUID) (err error, statusCode int, message string)
@@ -33,12 +33,13 @@ func NewRepo(db *pgxpool.Pool) *RepoStruct {
 	}
 }
 
-func (r *RepoStruct) Save(phoneNumber string, userId uuid.UUID) (err error, statusCode int, message string) {
+func (r *RepoStruct) Save(phoneNumber string, userId uuid.UUID, name string) (err error, statusCode int, message string) {
 	query, args, err := r.psql.Insert("guardians").
-		Columns("user_id", "contact_number").
+		Columns("user_id", "contact_number", "name").
 		Values(
 			userId,
 			phoneNumber,
+			name,
 		).ToSql()
 	if err != nil {
 		zap.L().Error("Error building query", zap.Error(err))
@@ -61,7 +62,7 @@ func (r *RepoStruct) Save(phoneNumber string, userId uuid.UUID) (err error, stat
 }
 
 func (r *RepoStruct) FindAllByUserId(userId uuid.UUID) (err error, statusCode int, guardians []Guardians, message string) {
-	query, args, err := r.psql.Select("id", "contact_number").From("guardians").
+	query, args, err := r.psql.Select("id", "contact_number", "name").From("guardians").
 		Where(sq.Eq{
 			"user_id": userId,
 		},
@@ -86,6 +87,7 @@ func (r *RepoStruct) FindAllByUserId(userId uuid.UUID) (err error, statusCode in
 		err = rows.Scan(
 			&guardian.ID,
 			&guardian.ContactNumber,
+			&guardian.Name,
 		)
 		if err != nil {
 			zap.L().Error("Error scanning row data", zap.Error(err))

@@ -1,0 +1,5 @@
+BEGIN;
+
+ALTER TABLE guardians ADD name VARCHAR (255);
+
+COMMIT;

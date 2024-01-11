@@ -46,7 +46,7 @@ func (s *ServiceStruct) RegisterGuardian(contactNumbers string, userId uuid.UUID
 		return err, fiber.StatusForbidden, "Must insert another user phone number!"
 	}
 
-	err, statusCode, message = s.SOSRepo.Save(contactNumbers, userId)
+	err, statusCode, message = s.SOSRepo.Save(contactNumbers, userId, guardian.Name.String)
 	if err != nil {
 		return err, statusCode, message
 	}
@@ -63,11 +63,11 @@ func (s *ServiceStruct) GetAllGuardians(userId uuid.UUID) (err error, statusCode
 	if len(results) <= 0 {
 		guardians = make([]GetAllGuardiansResponseDTO, 0)
 	} else {
-
 		for _, result := range results {
 			guardians = append(guardians, GetAllGuardiansResponseDTO{
 				ID:            result.ID,
 				ContactNumber: result.ContactNumber,
+				Name:          result.Name.String,
 			})
 		}
 	}

@@ -9,6 +9,7 @@ type GuardianRegistrationRequestDTO struct {
 type GetAllGuardiansResponseDTO struct {
 	ID            uuid.UUID `json:"id,omitempty"`
 	ContactNumber string    `json:"contact_number,omitempty"`
+	Name          string    `json:"name,omitempty"`
 }
 
 type EnterStandByModeRequestDTO struct {
