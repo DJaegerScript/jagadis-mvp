@@ -79,7 +79,7 @@ func (r *RepoStruct) FindSessionByToken(token string) (err error, statusCode int
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			zap.L().Error("Session not found", zap.Error(err))
-			return err, fiber.StatusForbidden, session, "No active session"
+			return err, fiber.StatusUnauthorized, session, "No active session"
 		}
 		zap.L().Error("Error executing query", zap.Error(err))
 		statusCode = fiber.StatusInternalServerError
