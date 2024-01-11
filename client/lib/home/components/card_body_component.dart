@@ -14,21 +14,11 @@ class CardBodyComponent extends StatefulWidget {
 }
 
 class _CardBodyComponentState extends State<CardBodyComponent> {
-  late String _initial = "";
   late Color _avatarColor;
 
   @override
   void initState() {
     super.initState();
-    List<String>? nameComponents = widget.name?.split(" ");
-
-    if (nameComponents != null) {
-      if (nameComponents.length < 2) {
-        _initial = nameComponents[0][0];
-      } else {
-        _initial = nameComponents[0][0] + nameComponents[1][0];
-      }
-    }
 
     _avatarColor = UtilityService.generateRandomColor();
   }
@@ -77,7 +67,8 @@ class _CardBodyComponentState extends State<CardBodyComponent> {
                     children: [
                       CircleAvatar(
                         backgroundColor: _avatarColor,
-                        child: Text(_initial,
+                        child: Text(
+                            UtilityService.getInitial(widget.name ?? ""),
                             style:
                                 const TextStyle(fontWeight: FontWeight.w600)),
                       ),

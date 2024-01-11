@@ -17,6 +17,18 @@ class UtilityService {
   }
 
   static String formatPhoneNumber(String phoneNumber) {
-    return "+62 ${phoneNumber.substring(2, 5)} - ${phoneNumber.substring(5, 9)} - ${phoneNumber.substring(9, 13)}";
+    return "+62 ${phoneNumber.substring(3, 6)} - ${phoneNumber.substring(6, 10)} - ${phoneNumber.substring(10, 14)}";
+  }
+
+  static String getInitial(String name) {
+    if (name == "") {
+      return name;
+    }
+
+    List<String> nameComponents = name.split(" ");
+
+    return nameComponents.length < 2
+        ? nameComponents[0][0]
+        : nameComponents[0][0] + nameComponents[1][0];
   }
 }
