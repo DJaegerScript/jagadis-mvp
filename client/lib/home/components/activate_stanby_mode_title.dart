@@ -10,7 +10,7 @@ class ActivateStandbyModeTitle extends StatelessWidget {
     var textSpans = [
       TextSpan(
           text: "${isStandby ? "" : "Aktifkan"} Mode ",
-          style: TextStyle(color: Color(0xFF170015))),
+          style: const TextStyle(color: Color(0xFF170015))),
       const TextSpan(
           text: "Stand By", style: TextStyle(color: Color(0xFFFF5C97))),
     ];

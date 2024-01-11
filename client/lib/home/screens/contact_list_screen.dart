@@ -3,7 +3,9 @@ import 'package:client/home/components/contact_list_component.dart';
 import 'package:flutter/material.dart';
 
 class ContactListScreen extends StatefulWidget {
-  const ContactListScreen({super.key});
+  const ContactListScreen({super.key, required this.isHidden});
+
+  final bool isHidden;
 
   @override
   State<StatefulWidget> createState() => _ContactListScreenState();
@@ -19,7 +21,7 @@ class _ContactListScreenState extends State<ContactListScreen> {
     return Align(
       alignment: Alignment.bottomCenter,
       child: AnimatedContainer(
-        height: _contactListHeight,
+        height: widget.isHidden ? 0 : _contactListHeight,
         decoration: BoxDecoration(
           color: Colors.black.withOpacity(0.75),
           borderRadius:
