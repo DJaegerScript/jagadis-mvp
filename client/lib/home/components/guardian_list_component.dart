@@ -1,18 +1,23 @@
-import 'package:client/home/components/contact_card_component.dart';
+import 'package:client/common/models/common_response.dart';
+import 'package:client/guardian/models/get_all_guardian_response.dart';
+import 'package:client/home/components/add_guardian_dialog_component.dart';
+import 'package:client/home/components/empty_guardian_card_component.dart';
+import 'package:client/home/components/guardian_card_component.dart';
+import 'package:client/home/services/guardian_service.dart';
 import 'package:flutter/material.dart';
 
-class ContactListComponent extends StatefulWidget {
-  const ContactListComponent(
+class GuardianListComponent extends StatefulWidget {
+  const GuardianListComponent(
       {super.key, required this.updateHeight, required this.finaliseHeight});
 
   final Function(double positionY) updateHeight;
   final Function() finaliseHeight;
 
   @override
-  State<StatefulWidget> createState() => _ContactListComponentState();
+  State<StatefulWidget> createState() => _GuardianListComponentState();
 }
 
-class _ContactListComponentState extends State<ContactListComponent> {
+class _GuardianListComponentState extends State<GuardianListComponent> {
   @override
   Widget build(BuildContext context) {
     double maxHeight = MediaQuery.of(context).size.height;
@@ -67,7 +72,10 @@ class _ContactListComponentState extends State<ContactListComponent> {
                           fontSize: 16,
                           fontWeight: FontWeight.w700)),
                   InkWell(
-                    onTap: () {},
+                    onTap: () => showDialog(
+                        context: context,
+                        builder: (context) =>
+                            const AddGuardianDialogComponent()),
                     child: const Row(
                       children: [
                         Icon(Icons.add, size: 24, color: Color(0xFFFF5C97)),
@@ -88,24 +96,30 @@ class _ContactListComponentState extends State<ContactListComponent> {
               const SizedBox(
                 height: 15,
               ),
-              const Expanded(
-                  child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    ContactCardComponent(),
-                    ContactCardComponent(),
-                    ContactCardComponent(),
-                    ContactCardComponent(),
-                    ContactCardComponent(),
-                    ContactCardComponent(),
-                    ContactCardComponent(),
-                    ContactCardComponent(),
-                    ContactCardComponent(),
-                    ContactCardComponent(),
-                    ContactCardComponent(),
-                    ContactCardComponent()
-                  ],
-                ),
+              Expanded(
+                  child: FutureBuilder(
+                future: GuardianService.getAllGuardians(context),
+                builder: (BuildContext context,
+                    AsyncSnapshot<CommonResponse<GetAllGuardianResponse>>
+                        snapshot) {
+                  if (snapshot.hasData) {
+                    print(snapshot.data?.content);
+                    List<Guardian>? guardians =
+                        snapshot.data?.content?.guardians;
+
+                    if (guardians != null && guardians.isNotEmpty) {
+                      return ListView.builder(
+                        itemCount: guardians.length,
+                        itemBuilder: (context, index) =>
+                            const Column(children: [GuardianCardComponent()]),
+                      );
+                    }
+
+                    return const EmptyGuardianCardComponent();
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
               ))
             ],
           ),

@@ -1,17 +1,17 @@
-import 'package:client/home/components/collapse_contact_button_component.dart';
-import 'package:client/home/components/contact_list_component.dart';
+import 'package:client/home/components/collapse_guardian_button_component.dart';
+import 'package:client/home/components/guardian_list_component.dart';
 import 'package:flutter/material.dart';
 
-class ContactListScreen extends StatefulWidget {
-  const ContactListScreen({super.key, required this.isHidden});
+class GuardianListScreen extends StatefulWidget {
+  const GuardianListScreen({super.key, required this.isHidden});
 
   final bool isHidden;
 
   @override
-  State<StatefulWidget> createState() => _ContactListScreenState();
+  State<StatefulWidget> createState() => _GuardianListScreenState();
 }
 
-class _ContactListScreenState extends State<ContactListScreen> {
+class _GuardianListScreenState extends State<GuardianListScreen> {
   double _contactListHeight = 350;
   bool _isExpanded = false;
 
@@ -32,13 +32,13 @@ class _ContactListScreenState extends State<ContactListScreen> {
           backgroundColor: Colors.transparent,
           body: Stack(
             children: [
-              CollapseContactButtonComponent(collapseContact: () {
+              CollapseGuardianButtonComponent(collapseContact: () {
                 setState(() {
                   _contactListHeight = 350;
                   _isExpanded = false;
                 });
               }),
-              ContactListComponent(
+              GuardianListComponent(
                 finaliseHeight: () {
                   setState(() {
                     if (_contactListHeight > 400 && !_isExpanded) {

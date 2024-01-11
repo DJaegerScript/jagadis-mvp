@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CollapseContactButtonComponent extends StatelessWidget {
-  const CollapseContactButtonComponent(
+class CollapseGuardianButtonComponent extends StatelessWidget {
+  const CollapseGuardianButtonComponent(
       {super.key, required this.collapseContact});
 
   final Function collapseContact;
