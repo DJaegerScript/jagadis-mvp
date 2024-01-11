@@ -3,7 +3,7 @@ import 'package:client/common/models/common_response.dart';
 import 'package:client/common/models/user_session.dart';
 import 'package:client/common/services/http_service.dart';
 import 'package:client/common/services/secure_storage_service.dart';
-import 'package:client/guardian/models/get_all_guardian_response.dart';
+import 'package:client/home/models/get_all_guardian_response.dart';
 import 'package:flutter/material.dart';
 
 class GuardianService {

@@ -9,8 +9,10 @@ class AlertCardComponent extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(8),
       onTap: () {},
-      child:
-          const CardBodyComponent(action: Icon(Icons.arrow_forward, size: 24)),
+      child: CardBodyComponent(
+          info: "",
+          name: "",
+          action: const Icon(Icons.arrow_forward, size: 24)),
     );
   }
 }

@@ -1,8 +1,8 @@
 import 'package:client/common/models/common_response.dart';
-import 'package:client/guardian/models/get_all_guardian_response.dart';
 import 'package:client/home/components/add_guardian_dialog_component.dart';
 import 'package:client/home/components/empty_guardian_card_component.dart';
 import 'package:client/home/components/guardian_card_component.dart';
+import 'package:client/home/models/get_all_guardian_response.dart';
 import 'package:client/home/services/guardian_service.dart';
 import 'package:flutter/material.dart';
 
@@ -103,15 +103,19 @@ class _GuardianListComponentState extends State<GuardianListComponent> {
                     AsyncSnapshot<CommonResponse<GetAllGuardianResponse>>
                         snapshot) {
                   if (snapshot.hasData) {
-                    print(snapshot.data?.content);
                     List<Guardian>? guardians =
                         snapshot.data?.content?.guardians;
 
                     if (guardians != null && guardians.isNotEmpty) {
                       return ListView.builder(
                         itemCount: guardians.length,
-                        itemBuilder: (context, index) =>
-                            const Column(children: [GuardianCardComponent()]),
+                        itemBuilder: (context, index) => Column(children: [
+                          GuardianCardComponent(
+                            id: guardians[index].id,
+                            name: guardians[index].name,
+                            phoneNumber: guardians[index].contactNumber,
+                          )
+                        ]),
                       );
                     }
 
