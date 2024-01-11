@@ -1,7 +1,10 @@
+import 'package:client/authentication/screens/login_screen.dart';
 import 'package:client/common/models/common_response.dart';
 import 'package:client/common/models/user_session.dart';
 import 'package:client/common/services/secure_storage_service.dart';
+import 'package:client/home/models/get_all_guardian_response.dart';
 import 'package:client/home/services/guardian_service.dart';
+import 'package:client/main.dart';
 import 'package:flutter/material.dart';
 
 class GuardianViewModel extends ChangeNotifier {
@@ -15,6 +18,24 @@ class GuardianViewModel extends ChangeNotifier {
   void setPhoneNumber(String phoneNumber) {
     _phoneNumber = phoneNumber;
     notifyListeners();
+  }
+
+  Future<CommonResponse<GetAllGuardianResponse>> getAllGuardians() async {
+    UserSession? user = await SecureStorageService.getSession();
+
+    if (user == null) {
+      navigatorKey.currentState?.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (route) => false,
+      );
+
+      throw Exception("Session expired!");
+    }
+
+    CommonResponse<GetAllGuardianResponse> response =
+        await GuardianService.getAllGuardians(user.id);
+
+    return response;
   }
 
   Future<CommonResponse> addGuardian() async {
@@ -36,6 +57,20 @@ class GuardianViewModel extends ChangeNotifier {
 
     CommonResponse response = await GuardianService.addGuardian(body, user.id);
 
+    return response;
+  }
+
+  Future<CommonResponse> removeGuardian(String guardianId) async {
+    UserSession? user = await SecureStorageService.getSession();
+
+    if (user == null) {
+      throw Exception("Session expired!");
+    }
+
+    CommonResponse response =
+        await GuardianService.removeGuardian(user.id, guardianId);
+
+    notifyListeners();
     return response;
   }
 }

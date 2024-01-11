@@ -2,6 +2,7 @@ package sos
 
 import (
 	"context"
+	"errors"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofrs/uuid"
@@ -114,9 +115,15 @@ func (r *RepoStruct) DeleteById(guardianId uuid.UUID, userId uuid.UUID) (err err
 
 	ctx := context.Background()
 
-	if _, err = r.DB.Exec(ctx, query, args...); err != nil {
+	res, err := r.DB.Exec(ctx, query, args...)
+	if err != nil {
 		zap.L().Error("Error executing query", zap.Error(err))
 		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+	}
+
+	if res.RowsAffected() <= 0 {
+		zap.L().Error("No guardian record found", zap.Error(err))
+		return errors.New("record not found"), fiber.StatusNotFound, "Penerima sinyal tidak ditemukan!"
 	}
 
 	return nil, fiber.StatusOK, ""
