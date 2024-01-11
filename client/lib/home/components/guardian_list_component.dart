@@ -63,54 +63,62 @@ class _GuardianListComponentState extends State<GuardianListComponent> {
                 ]),
             child: ChangeNotifierProvider(
               create: (context) => GuardianViewModel(),
-              child: Column(
-                children: [
-                  Container(
-                    width: 38,
-                    height: 5,
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(36)),
-                        color: Color(0xFFD9D9D9)),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text("Daftar Penerima Sinyal SOS",
-                          style: TextStyle(
-                              color: Color(0xFF170015),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700)),
-                      InkWell(
-                        onTap: () => showDialog(
-                            context: context,
-                            builder: (context) =>
-                                const AddGuardianDialogComponent()),
-                        child: const Row(
-                          children: [
-                            Icon(Icons.add, size: 24, color: Color(0xFFFF5C97)),
-                            SizedBox(width: 8),
-                            // Adjust the spacing between icon and text
-                            Text(
-                              'Tambah',
-                              style: TextStyle(
-                                  color: Color(0xFFFF5C97),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Consumer<GuardianViewModel>(
-                      builder: (context, viewModel, child) {
-                    return FutureBuilder(
+              child: Consumer<GuardianViewModel>(
+                  builder: (context, viewModel, child) {
+                void updateGuardians() {
+                  setState(() {
+                    _guardians = viewModel.getAllGuardians();
+                  });
+                }
+
+                return Column(
+                  children: [
+                    Container(
+                      width: 38,
+                      height: 5,
+                      decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(36)),
+                          color: Color(0xFFD9D9D9)),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Daftar Penerima Sinyal SOS",
+                            style: TextStyle(
+                                color: Color(0xFF170015),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700)),
+                        InkWell(
+                          onTap: () => showDialog(
+                              context: context,
+                              builder: (context) => AddGuardianDialogComponent(
+                                    action: updateGuardians,
+                                  )),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.add,
+                                  size: 24, color: Color(0xFFFF5C97)),
+                              SizedBox(width: 8),
+                              // Adjust the spacing between icon and text
+                              Text(
+                                'Tambah',
+                                style: TextStyle(
+                                    color: Color(0xFFFF5C97),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    FutureBuilder(
                       future: _guardians,
                       builder: (BuildContext context,
                           AsyncSnapshot<CommonResponse<GetAllGuardianResponse>>
@@ -120,12 +128,6 @@ class _GuardianListComponentState extends State<GuardianListComponent> {
                               snapshot.data?.content?.guardians;
 
                           if (guardians != null && guardians.isNotEmpty) {
-                            void updateGuardians() {
-                              setState(() {
-                                _guardians = viewModel.getAllGuardians();
-                              });
-                            }
-
                             return Expanded(
                                 child: ListView.builder(
                               itemCount: guardians.length,
@@ -141,17 +143,19 @@ class _GuardianListComponentState extends State<GuardianListComponent> {
                             ));
                           }
 
-                          return const EmptyGuardianCardComponent();
+                          return EmptyGuardianCardComponent(
+                            action: updateGuardians,
+                          );
                         } else {
                           return const Expanded(
                               child:
                                   Center(child: CircularProgressIndicator()));
                         }
                       },
-                    );
-                  })
-                ],
-              ),
+                    )
+                  ],
+                );
+              }),
             )),
       ),
     );

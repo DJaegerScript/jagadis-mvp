@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AddGuardianDialogComponent extends StatefulWidget {
-  const AddGuardianDialogComponent({super.key});
+  const AddGuardianDialogComponent({super.key, required this.action});
+
+  final Function action;
 
   @override
   State<StatefulWidget> createState() => _AddGuardianDialogComponent();
@@ -73,6 +75,8 @@ class _AddGuardianDialogComponent extends State<AddGuardianDialogComponent> {
                               });
 
                           if (response.isSuccess) {
+                            widget.action();
+
                             Future.delayed(Duration.zero).then((value) =>
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
