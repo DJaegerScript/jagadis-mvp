@@ -76,8 +76,8 @@ class _AddGuardianDialogComponent extends State<AddGuardianDialogComponent> {
                             Future.delayed(Duration.zero).then((value) =>
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content:
-                                        Text('Penerima berhasil ditambahkan!'),
+                                    content: Text(
+                                        'Penerima sinyal berhasil ditambahkan!'),
                                   ),
                                 ));
                           } else {
