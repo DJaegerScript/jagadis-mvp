@@ -22,4 +22,20 @@ class ProfileService {
 
     return data;
   }
+
+  static Future<CommonResponse> updateUserDetail(BuildContext context, Map<String, String> body) async {
+    UserSession? user = await SecureStorageService.getSession();
+
+    if (user == null) {
+      Future.delayed(Duration.zero).then((value) =>
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => const LoginScreen(),
+      )));
+    }
+
+    dynamic response = await HttpService().put("user/${user?.id}/profile", body);
+    CommonResponse data = CommonResponse.fromJson(response);
+
+    return data;
+  }
 }

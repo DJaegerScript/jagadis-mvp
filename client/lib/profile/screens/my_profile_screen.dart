@@ -71,9 +71,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                               margin: const EdgeInsets.only(right: 10),
                               child: Image(
                                 image: AssetImage(
-                                  snapshot.data?.content?.user.gender == "FEMALE" ? 
-                                    'assets/images/placeholder_avatar.png' : 
-                                    'assets/images/male_placeholder_avatar.png'), 
+                                  snapshot.data?.content?.user.gender == "MALE" ? 
+                                    'assets/images/male_placeholder_avatar.png' : 
+                                    'assets/images/placeholder_avatar.png'), 
                                 width: 70, 
                                 height: 70,
                               ),
@@ -118,9 +118,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           height: 80,
                           width: 80,
                           child: Image.asset(
-                            snapshot.data?.content?.user.gender == "FEMALE" ? 
-                            "assets/images/female.png" : 
-                            "assets/images/male.png"
+                            snapshot.data?.content?.user.gender == "MALE" ? 
+                            "assets/images/male.png" : 
+                            "assets/images/female.png"
                           ),
                         )
                       ],
