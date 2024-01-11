@@ -29,4 +29,11 @@ class GuardianService {
 
     return data;
   }
+
+  static Future<CommonResponse> resetGuardian(String userId) async {
+    dynamic response = await HttpService().delete("sos/$userId/guardian");
+    CommonResponse data = CommonResponse.fromJson(response);
+
+    return data;
+  }
 }

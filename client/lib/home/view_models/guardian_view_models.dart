@@ -10,13 +10,24 @@ import 'package:flutter/material.dart';
 class GuardianViewModel extends ChangeNotifier {
   bool isLoading = false;
   String _phoneNumber = "";
+  late Future<CommonResponse<GetAllGuardianResponse>> guardians;
+
+  GuardianViewModel() {
+    guardians = getAllGuardians();
+  }
 
   void setLoading(bool value) {
     isLoading = value;
+    notifyListeners();
   }
 
   void setPhoneNumber(String phoneNumber) {
     _phoneNumber = phoneNumber;
+    notifyListeners();
+  }
+
+  void refreshGuardians() {
+    guardians = getAllGuardians();
     notifyListeners();
   }
 
@@ -70,7 +81,20 @@ class GuardianViewModel extends ChangeNotifier {
     CommonResponse response =
         await GuardianService.removeGuardian(user.id, guardianId);
 
-    notifyListeners();
+    return response;
+  }
+
+  Future<CommonResponse> resetGuardian() async {
+    UserSession? user = await SecureStorageService.getSession();
+
+    if (user == null) {
+      throw Exception("Session expired!");
+    }
+
+    CommonResponse response = await GuardianService.resetGuardian(
+      user.id,
+    );
+
     return response;
   }
 }
