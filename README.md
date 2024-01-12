@@ -1,3 +1,9 @@
+**Kyrios Team** <br>
+1. Adjie Djaka Permana as Hacker <br>
+2. Dimas Herjunodarpito Notoprayitno as Hacker <br>
+3. Nur Fajar Sayyidul Ayyam as Hipster <br>
+4. Syifa Nurul Awaliah as Hustler <br>
+
 **Login Screen** <br>
 ![Login_Screen](Images/login_screen.png) <br>
 
