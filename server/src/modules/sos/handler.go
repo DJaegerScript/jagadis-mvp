@@ -15,6 +15,7 @@ type Handler interface {
 	ResetGuardian(ctx *fiber.Ctx) error
 	EnterStandbyMode(ctx *fiber.Ctx) error
 	UpdateAlert(ctx *fiber.Ctx) error
+	GetActivatedAlert(ctx *fiber.Ctx) error
 }
 
 type HandlerStruct struct {
@@ -152,7 +153,7 @@ func (h *HandlerStruct) EnterStandbyMode(ctx *fiber.Ctx) error {
 		return common.HandleException(ctx, fiber.StatusForbidden, "Compromised request")
 	}
 
-	err, requestBody := common.ParseBody(ctx, h.Validate, new(EnterStandByModeRequestDTO))
+	err, requestBody := common.ParseBody(ctx, h.Validate, new(AlertRequestDTO))
 	if err != nil {
 		return common.HandleException(ctx, fiber.StatusBadRequest, "Invalid request body")
 	}
@@ -172,11 +173,6 @@ func (h *HandlerStruct) EnterStandbyMode(ctx *fiber.Ctx) error {
 	})
 }
 
-/*
- * TODO:
- * - Validate update for action that already has that action
- * - Should create update for long/lat
- */
 func (h *HandlerStruct) UpdateAlert(ctx *fiber.Ctx) error {
 	userId, err := common.GetSession(ctx)
 	if err != nil {
@@ -187,10 +183,14 @@ func (h *HandlerStruct) UpdateAlert(ctx *fiber.Ctx) error {
 		return common.HandleException(ctx, fiber.StatusForbidden, "Compromised request")
 	}
 
-	alertId := uuid.FromStringOrNil(ctx.Params("alertId"))
+	err, requestBody := common.ParseBody(ctx, h.Validate, new(AlertRequestDTO))
+	if err != nil {
+		return common.HandleException(ctx, fiber.StatusBadRequest, "Invalid request body")
+	}
+
 	action := ctx.Query("action")
 
-	err, statusCode, message := h.Service.UpdateAlert(action, alertId, userId)
+	err, statusCode, message := h.Service.UpdateAlert(action, requestBody, userId)
 	if err != nil {
 		return common.HandleException(ctx, statusCode, message)
 	}
@@ -203,5 +203,31 @@ func (h *HandlerStruct) UpdateAlert(ctx *fiber.Ctx) error {
 		"message":    "Alert updated successfully!",
 		"content":    nil,
 	})
+}
 
+func (h *HandlerStruct) GetActivatedAlert(ctx *fiber.Ctx) error {
+	userId, err := common.GetSession(ctx)
+	if err != nil {
+		return common.HandleException(ctx, fiber.StatusInternalServerError, "Oops! Something went wrong")
+	}
+
+	if !common.GetRequestAuthenticity(ctx, userId) {
+		return common.HandleException(ctx, fiber.StatusForbidden, "Compromised request")
+	}
+
+	err, statusCode, content, message := h.Service.GetAllActivatedAlert(userId)
+	if err != nil {
+		return common.HandleException(ctx, statusCode, message)
+	}
+
+	statusCode = fiber.StatusOK
+
+	return ctx.Status(statusCode).JSON(fiber.Map{
+		"isSuccess":  true,
+		"statusCode": statusCode,
+		"message":    "Activated alert successfully retrieved!",
+		"content": fiber.Map{
+			"alerts": content,
+		},
+	})
 }

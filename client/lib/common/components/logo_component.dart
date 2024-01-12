@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class LogoComponent extends StatelessWidget {
@@ -6,15 +6,12 @@ class LogoComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SvgPicture.asset("assets/images/jagadis_insignia.svg"),
-        const SizedBox(
-          width: 14,
-        ),
-        SvgPicture.asset("assets/images/jagadis_wordmark.svg"),
-      ]
-    );
+    return Row(children: [
+      SvgPicture.asset("assets/images/jagadis_insignia.svg"),
+      const SizedBox(
+        width: 14,
+      ),
+      SvgPicture.asset("assets/images/jagadis_wordmark.svg"),
+    ]);
   }
-  
 }

@@ -1,9 +1,11 @@
-import 'package:client/home/components/add_guardian_dialog_component.dart';
+import 'package:jagadis/sos/components/add_guardian_dialog_component.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 
 class EmptyGuardianCardComponent extends StatelessWidget {
-  const EmptyGuardianCardComponent({super.key});
+  const EmptyGuardianCardComponent({super.key, required this.action});
+
+  final Function action;
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +13,9 @@ class EmptyGuardianCardComponent extends StatelessWidget {
         onTap: () {
           showDialog(
               context: context,
-              builder: (context) => const AddGuardianDialogComponent());
+              builder: (context) => AddGuardianDialogComponent(
+                    action: action,
+                  ));
         },
         child: DottedBorder(
           color: const Color(0xFF79747E),

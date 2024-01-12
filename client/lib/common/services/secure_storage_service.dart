@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:client/common/models/user_session.dart';
+import 'package:jagadis/common/models/user_session.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:synchronized/synchronized.dart';
 
@@ -10,7 +10,7 @@ class SecureStorageService {
 
   static Future<void> write(String key, String value) async {
     await _lock.synchronized(
-            () async => await _secureStorage.write(key: key, value: value));
+        () async => await _secureStorage.write(key: key, value: value));
   }
 
   static Future<String?> read(String key) async {

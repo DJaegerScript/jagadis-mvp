@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:client/authentication/screens/login_screen.dart';
-import 'package:client/authentication/services/authentication_service.dart';
-import 'package:client/common/services/secure_storage_service.dart';
-import 'package:client/main.dart';
+import 'package:jagadis/authentication/screens/login_screen.dart';
+import 'package:jagadis/authentication/services/authentication_service.dart';
+import 'package:jagadis/common/services/secure_storage_service.dart';
+import 'package:jagadis/main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
@@ -11,7 +11,7 @@ import 'package:path/path.dart' as path;
 
 class HttpService {
   // TODO: make dynamic from .env
-  static const String _baseUrl = "https://1c22-152-118-150-254.ngrok-free.app";
+  static const String _baseUrl = "https://e8b1-182-253-127-167.ngrok-free.app";
   static final Map<String, String> headers = {
     "Content-Type": "application/json",
   };

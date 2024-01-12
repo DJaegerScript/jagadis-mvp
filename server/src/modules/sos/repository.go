@@ -2,6 +2,7 @@ package sos
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/gofiber/fiber/v2"
@@ -17,9 +18,10 @@ type Repo interface {
 	FindAllByUserId(userId uuid.UUID) (err error, statusCode int, guardians []Guardians, message string)
 	DeleteById(guardianId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string)
 	DeleteByUserId(userId uuid.UUID) (err error, statusCode int, message string)
-	SaveAlert(location *EnterStandByModeRequestDTO, userId uuid.UUID, alertedGuardians []byte) (err error, statusCode int, message string)
-	FindAlertByUserId(userId uuid.UUID) (err error, statusCode int, alerts []Alerts, message string)
-	UpdateAlert(action string, userId uuid.UUID, alertId uuid.UUID) (err error, statusCode int, message string)
+	SaveAlert(location *AlertRequestDTO, userId uuid.UUID, alertedGuardians []byte) (err error, statusCode int, message string)
+	FindAlertByUserId(userId uuid.UUID, action string) (err error, statusCode int, alerts []Alerts, message string)
+	UpdateAlert(action string, location *AlertRequestDTO, alertId uuid.UUID) (err error, statusCode int, message string)
+	FindAlertByGuardian(status string, phoneNumber string) (err error, statusCode int, alerts []AlertDTO, message string)
 }
 
 type RepoStruct struct {
@@ -78,7 +80,6 @@ func (r *RepoStruct) FindAllByUserId(userId uuid.UUID) (err error, statusCode in
 	rows, err := r.DB.Query(ctx, query, args...)
 	if err != nil {
 		zap.L().Error("Error executing query", zap.Error(err))
-		statusCode = fiber.StatusInternalServerError
 		return err, fiber.StatusInternalServerError, guardians, "Oops! Something went wrong"
 	}
 
@@ -150,7 +151,7 @@ func (r *RepoStruct) DeleteByUserId(userId uuid.UUID) (err error, statusCode int
 	return nil, fiber.StatusOK, ""
 }
 
-func (r *RepoStruct) SaveAlert(location *EnterStandByModeRequestDTO, userId uuid.UUID, alertedGuardians []byte) (err error, statusCode int, message string) {
+func (r *RepoStruct) SaveAlert(location *AlertRequestDTO, userId uuid.UUID, alertedGuardians []byte) (err error, statusCode int, message string) {
 	query, args, err := r.psql.Insert("alerts").
 		Columns("user_id", "latest_longitude", "latest_latitude", "guardians", "standby_at").
 		Values(
@@ -175,12 +176,22 @@ func (r *RepoStruct) SaveAlert(location *EnterStandByModeRequestDTO, userId uuid
 	return nil, fiber.StatusCreated, ""
 }
 
-func (r *RepoStruct) FindAlertByUserId(userId uuid.UUID) (err error, statusCode int, alerts []Alerts, message string) {
-	query, args, err := r.psql.Select("*").From("alerts").
-		Where(sq.Eq{
+func (r *RepoStruct) FindAlertByUserId(userId uuid.UUID, action string) (err error, statusCode int, alerts []Alerts, message string) {
+	var conditions map[string]interface{}
+
+	if action != "" {
+		conditions = sq.Eq{
 			"user_id": userId,
-		},
-		).ToSql()
+			"status":  action,
+		}
+	} else {
+		conditions = sq.Eq{
+			"user_id": userId,
+		}
+	}
+
+	query, args, err := r.psql.Select("*").From("alerts").
+		Where(conditions).ToSql()
 	if err != nil {
 		zap.L().Error("Error building query", zap.Error(err))
 		return err, fiber.StatusInternalServerError, alerts, "Oops! Something went wrong"
@@ -191,7 +202,6 @@ func (r *RepoStruct) FindAlertByUserId(userId uuid.UUID) (err error, statusCode 
 	rows, err := r.DB.Query(ctx, query, args...)
 	if err != nil {
 		zap.L().Error("Error executing query", zap.Error(err))
-		statusCode = fiber.StatusInternalServerError
 		return err, fiber.StatusInternalServerError, alerts, "Oops! Something went wrong"
 	}
 
@@ -220,24 +230,33 @@ func (r *RepoStruct) FindAlertByUserId(userId uuid.UUID) (err error, statusCode 
 	return nil, fiber.StatusOK, alerts, ""
 }
 
-func (r *RepoStruct) UpdateAlert(action string, userId uuid.UUID, alertId uuid.UUID) (err error, statusCode int, message string) {
+func (r *RepoStruct) UpdateAlert(action string, location *AlertRequestDTO, alertId uuid.UUID) (err error, statusCode int, message string) {
 	queryStatement := r.psql.Update("alerts").
 		Where(sq.Eq{
-			"id":      alertId,
-			"user_id": userId,
+			"id": alertId,
 		})
 
 	if action == "ACTIVATED" {
 		queryStatement = queryStatement.
 			SetMap(map[string]interface{}{
-				"status":       action,
-				"activated_at": time.Now(),
+				"status":           action,
+				"activated_at":     time.Now(),
+				"latest_latitude":  location.Latitude,
+				"latest_longitude": location.Longitude,
+			})
+	} else if action == "TURNED_OFF" {
+		queryStatement = queryStatement.
+			SetMap(map[string]interface{}{
+				"status":           action,
+				"turned_off_at":    time.Now(),
+				"latest_latitude":  location.Latitude,
+				"latest_longitude": location.Longitude,
 			})
 	} else {
 		queryStatement = queryStatement.
 			SetMap(map[string]interface{}{
-				"status":        action,
-				"turned_off_at": time.Now(),
+				"latest_latitude":  location.Latitude,
+				"latest_longitude": location.Longitude,
 			})
 	}
 
@@ -256,4 +275,63 @@ func (r *RepoStruct) UpdateAlert(action string, userId uuid.UUID, alertId uuid.U
 	}
 
 	return nil, fiber.StatusOK, ""
+}
+
+func (r *RepoStruct) FindAlertByGuardian(status string, phoneNumber string) (err error, statusCode int, alerts []AlertDTO, message string) {
+
+	query, args, err := r.psql.Select("alerts.*, u.name, u.phone_number").
+		From("alerts").
+		Join("public.users u ON alerts.user_id = u.id").
+		Where(sq.Eq{"status": status}).
+		ToSql()
+	if err != nil {
+		zap.L().Error("Error building query", zap.Error(err))
+		return err, fiber.StatusInternalServerError, alerts, "Oops! Something went wrong"
+	}
+
+	ctx := context.Background()
+
+	rows, err := r.DB.Query(ctx, query, args...)
+	if err != nil {
+		zap.L().Error("Error executing query", zap.Error(err))
+		return err, fiber.StatusInternalServerError, alerts, "Oops! Something went wrong"
+	}
+
+	for rows.Next() {
+		var alert AlertDTO
+
+		err = rows.Scan(
+			&alert.ID,
+			&alert.UserId,
+			&alert.Status,
+			&alert.LatestLongitude,
+			&alert.LatestLatitude,
+			&alert.Guardians,
+			&alert.StandByAt,
+			&alert.ActivatedAt,
+			&alert.TurnedOffAt,
+			&alert.Name,
+			&alert.PhoneNumber,
+		)
+		if err != nil {
+			zap.L().Error("Error scanning row data", zap.Error(err))
+			return err, fiber.StatusInternalServerError, alerts, "Oops! Something went wrong"
+		}
+
+		var alertedGuardians []AlertedGuardianDTO
+		err = json.Unmarshal(alert.Guardians, &alertedGuardians)
+		if err != nil {
+			zap.L().Error("Error unmarshalling guardian", zap.Error(err))
+			return err, fiber.StatusInternalServerError, nil, "Oops! Something went wrong"
+		}
+
+		for _, guardian := range alertedGuardians {
+			if guardian.ContactNumber == phoneNumber {
+				alerts = append(alerts, alert)
+			}
+		}
+
+	}
+
+	return nil, fiber.StatusOK, alerts, ""
 }

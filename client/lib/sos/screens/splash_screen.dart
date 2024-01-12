@@ -2,10 +2,10 @@
 
 import 'dart:async';
 
-import 'package:client/authentication/screens/login_screen.dart';
-import 'package:client/authentication/services/authentication_service.dart';
-import 'package:client/home/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:jagadis/authentication/screens/login_screen.dart';
+import 'package:jagadis/authentication/services/authentication_service.dart';
+import 'package:jagadis/sos/screens/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

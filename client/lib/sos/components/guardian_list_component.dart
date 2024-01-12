@@ -1,9 +1,9 @@
-import 'package:client/common/models/common_response.dart';
-import 'package:client/home/components/add_guardian_dialog_component.dart';
-import 'package:client/home/components/empty_guardian_card_component.dart';
-import 'package:client/home/components/guardian_card_component.dart';
-import 'package:client/home/models/get_all_guardian_response.dart';
-import 'package:client/home/view_models/guardian_view_models.dart';
+import 'package:jagadis/common/models/common_response.dart';
+import 'package:jagadis/sos/components/add_guardian_dialog_component.dart';
+import 'package:jagadis/sos/components/empty_guardian_card_component.dart';
+import 'package:jagadis/sos/components/guardian_card_component.dart';
+import 'package:jagadis/sos/models/get_all_guardian_response.dart';
+import 'package:jagadis/sos/view_models/guardian_view_models.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,15 +19,6 @@ class GuardianListComponent extends StatefulWidget {
 }
 
 class _GuardianListComponentState extends State<GuardianListComponent> {
-  late Future<CommonResponse<GetAllGuardianResponse>> _guardians;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _guardians = GuardianViewModel().getAllGuardians();
-  }
-
   @override
   Widget build(BuildContext context) {
     double maxHeight = MediaQuery.of(context).size.height;
@@ -61,9 +52,9 @@ class _GuardianListComponentState extends State<GuardianListComponent> {
                     blurRadius: 5,
                   )
                 ]),
-            child: ChangeNotifierProvider(
-              create: (context) => GuardianViewModel(),
-              child: Column(
+            child: Consumer<GuardianViewModel>(
+                builder: (context, viewModel, child) {
+              return Column(
                 children: [
                   Container(
                     width: 38,
@@ -86,8 +77,9 @@ class _GuardianListComponentState extends State<GuardianListComponent> {
                       InkWell(
                         onTap: () => showDialog(
                             context: context,
-                            builder: (context) =>
-                                const AddGuardianDialogComponent()),
+                            builder: (context) => AddGuardianDialogComponent(
+                                  action: viewModel.refreshGuardians,
+                                )),
                         child: const Row(
                           children: [
                             Icon(Icons.add, size: 24, color: Color(0xFFFF5C97)),
@@ -108,51 +100,42 @@ class _GuardianListComponentState extends State<GuardianListComponent> {
                   const SizedBox(
                     height: 15,
                   ),
-                  Consumer<GuardianViewModel>(
-                      builder: (context, viewModel, child) {
-                    return FutureBuilder(
-                      future: _guardians,
-                      builder: (BuildContext context,
-                          AsyncSnapshot<CommonResponse<GetAllGuardianResponse>>
-                              snapshot) {
-                        if (snapshot.hasData) {
-                          List<Guardian>? guardians =
-                              snapshot.data?.content?.guardians;
+                  FutureBuilder(
+                    future: viewModel.guardians,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<CommonResponse<GetAllGuardianResponse>>
+                            snapshot) {
+                      if (snapshot.hasData) {
+                        List<Guardian>? guardians =
+                            snapshot.data?.content.guardians;
 
-                          if (guardians != null && guardians.isNotEmpty) {
-                            void updateGuardians() {
-                              setState(() {
-                                _guardians = viewModel.getAllGuardians();
-                              });
-                            }
-
-                            return Expanded(
-                                child: ListView.builder(
-                              itemCount: guardians.length,
-                              itemBuilder: (context, index) =>
-                                  Column(children: [
-                                GuardianCardComponent(
-                                  action: updateGuardians,
-                                  id: guardians[index].id,
-                                  name: guardians[index].name,
-                                  phoneNumber: guardians[index].contactNumber,
-                                )
-                              ]),
-                            ));
-                          }
-
-                          return const EmptyGuardianCardComponent();
-                        } else {
-                          return const Expanded(
-                              child:
-                                  Center(child: CircularProgressIndicator()));
+                        if (guardians != null && guardians.isNotEmpty) {
+                          return Expanded(
+                              child: ListView.builder(
+                            itemCount: guardians.length,
+                            itemBuilder: (context, index) => Column(children: [
+                              GuardianCardComponent(
+                                action: viewModel.refreshGuardians,
+                                id: guardians[index].id,
+                                name: guardians[index].name,
+                                phoneNumber: guardians[index].contactNumber,
+                              )
+                            ]),
+                          ));
                         }
-                      },
-                    );
-                  })
+
+                        return EmptyGuardianCardComponent(
+                          action: viewModel.refreshGuardians,
+                        );
+                      } else {
+                        return const Expanded(
+                            child: Center(child: CircularProgressIndicator()));
+                      }
+                    },
+                  )
                 ],
-              ),
-            )),
+              );
+            })),
       ),
     );
   }

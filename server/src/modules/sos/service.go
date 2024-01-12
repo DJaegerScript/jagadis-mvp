@@ -14,8 +14,9 @@ type Service interface {
 	GetAllGuardians(userId uuid.UUID) (err error, statusCode int, guardians []GetAllGuardiansResponseDTO, message string)
 	RemoveGuardian(guardianId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string)
 	ResetGuardian(userId uuid.UUID) (err error, statusCode int, message string)
-	EnterStandbyMode(location *EnterStandByModeRequestDTO, userId uuid.UUID) (err error, statusCode int, message string)
-	UpdateAlert(action string, alertId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string)
+	EnterStandbyMode(location *AlertRequestDTO, userId uuid.UUID) (err error, statusCode int, message string)
+	UpdateAlert(action string, location *AlertRequestDTO, userId uuid.UUID) (err error, statusCode int, message string)
+	GetAllActivatedAlert(userId uuid.UUID) (err error, statusCode int, dto []GetAllActivatedAlertResponseDTO, message string)
 }
 
 type ServiceStruct struct {
@@ -83,8 +84,8 @@ func (s *ServiceStruct) ResetGuardian(userId uuid.UUID) (err error, statusCode i
 	return s.SOSRepo.DeleteByUserId(userId)
 }
 
-func (s *ServiceStruct) EnterStandbyMode(location *EnterStandByModeRequestDTO, userId uuid.UUID) (err error, statusCode int, message string) {
-	err, statusCode, alerts, message := s.SOSRepo.FindAlertByUserId(userId)
+func (s *ServiceStruct) EnterStandbyMode(location *AlertRequestDTO, userId uuid.UUID) (err error, statusCode int, message string) {
+	err, statusCode, alerts, message := s.SOSRepo.FindAlertByUserId(userId, "STANDBY")
 	if err != nil {
 		return err, statusCode, message
 	}
@@ -104,11 +105,9 @@ func (s *ServiceStruct) EnterStandbyMode(location *EnterStandByModeRequestDTO, u
 
 	var alertedGuardians []AlertedGuardianDTO
 	for _, guardian := range guardians {
-		_, _, guardianDetail, _ := s.UserRepo.FindUserByPhoneNumber(guardian.ContactNumber)
-
 		alertedGuardians = append(alertedGuardians, AlertedGuardianDTO{
 			ContactNumber: guardian.ContactNumber,
-			Name:          guardianDetail.Name.String,
+			Name:          guardian.Name.String,
 		})
 	}
 
@@ -126,6 +125,42 @@ func (s *ServiceStruct) EnterStandbyMode(location *EnterStandByModeRequestDTO, u
 	return err, statusCode, message
 }
 
-func (s *ServiceStruct) UpdateAlert(action string, alertId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string) {
-	return s.SOSRepo.UpdateAlert(action, userId, alertId)
+func (s *ServiceStruct) UpdateAlert(action string, location *AlertRequestDTO, userId uuid.UUID) (err error, statusCode int, message string) {
+	err, statusCode, alerts, message := s.SOSRepo.FindAlertByUserId(userId, "STANDBY")
+	if err != nil {
+		return err, statusCode, message
+	}
+
+	if len(alerts) <= 0 {
+		return err, fiber.StatusNotFound, "Tidak ada sinyal yang standby!"
+	}
+
+	return s.SOSRepo.UpdateAlert(action, location, alerts[0].ID)
+}
+
+func (s *ServiceStruct) GetAllActivatedAlert(userId uuid.UUID) (err error, statusCode int, dto []GetAllActivatedAlertResponseDTO, message string) {
+	err, statusCode, guardian, message := s.UserRepo.FindUserById(userId)
+	if err != nil {
+		return err, statusCode, nil, message
+	}
+
+	err, statusCode, alerts, message := s.SOSRepo.FindAlertByGuardian("ACTIVATED", guardian.PhoneNumber)
+	if err != nil {
+		return err, statusCode, nil, message
+	}
+
+	if len(alerts) <= 0 {
+		dto = make([]GetAllActivatedAlertResponseDTO, 0)
+	} else {
+		for _, alert := range alerts {
+			dto = append(dto, GetAllActivatedAlertResponseDTO{
+				ID:          alert.ID,
+				ActivatedAt: alert.ActivatedAt.Time,
+				Name:        alert.Name.String,
+				PhoneNumber: alert.PhoneNumber,
+			})
+		}
+	}
+
+	return nil, fiber.StatusOK, dto, "Activated alert retrieved successfully!"
 }

@@ -1,7 +1,15 @@
-import 'package:client/home/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:jagadis/common/services/background_service.dart';
+import 'package:jagadis/sos/screens/splash_screen.dart';
 
-void main() => runApp(const App());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await BackgroundService.initializeService();
+  initializeDateFormatting("id_ID", null).then((_) {
+    runApp(const App());
+  });
+}
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 

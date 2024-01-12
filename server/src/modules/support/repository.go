@@ -53,7 +53,6 @@ func (r *RepoStruct) GetSupportTypeByID(supportTypeId uuid.UUID) (statusCode int
 			return fiber.StatusNotFound, supportType, "Support type not found!", err
 		}
 		zap.L().Error("Error executing query", zap.Error(err))
-		statusCode = fiber.StatusInternalServerError
 		return fiber.StatusInternalServerError, supportType, "Oops! Something went wrong", err
 	}
 
@@ -84,7 +83,6 @@ func (r *RepoStruct) GetSupportByID(supportId uuid.UUID) (statusCode int, suppor
 			return fiber.StatusNotFound, support, "Support not found!", err
 		}
 		zap.L().Error("Error executing query", zap.Error(err))
-		statusCode = fiber.StatusInternalServerError
 		return fiber.StatusInternalServerError, support, "Oops! Something went wrong", err
 	}
 
@@ -114,7 +112,6 @@ func (r *RepoStruct) GetPersonalGuardBySupportID(supportId uuid.UUID) (statusCod
 			return fiber.StatusNotFound, personalGuard, "Personal guard not found!", err
 		}
 		zap.L().Error("Error executing query", zap.Error(err))
-		statusCode = fiber.StatusInternalServerError
 		return fiber.StatusInternalServerError, personalGuard, "Oops! Something went wrong", err
 	}
 
@@ -133,7 +130,6 @@ func (r *RepoStruct) GetAllPersonalGuard() (statusCode int, personalGuards []Per
 	rows, err := r.DB.Query(ctx, query, args...)
 	if err != nil {
 		zap.L().Error("Error executing query", zap.Error(err))
-		statusCode = fiber.StatusInternalServerError
 		return fiber.StatusInternalServerError, personalGuards, "Oops! Something went wrong", err
 	}
 
@@ -174,7 +170,6 @@ func (r *RepoStruct) GetPersonalGuardVendorByID(vendorId *uuid.UUID) (statusCode
 			return fiber.StatusNotFound, vendor, "Vendor not found!", err
 		}
 		zap.L().Error("Error executing query", zap.Error(err))
-		statusCode = fiber.StatusInternalServerError
 		return fiber.StatusInternalServerError, vendor, "Oops! Something went wrong", err
 	}
 
@@ -203,7 +198,6 @@ func (r *RepoStruct) GetTherapistBySupportID(supportId uuid.UUID) (statusCode in
 			return fiber.StatusNotFound, therapist, "Therapist not found!", err
 		}
 		zap.L().Error("Error executing query", zap.Error(err))
-		statusCode = fiber.StatusInternalServerError
 		return fiber.StatusInternalServerError, therapist, "Oops! Something went wrong", err
 	}
 
@@ -222,7 +216,6 @@ func (r *RepoStruct) GetAllTherapist() (statusCode int, therapists []Therapist, 
 	rows, err := r.DB.Query(ctx, query, args...)
 	if err != nil {
 		zap.L().Error("Error executing query", zap.Error(err))
-		statusCode = fiber.StatusInternalServerError
 		return fiber.StatusInternalServerError, therapists, "Oops! Something went wrong", err
 	}
 
@@ -263,7 +256,6 @@ func (r *RepoStruct) GetTherapistVendorByID(vendorId uuid.UUID) (statusCode int,
 			return fiber.StatusNotFound, vendor, "Vendor not found!", err
 		}
 		zap.L().Error("Error executing query", zap.Error(err))
-		statusCode = fiber.StatusInternalServerError
 		return fiber.StatusInternalServerError, vendor, "Oops! Something went wrong", err
 	}
 
