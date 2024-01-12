@@ -1,9 +1,5 @@
-import 'package:client/home/screens/home_screen.dart';
+import 'package:client/home/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
-
-import 'authentication/screens/login_screen.dart';
-import 'authentication/services/authentication_service.dart';
-
 
 void main() => runApp(const App());
 
@@ -21,18 +17,6 @@ class App extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: FutureBuilder(
-          future: AuthenticationService.isAuthenticated(),
-          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-            if (snapshot.data == null) {
-              return const Center(child: CircularProgressIndicator());
-            } else {
-              return snapshot.data!
-                  ?
-              const HomeScreen()
-                  : const LoginScreen();
-            }
-          },
-        ));
+        home: const SplashScreen());
   }
 }

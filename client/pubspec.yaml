@@ -70,10 +70,7 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   assets:
-    - assets/images/logo_jagadis.png
-    - assets/images/google_PNG19635.png
-    - assets/images/jagadis_insignia.svg
-    - assets/images/jagadis_wordmark.svg
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
