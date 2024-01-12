@@ -42,7 +42,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCyF7vcdAO_mPaQ_ZHYssYAPgBWP4IoB5A" />
+            android:value="API KEY" />
 
         <service
             android:name="id.flutter.flutter_background_service.BackgroundService"

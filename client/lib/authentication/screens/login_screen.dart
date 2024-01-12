@@ -1,12 +1,12 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:jagadis/authentication/models/login_response.dart';
 import 'package:jagadis/authentication/services/authentication_service.dart';
 import 'package:jagadis/common/components/text_field_component.dart';
 import 'package:jagadis/common/models/common_response.dart';
 import 'package:jagadis/common/services/secure_storage_service.dart';
 import 'package:jagadis/sos/screens/home_screen.dart';
-import 'package:flutter/material.dart';
 
 import 'registration_screen.dart';
 
@@ -39,62 +39,64 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Container(
                       margin: const EdgeInsets.all(20),
                       child: TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const RegistrationScreen(),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            "Daftar",
-                            style: TextStyle(
-                              color: Colors.pinkAccent,
-                              fontSize: 16,
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => const RegistrationScreen(),
+                            )
+                          );
+                        },
+                        child: const Text(
+                          "Daftar",
+                          style: TextStyle(
+                            color: Color(0xFFFF5C96),
+                            fontSize: 14,
+                          ),
+                        )
+                      ),
+                    )
+                  ),
+                  
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  
+                  Stack(
+                    children: [
+                      const Column(
+                        children: [
+                          Align(
+                            alignment: AlignmentDirectional.topStart,
+                            child: Image(
+                              image: AssetImage("assets/images/logo_jagadis.png"), 
+                              width: 250, 
+                              height: 250, 
+                              fit: BoxFit.cover
                             ),
-                          )),
-                    )),
-                const SizedBox(
-                  height: 4,
-                ),
-                Stack(
-                  children: [
-                    const Column(
-                      children: [
-                        Align(
-                          alignment: AlignmentDirectional.topStart,
-                          child: Image(
-                              image:
-                                  AssetImage("assets/images/logo_jagadis.png"),
-                              width: 250,
-                              height: 250,
-                              fit: BoxFit.cover),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        const SizedBox(
-                          height: 170,
-                        ),
-                        Container(
+                          ),
+                        ],
+                      ),
+
+                      Column(
+                        children: [
+                          const SizedBox(
+                            height: 170,
+                          ),
+                          Container(
                             alignment: Alignment.topLeft,
                             margin: const EdgeInsets.only(left: 20, right: 20),
                             child: RichText(
                                 text: const TextSpan(
                                     text: "Selamat datang di ",
                                     style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 24,
+                                        color: Color(0xFF170015),
+                                        fontSize: 22,
                                         fontWeight: FontWeight.bold),
                                     children: [
                                   TextSpan(
                                     text: "JaGadis",
                                     style: TextStyle(
-                                        color: Colors.pinkAccent,
-                                        fontSize: 24,
+                                        color: Color(0xFFFF5C96),
+                                        fontSize: 22,
                                         fontWeight: FontWeight.bold),
                                   )
                                 ]))),
@@ -108,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 "Bersiaplah melindungi diri Anda. Atur tombol darurat dan gunakan fitur preventif!",
                                 style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: 16,
+                                  fontSize: 14,
                                 ))),
                       ],
                     )
@@ -125,8 +127,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           alignment: Alignment.topLeft,
                           child: const Text("Email/Username",
                               style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
+                                  color: Color(0xFF170015),
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold))),
                       const SizedBox(
                         height: 8,
@@ -153,8 +155,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           alignment: Alignment.topLeft,
                           child: const Text("Password",
                               style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
+                                  color: Color(0xFF170015),
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold))),
                       const SizedBox(
                         height: 8,
@@ -174,19 +176,21 @@ class _LoginScreenState extends State<LoginScreen> {
                             return null;
                           }),
                       const SizedBox(
-                        height: 32,
+                        height: 40,
                       ),
                       ElevatedButton(
                           onPressed: _login,
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.pinkAccent,
-                              minimumSize: const Size(double.infinity, 50),
+                              backgroundColor: const Color(0xFFFF5C96),
+                              minimumSize:
+                                  Size(MediaQuery.of(context).size.width, 60),
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15))),
+                                  borderRadius: BorderRadius.circular(60))),
                           child: const Text(
                             "Masuk",
                             style: TextStyle(
                               color: Colors.white,
+                              fontSize: 14,
                             ),
                           )),
                       const SizedBox(
@@ -194,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const Text("Atau masuk dengan",
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Color(0xFF79747E),
                             fontSize: 16,
                           )),
                       const SizedBox(
@@ -204,9 +208,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: _login,
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            minimumSize: const Size(double.infinity, 50),
+                            minimumSize:
+                                Size(MediaQuery.of(context).size.width, 60),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(60),
                                 side: const BorderSide(color: Colors.black54))),
                         icon: const Image(
                             image:
@@ -217,6 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           "Google",
                           style: TextStyle(
                             color: Colors.black,
+                            fontSize: 16,
                           ),
                         ),
                       ),
@@ -245,11 +251,12 @@ class _LoginScreenState extends State<LoginScreen> {
           await AuthenticationService.loginUser(body);
 
       if (response.isSuccess) {
-        await SecureStorageService.write("token", response.content.token);
+        await SecureStorageService.write(
+            "token", response.content?.token ?? "");
         await SecureStorageService.write(
             "user",
-            response.content.user != null
-                ? jsonEncode(response.content.user)
+            response.content?.user != null
+                ? jsonEncode(response.content?.user)
                 : "");
 
         Future.delayed(Duration.zero).then(

@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:jagadis/authentication/screens/login_screen.dart';
 import 'package:jagadis/authentication/services/authentication_service.dart';
 import 'package:jagadis/common/components/text_field_component.dart';
 import 'package:jagadis/common/models/common_response.dart';
-import 'package:flutter/material.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -35,61 +35,64 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     child: Container(
                       margin: const EdgeInsets.all(20),
                       child: TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const LoginScreen(),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            "Masuk",
-                            style: TextStyle(
-                              color: Colors.pinkAccent,
-                              fontSize: 16,
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                            )
+                          );
+                        },
+                        child: const Text(
+                          "Masuk",
+                          style: TextStyle(
+                            color: Color(0xFFFF5C96),
+                            fontSize: 14,
+                          ),
+                        )
+                      ),
+                    )
+                  ),
+                  
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  
+                  Stack(
+                    children: [
+                      const Column(
+                        children: [
+                          Align(
+                            alignment: AlignmentDirectional.topStart,
+                            child: Image(
+                              image: AssetImage("assets/images/logo_jagadis.png"), 
+                              width: 250, 
+                              height: 250, 
+                              fit: BoxFit.cover
                             ),
-                          )),
-                    )),
-                const SizedBox(
-                  height: 4,
-                ),
-                Stack(
-                  children: [
-                    const Column(
-                      children: [
-                        Align(
-                          alignment: AlignmentDirectional.topStart,
-                          child: Image(
-                              image:
-                                  AssetImage("assets/images/logo_jagadis.png"),
-                              width: 250,
-                              height: 250,
-                              fit: BoxFit.cover),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        const SizedBox(
-                          height: 170,
-                        ),
-                        Container(
+                          ),
+                        ],
+                      ),
+
+                      Column(
+                        children: [
+                          const SizedBox(
+                            height: 170,
+                          ),
+                          Container(
                             alignment: Alignment.topLeft,
                             margin: const EdgeInsets.only(left: 20, right: 20),
                             child: RichText(
                                 text: const TextSpan(
                                     text: "Selamat datang di ",
                                     style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 24,
+                                        color: Color(0xFF170015),
+                                        fontSize: 22,
                                         fontWeight: FontWeight.bold),
                                     children: [
                                   TextSpan(
                                     text: "JaGadis",
                                     style: TextStyle(
-                                        color: Colors.pinkAccent,
-                                        fontSize: 24,
+                                        color: Color(0xFFFF5C96),
+                                        fontSize: 22,
                                         fontWeight: FontWeight.bold),
                                   )
                                 ]))),
@@ -102,8 +105,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             child: const Text(
                                 "Daftar sekarang dan ambil langkah pertama menuju keamanan!",
                                 style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
+                                  color: Color(0xFF170015),
+                                  fontSize: 14,
                                 ))),
                       ],
                     )
@@ -120,8 +123,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           alignment: Alignment.topLeft,
                           child: const Text("Email",
                               style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
+                                  color: Color(0xFF170015),
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold))),
                       const SizedBox(
                         height: 8,
@@ -148,31 +151,33 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           alignment: Alignment.topLeft,
                           child: const Text("No. HP",
                               style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
+                                  color: Color(0xFF170015),
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold))),
                       const SizedBox(
                         height: 8,
                       ),
                       TextFieldComponent(
-                          keyboardType: TextInputType.phone,
-                          labelText: "No. HP",
-                          hintText: "No. HP",
-                          action: (String? value) {
-                            setState(() {
-                              _phoneNumber = value!;
-                            });
-                          },
-                          validator: (String? value) {
-                            if (value == null || value.isEmpty) {
-                              return "Phone number cannot be empty";
-                            } else if (!_phoneNumber.startsWith("+62") &&
-                                !_phoneNumber.startsWith("62") &&
-                                !_phoneNumber.startsWith("0")) {
-                              return 'Phone number is invalid!';
-                            }
-                            return null;
-                          }),
+                        keyboardType: TextInputType.phone,
+                        labelText: "No. HP",
+                        hintText: "No. HP",
+                        action: (String? value) {
+                          setState(() {
+                            _phoneNumber = value!;
+                          });
+                        },
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return "Phone number cannot be empty";
+                          } else if (!_phoneNumber.startsWith("+62") &&
+                              !_phoneNumber.startsWith("62") &&
+                              !_phoneNumber.startsWith("0")) {
+                            return 'Phone number is invalid!';
+                          }
+                          return null;
+                        },
+                        isForPhone: true,
+                      ),
                       const SizedBox(
                         height: 14,
                       ),
@@ -180,8 +185,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           alignment: Alignment.topLeft,
                           child: const Text("Password",
                               style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
+                                  color: Color(0xFF170015),
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold))),
                       const SizedBox(
                         height: 8,
@@ -207,8 +212,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           alignment: Alignment.topLeft,
                           child: const Text("Konfirmasi Password",
                               style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
+                                  color: Color(0xFF170015),
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold))),
                       const SizedBox(
                         height: 8,
@@ -230,19 +235,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             return null;
                           }),
                       const SizedBox(
-                        height: 20,
+                        height: 28,
                       ),
                       ElevatedButton(
                           onPressed: _register,
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.pinkAccent,
-                              minimumSize: const Size(double.infinity, 50),
+                              backgroundColor: const Color(0xFFFF5C96),
+                              minimumSize:
+                                  Size(MediaQuery.of(context).size.width, 60),
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15))),
+                                  borderRadius: BorderRadius.circular(60))),
                           child: const Text(
                             "Daftar",
                             style: TextStyle(
                               color: Colors.white,
+                              fontSize: 14,
                             ),
                           )),
                       const SizedBox(
