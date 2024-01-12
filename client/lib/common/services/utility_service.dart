@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 
 class UtilityService {
   static Color generateRandomColor() {
@@ -31,6 +32,13 @@ class UtilityService {
     return nameComponents.length < 2
         ? nameComponents[0][0]
         : nameComponents[0][0] + nameComponents[1][0];
+  }
+
+  static String formatDate(DateTime datetime) {
+    final format = DateFormat("dd MMMM yyyy HH:mm", "id_ID");
+
+    // Format the DateTime object
+    return format.format(datetime);
   }
 
   static Future<Position> getCurrentPosition() async {

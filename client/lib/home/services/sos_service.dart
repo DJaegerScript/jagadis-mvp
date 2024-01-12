@@ -1,7 +1,20 @@
 import 'package:client/common/models/common_response.dart';
 import 'package:client/common/services/http_service.dart';
+import 'package:client/home/models/get_all_activated_alert_response.dart';
 
 class SOSService {
+  static Future<CommonResponse<GetAllActivatedAlertResponse>>
+      getAllActivatedAlert(String userId) async {
+    dynamic response = await HttpService().get(
+      "sos/$userId/alert",
+    );
+
+    CommonResponse<GetAllActivatedAlertResponse> data = CommonResponse.fromJson(
+        response, (json) => GetAllActivatedAlertResponse.fromJson(json));
+
+    return data;
+  }
+
   static Future<CommonResponse> enterStandbyMode(
       Map<String, double> bodyRequest, String userId) async {
     dynamic response =

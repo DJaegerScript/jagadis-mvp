@@ -1,6 +1,7 @@
 import 'package:client/common/models/common_response.dart';
 import 'package:client/common/models/user_session.dart';
 import 'package:client/common/services/secure_storage_service.dart';
+import 'package:client/home/models/get_all_activated_alert_response.dart';
 import 'package:client/home/services/sos_service.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -11,6 +12,23 @@ class SOSViewModel extends ChangeNotifier {
   void setIsStandby(bool value) {
     isStandby = value;
     notifyListeners();
+  }
+
+  Future<GetAllActivatedAlertResponse> getAllActivatedAlert() async {
+    UserSession? user = await SecureStorageService.getSession();
+
+    if (user == null) {
+      throw "Session expired!";
+    }
+
+    CommonResponse<GetAllActivatedAlertResponse> response =
+        await SOSService.getAllActivatedAlert(user.id);
+
+    if (response.isSuccess) {
+      return response.content;
+    } else {
+      throw response.message;
+    }
   }
 
   Future<String> enterStandbyMode(Position position) async {

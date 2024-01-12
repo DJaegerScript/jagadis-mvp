@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:client/common/services/background_service.dart';
 import 'package:client/home/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'authentication/screens/login_screen.dart';
 import 'authentication/services/authentication_service.dart';
@@ -10,7 +11,9 @@ import 'authentication/services/authentication_service.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await BackgroundService.initializeService();
-  runApp(const App());
+  initializeDateFormatting("id_ID", null).then((_) {
+    runApp(const App());
+  });
 }
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
