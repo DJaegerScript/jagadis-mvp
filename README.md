@@ -30,8 +30,8 @@ This platform can be used after the user logs into their registered account. To 
 
 ## Screenshots:
 
-1. **Splash Screen**
-   ![Splash_Screen](images/README/Screenshot_20240112_231406.jpg)  
+1. **Splash Screen**  
+   ![Splash_Screen](image/README/Screenshot_20240112_231406.jpg)  
 
 2. **Login Screen**
 
