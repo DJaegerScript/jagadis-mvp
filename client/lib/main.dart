@@ -1,11 +1,17 @@
+import 'dart:async';
+
+import 'package:client/common/services/background_service.dart';
 import 'package:client/home/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'authentication/screens/login_screen.dart';
 import 'authentication/services/authentication_service.dart';
 
-
-void main() => runApp(const App());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await BackgroundService.initializeService();
+  runApp(const App());
+}
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -27,10 +33,7 @@ class App extends StatelessWidget {
             if (snapshot.data == null) {
               return const Center(child: CircularProgressIndicator());
             } else {
-              return snapshot.data!
-                  ?
-              const HomeScreen()
-                  : const LoginScreen();
+              return snapshot.data! ? const HomeScreen() : const LoginScreen();
             }
           },
         ));
