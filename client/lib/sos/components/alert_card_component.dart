@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:jagadis/common/services/utility_service.dart';
 import 'package:jagadis/sos/components/card_body_component.dart';
-import 'package:flutter/material.dart';
+import 'package:jagadis/sos/screens/tracking_screen.dart';
 
 class AlertCardComponent extends StatelessWidget {
   const AlertCardComponent(
@@ -19,7 +20,8 @@ class AlertCardComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(8),
-      onTap: () {},
+      onTap: () => Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const TrackingScreen())),
       child: CardBodyComponent(
           name: name ?? UtilityService.formatPhoneNumber(phoneNumber),
           info: UtilityService.formatDate(activatedAt),
