@@ -107,7 +107,7 @@ class _GuardianListComponentState extends State<GuardianListComponent> {
                             snapshot) {
                       if (snapshot.hasData) {
                         List<Guardian>? guardians =
-                            snapshot.data?.content?.guardians;
+                            snapshot.data?.content.guardians;
 
                         if (guardians != null && guardians.isNotEmpty) {
                           return Expanded(
