@@ -2,7 +2,6 @@ package sos
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofrs/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -17,6 +16,7 @@ type Service interface {
 	ResetGuardian(userId uuid.UUID) (err error, statusCode int, message string)
 	EnterStandbyMode(location *AlertRequestDTO, userId uuid.UUID) (err error, statusCode int, message string)
 	UpdateAlert(action string, location *AlertRequestDTO, userId uuid.UUID) (err error, statusCode int, message string)
+	GetAllActivatedAlert(userId uuid.UUID) (err error, statusCode int, dto []GetAllActivatedAlertResponseDTO, message string)
 }
 
 type ServiceStruct struct {
@@ -135,10 +135,32 @@ func (s *ServiceStruct) UpdateAlert(action string, location *AlertRequestDTO, us
 		return err, fiber.StatusNotFound, "Tidak ada sinyal yang standby!"
 	}
 
-	if action == "TRACK" {
-		fmt.Println(location.Latitude)
-		fmt.Println(location.Longitude)
+	return s.SOSRepo.UpdateAlert(action, location, alerts[0].ID)
+}
+
+func (s *ServiceStruct) GetAllActivatedAlert(userId uuid.UUID) (err error, statusCode int, dto []GetAllActivatedAlertResponseDTO, message string) {
+	err, statusCode, guardian, message := s.UserRepo.FindUserById(userId)
+	if err != nil {
+		return err, statusCode, nil, message
 	}
 
-	return s.SOSRepo.UpdateAlert(action, location, alerts[0].ID)
+	err, statusCode, alerts, message := s.SOSRepo.FindAlertByGuardian("ACTIVATED", guardian.PhoneNumber)
+	if err != nil {
+		return err, statusCode, nil, message
+	}
+
+	if len(alerts) <= 0 {
+		dto = make([]GetAllActivatedAlertResponseDTO, 0)
+	} else {
+		for _, alert := range alerts {
+			dto = append(dto, GetAllActivatedAlertResponseDTO{
+				ID:          alert.ID,
+				ActivatedAt: alert.ActivatedAt.Time,
+				Name:        alert.Name.String,
+				PhoneNumber: alert.PhoneNumber,
+			})
+		}
+	}
+
+	return nil, fiber.StatusOK, dto, "Activated alert retrieved successfully!"
 }

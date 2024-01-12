@@ -126,7 +126,6 @@ func (r *RepoStruct) FindUserById(userId uuid.UUID) (err error, statusCode int, 
 			return err, fiber.StatusNotFound, user, "User not found!"
 		}
 		zap.L().Error("Error executing query", zap.Error(err))
-		statusCode = fiber.StatusInternalServerError
 		return err, fiber.StatusInternalServerError, user, "Oops! Something went wrong"
 	}
 
@@ -162,7 +161,6 @@ func (r *RepoStruct) FindUserByEmail(email string) (err error, statusCode int, u
 			return err, fiber.StatusNotFound, user, "User not found!"
 		}
 		zap.L().Error("Error executing query", zap.Error(err))
-		statusCode = fiber.StatusInternalServerError
 		return err, fiber.StatusInternalServerError, user, "Oops! Something went wrong"
 	}
 
@@ -198,7 +196,6 @@ func (r *RepoStruct) FindUserByPhoneNumber(phoneNumber string) (err error, statu
 			return err, fiber.StatusNotFound, user, "User not found!"
 		}
 		zap.L().Error("Error executing query", zap.Error(err))
-		statusCode = fiber.StatusInternalServerError
 		return err, fiber.StatusInternalServerError, user, "Oops! Something went wrong"
 	}
 

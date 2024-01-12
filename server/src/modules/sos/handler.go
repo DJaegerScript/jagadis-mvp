@@ -15,6 +15,7 @@ type Handler interface {
 	ResetGuardian(ctx *fiber.Ctx) error
 	EnterStandbyMode(ctx *fiber.Ctx) error
 	UpdateAlert(ctx *fiber.Ctx) error
+	GetActivatedAlert(ctx *fiber.Ctx) error
 }
 
 type HandlerStruct struct {
@@ -172,10 +173,6 @@ func (h *HandlerStruct) EnterStandbyMode(ctx *fiber.Ctx) error {
 	})
 }
 
-/*
- * TODO:
- * - Should create update for long/lat
- */
 func (h *HandlerStruct) UpdateAlert(ctx *fiber.Ctx) error {
 	userId, err := common.GetSession(ctx)
 	if err != nil {
@@ -206,5 +203,31 @@ func (h *HandlerStruct) UpdateAlert(ctx *fiber.Ctx) error {
 		"message":    "Alert updated successfully!",
 		"content":    nil,
 	})
+}
 
+func (h *HandlerStruct) GetActivatedAlert(ctx *fiber.Ctx) error {
+	userId, err := common.GetSession(ctx)
+	if err != nil {
+		return common.HandleException(ctx, fiber.StatusInternalServerError, "Oops! Something went wrong")
+	}
+
+	if !common.GetRequestAuthenticity(ctx, userId) {
+		return common.HandleException(ctx, fiber.StatusForbidden, "Compromised request")
+	}
+
+	err, statusCode, content, message := h.Service.GetAllActivatedAlert(userId)
+	if err != nil {
+		return common.HandleException(ctx, statusCode, message)
+	}
+
+	statusCode = fiber.StatusOK
+
+	return ctx.Status(statusCode).JSON(fiber.Map{
+		"isSuccess":  true,
+		"statusCode": statusCode,
+		"message":    "Activated alert successfully retrieved!",
+		"content": fiber.Map{
+			"alerts": content,
+		},
+	})
 }

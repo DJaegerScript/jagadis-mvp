@@ -2,6 +2,7 @@ package sos
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/gofiber/fiber/v2"
@@ -20,6 +21,7 @@ type Repo interface {
 	SaveAlert(location *AlertRequestDTO, userId uuid.UUID, alertedGuardians []byte) (err error, statusCode int, message string)
 	FindAlertByUserId(userId uuid.UUID, action string) (err error, statusCode int, alerts []Alerts, message string)
 	UpdateAlert(action string, location *AlertRequestDTO, alertId uuid.UUID) (err error, statusCode int, message string)
+	FindAlertByGuardian(status string, phoneNumber string) (err error, statusCode int, alerts []AlertDTO, message string)
 }
 
 type RepoStruct struct {
@@ -78,7 +80,6 @@ func (r *RepoStruct) FindAllByUserId(userId uuid.UUID) (err error, statusCode in
 	rows, err := r.DB.Query(ctx, query, args...)
 	if err != nil {
 		zap.L().Error("Error executing query", zap.Error(err))
-		statusCode = fiber.StatusInternalServerError
 		return err, fiber.StatusInternalServerError, guardians, "Oops! Something went wrong"
 	}
 
@@ -201,7 +202,6 @@ func (r *RepoStruct) FindAlertByUserId(userId uuid.UUID, action string) (err err
 	rows, err := r.DB.Query(ctx, query, args...)
 	if err != nil {
 		zap.L().Error("Error executing query", zap.Error(err))
-		statusCode = fiber.StatusInternalServerError
 		return err, fiber.StatusInternalServerError, alerts, "Oops! Something went wrong"
 	}
 
@@ -275,4 +275,63 @@ func (r *RepoStruct) UpdateAlert(action string, location *AlertRequestDTO, alert
 	}
 
 	return nil, fiber.StatusOK, ""
+}
+
+func (r *RepoStruct) FindAlertByGuardian(status string, phoneNumber string) (err error, statusCode int, alerts []AlertDTO, message string) {
+
+	query, args, err := r.psql.Select("alerts.*, u.name, u.phone_number").
+		From("alerts").
+		Join("public.users u ON alerts.user_id = u.id").
+		Where(sq.Eq{"status": status}).
+		ToSql()
+	if err != nil {
+		zap.L().Error("Error building query", zap.Error(err))
+		return err, fiber.StatusInternalServerError, alerts, "Oops! Something went wrong"
+	}
+
+	ctx := context.Background()
+
+	rows, err := r.DB.Query(ctx, query, args...)
+	if err != nil {
+		zap.L().Error("Error executing query", zap.Error(err))
+		return err, fiber.StatusInternalServerError, alerts, "Oops! Something went wrong"
+	}
+
+	for rows.Next() {
+		var alert AlertDTO
+
+		err = rows.Scan(
+			&alert.ID,
+			&alert.UserId,
+			&alert.Status,
+			&alert.LatestLongitude,
+			&alert.LatestLatitude,
+			&alert.Guardians,
+			&alert.StandByAt,
+			&alert.ActivatedAt,
+			&alert.TurnedOffAt,
+			&alert.Name,
+			&alert.PhoneNumber,
+		)
+		if err != nil {
+			zap.L().Error("Error scanning row data", zap.Error(err))
+			return err, fiber.StatusInternalServerError, alerts, "Oops! Something went wrong"
+		}
+
+		var alertedGuardians []AlertedGuardianDTO
+		err = json.Unmarshal(alert.Guardians, &alertedGuardians)
+		if err != nil {
+			zap.L().Error("Error unmarshalling guardian", zap.Error(err))
+			return err, fiber.StatusInternalServerError, nil, "Oops! Something went wrong"
+		}
+
+		for _, guardian := range alertedGuardians {
+			if guardian.ContactNumber == phoneNumber {
+				alerts = append(alerts, alert)
+			}
+		}
+
+	}
+
+	return nil, fiber.StatusOK, alerts, ""
 }

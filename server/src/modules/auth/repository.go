@@ -82,7 +82,6 @@ func (r *RepoStruct) FindSessionByToken(token string) (err error, statusCode int
 			return err, fiber.StatusUnauthorized, session, "No active session"
 		}
 		zap.L().Error("Error executing query", zap.Error(err))
-		statusCode = fiber.StatusInternalServerError
 		return err, fiber.StatusInternalServerError, session, "Oops! Something went wrong"
 	}
 
