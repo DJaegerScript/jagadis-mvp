@@ -6,7 +6,6 @@ import 'package:jagadis/common/services/secure_storage_service.dart';
 import 'package:jagadis/profile/models/get_user_detail_response.dart';
 import 'package:jagadis/profile/screens/edit_profile_screen.dart';
 import 'package:jagadis/profile/services/profile_service.dart';
-import 'package:jagadis/sos/screens/home_screen.dart';
 
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({Key? key}) : super(key: key);
@@ -29,21 +28,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               fontWeight: FontWeight.w700,
               fontSize: 16,
             ),
-          ),
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              size: 23.45,
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const HomeScreen(),
-                ),
-              );
-            },
-            color: Colors.black,
           ),
         ),
         body: SingleChildScrollView(
@@ -68,7 +52,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                 margin: const EdgeInsets.only(right: 10),
                                 child: Image(
                                   image: AssetImage(snapshot
-                                              .data?.content?.user.gender ==
+                                              .data?.content.user.gender ==
                                           "MALE"
                                       ? 'assets/images/male_placeholder_avatar.png'
                                       : 'assets/images/placeholder_avatar.png'),
@@ -81,7 +65,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    snapshot.data!.content!.user.name,
+                                    snapshot.data!.content.user.name,
                                     style: const TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFF170015),
@@ -89,7 +73,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                     ),
                                   ),
                                   Text(
-                                    snapshot.data!.content!.user.phoneNumber,
+                                    snapshot.data!.content.user.phoneNumber,
                                     style: const TextStyle(
                                       fontSize: 10,
                                       color: Color(0xFF79747E),
@@ -97,7 +81,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                     ),
                                   ),
                                   Text(
-                                    snapshot.data!.content!.user.email,
+                                    snapshot.data!.content.user.email,
                                     style: const TextStyle(
                                       fontSize: 10,
                                       color: Color(0xFF79747E),
@@ -112,7 +96,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             height: 80,
                             width: 80,
                             child: Image.asset(
-                                snapshot.data?.content?.user.gender == "MALE"
+                                snapshot.data?.content.user.gender == "MALE"
                                     ? "assets/images/male.png"
                                     : "assets/images/female.png"),
                           )
@@ -137,10 +121,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               const SizedBox(height: 8),
               GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const EditProfileScreen()),
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const EditProfileScreen(),
+                      )
                     );
                   },
                   child: Container(

@@ -15,9 +15,9 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _editFormKey = GlobalKey<FormState>();
 
-  TextEditingController _dateController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
   String _namaLengkap = "";
-  String _email = "";
+  final String _email = "";
   String _phoneNumber = "";
   String _gender = "Perempuan";
   String _city = "Kota Administrasi Jakarta Barat";
@@ -627,21 +627,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             fontWeight: FontWeight.w700,
             fontSize: 16,
           ),
-        ),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            size: 23.45,
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const MyProfileScreen(),
-              ),
-            );
-          },
-          color: Colors.black,
         ),
       ),
       body: SingleChildScrollView(

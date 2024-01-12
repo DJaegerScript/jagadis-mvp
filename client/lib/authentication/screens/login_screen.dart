@@ -39,47 +39,49 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Container(
                       margin: const EdgeInsets.all(20),
                       child: TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const RegistrationScreen(),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            "Daftar",
-                            style: TextStyle(
-                              color: Color(0xFFFF5C96),
-                              fontSize: 14,
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => const RegistrationScreen(),
+                            )
+                          );
+                        },
+                        child: const Text(
+                          "Daftar",
+                          style: TextStyle(
+                            color: Color(0xFFFF5C96),
+                            fontSize: 14,
+                          ),
+                        )
+                      ),
+                    )
+                  ),
+                  
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  
+                  Stack(
+                    children: [
+                      const Column(
+                        children: [
+                          Align(
+                            alignment: AlignmentDirectional.topStart,
+                            child: Image(
+                              image: AssetImage("assets/images/logo_jagadis.png"), 
+                              width: 250, 
+                              height: 250, 
+                              fit: BoxFit.cover
                             ),
-                          )),
-                    )),
-                const SizedBox(
-                  height: 4,
-                ),
-                Stack(
-                  children: [
-                    const Column(
-                      children: [
-                        Align(
-                          alignment: AlignmentDirectional.topStart,
-                          child: Image(
-                              image:
-                                  AssetImage("assets/images/logo_jagadis.png"),
-                              width: 250,
-                              height: 250,
-                              fit: BoxFit.cover),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        const SizedBox(
-                          height: 170,
-                        ),
-                        Container(
+                          ),
+                        ],
+                      ),
+
+                      Column(
+                        children: [
+                          const SizedBox(
+                            height: 170,
+                          ),
+                          Container(
                             alignment: Alignment.topLeft,
                             margin: const EdgeInsets.only(left: 20, right: 20),
                             child: RichText(
