@@ -1,6 +1,6 @@
-import 'package:client/common/models/common_response.dart';
-import 'package:client/common/services/http_service.dart';
-import 'package:client/sos/models/get_all_guardian_response.dart';
+import 'package:jagadis/common/models/common_response.dart';
+import 'package:jagadis/common/services/http_service.dart';
+import 'package:jagadis/sos/models/get_all_guardian_response.dart';
 
 class GuardianService {
   static Future<CommonResponse<GetAllGuardianResponse>> getAllGuardians(

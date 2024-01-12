@@ -1,5 +1,5 @@
-import 'package:client/common/services/utility_service.dart';
-import 'package:client/sos/view_models/sos_view_models.dart';
+import 'package:jagadis/common/services/utility_service.dart';
+import 'package:jagadis/sos/view_models/sos_view_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';

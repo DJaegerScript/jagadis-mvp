@@ -1,8 +1,8 @@
-import 'package:client/common/models/common_response.dart';
-import 'package:client/common/models/user_session.dart';
-import 'package:client/common/services/secure_storage_service.dart';
-import 'package:client/sos/models/get_all_activated_alert_response.dart';
-import 'package:client/sos/services/sos_service.dart';
+import 'package:jagadis/common/models/common_response.dart';
+import 'package:jagadis/common/models/user_session.dart';
+import 'package:jagadis/common/services/secure_storage_service.dart';
+import 'package:jagadis/sos/models/get_all_activated_alert_response.dart';
+import 'package:jagadis/sos/services/sos_service.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 

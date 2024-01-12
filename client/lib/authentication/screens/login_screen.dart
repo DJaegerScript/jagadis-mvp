@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:client/authentication/models/login_response.dart';
-import 'package:client/authentication/services/authentication_service.dart';
-import 'package:client/common/components/text_field_component.dart';
-import 'package:client/common/models/common_response.dart';
-import 'package:client/common/services/secure_storage_service.dart';
-import 'package:client/sos/screens/home_screen.dart';
+import 'package:jagadis/authentication/models/login_response.dart';
+import 'package:jagadis/authentication/services/authentication_service.dart';
+import 'package:jagadis/common/components/text_field_component.dart';
+import 'package:jagadis/common/models/common_response.dart';
+import 'package:jagadis/common/services/secure_storage_service.dart';
+import 'package:jagadis/sos/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'registration_screen.dart';

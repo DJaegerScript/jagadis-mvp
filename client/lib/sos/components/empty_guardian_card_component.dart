@@ -1,4 +1,4 @@
-import 'package:client/sos/components/add_guardian_dialog_component.dart';
+import 'package:jagadis/sos/components/add_guardian_dialog_component.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 

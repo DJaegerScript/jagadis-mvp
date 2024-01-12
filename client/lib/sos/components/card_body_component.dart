@@ -1,4 +1,4 @@
-import 'package:client/common/services/utility_service.dart';
+import 'package:jagadis/common/services/utility_service.dart';
 import 'package:flutter/material.dart';
 
 class CardBodyComponent extends StatefulWidget {

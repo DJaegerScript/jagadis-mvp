@@ -1,6 +1,6 @@
-import 'package:client/sos/components/alert_card_component.dart';
-import 'package:client/sos/models/get_all_activated_alert_response.dart';
-import 'package:client/sos/view_models/sos_view_models.dart';
+import 'package:jagadis/sos/components/alert_card_component.dart';
+import 'package:jagadis/sos/models/get_all_activated_alert_response.dart';
+import 'package:jagadis/sos/view_models/sos_view_models.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_shadow/simple_shadow.dart';

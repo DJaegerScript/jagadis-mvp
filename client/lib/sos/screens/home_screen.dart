@@ -1,7 +1,7 @@
-import 'package:client/common/components/header_component.dart';
-import 'package:client/sos/screens/alert_list_screen.dart';
-import 'package:client/sos/screens/guardian_list_screen.dart';
-import 'package:client/sos/screens/sos_screen.dart';
+import 'package:jagadis/common/components/header_component.dart';
+import 'package:jagadis/sos/screens/alert_list_screen.dart';
+import 'package:jagadis/sos/screens/guardian_list_screen.dart';
+import 'package:jagadis/sos/screens/sos_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
