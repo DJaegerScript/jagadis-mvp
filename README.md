@@ -77,3 +77,7 @@ This platform can be used after the user logs into their registered account. To 
 12. **Tracking Screen**
 
 ![1705072648659](image/README/1705072648659.png)
+
+13. **Location Screen**
+
+![1705074059467](image/README/1705074059467.png)
