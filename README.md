@@ -32,19 +32,19 @@ This platform can be used after the user logs into their registered account. To 
 
 1. **Login Screen**
 
-   ![Login_Screen](Image/README/login_screen.png)
+   ![Login_Screen](image/README/login_screen.png)
 
 2. **Register Screen**
 
-   ![Register_Screen](Image/README/register_screen.png)
+   ![Register_Screen](image/README/register_screen.png)
 
 3. **Profile Screen**
 
-   ![Profil_Kamu](Image/README/profil_kamu.png)
+   ![Profil_Kamu](image/README/profil_kamu.png)
 
 4. **Edit Profile Screen**
 
-   ![Ubah_Profil_Screen](Image/README/ubah_profil.png)
+   ![Ubah_Profil_Screen](image/README/ubah_profil.png)
 
 5. **Home Screen**
 
