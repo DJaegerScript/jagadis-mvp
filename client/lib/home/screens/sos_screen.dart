@@ -1,7 +1,9 @@
 import 'package:client/home/components/activate_stanby_mode_title.dart';
 import 'package:client/home/components/activate_standby_mode_brief.dart';
 import 'package:client/home/components/standby_switch_component.dart';
+import 'package:client/home/view_models/sos_view_models.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 
 class SOSScreen extends StatefulWidget {
   const SOSScreen({super.key});
@@ -11,38 +13,27 @@ class SOSScreen extends StatefulWidget {
 }
 
 class _SOSScreenState extends State<SOSScreen> {
-  bool _isStandby = false;
-
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding:
-          const EdgeInsetsDirectional.symmetric(horizontal: 16, vertical: 29),
-      child: Column(
-        children: [
-          Column(
-            children: [
-              ActivateStandbyModeTitle(
-                isStandby: _isStandby,
-              ),
-              const SizedBox(height: 8),
-              ActivateStandbyModeBrief(
-                isStandby: _isStandby,
-              )
-            ],
-          ),
-          const SizedBox(
-            height: 70,
-          ),
-          StandbySwitchComponent(
-            isStandby: _isStandby,
-            setStandby: () {
-              setState(() {
-                _isStandby = !_isStandby;
-              });
-            },
-          )
-        ],
+    return ChangeNotifierProvider(
+      create: (context) => SOSViewModel(),
+      child: const Padding(
+        padding: EdgeInsetsDirectional.symmetric(horizontal: 16, vertical: 29),
+        child: Column(
+          children: [
+            Column(
+              children: [
+                ActivateStandbyModeTitle(),
+                SizedBox(height: 8),
+                ActivateStandbyModeBrief()
+              ],
+            ),
+            SizedBox(
+              height: 70,
+            ),
+            StandbySwitchComponent()
+          ],
+        ),
       ),
     );
   }
