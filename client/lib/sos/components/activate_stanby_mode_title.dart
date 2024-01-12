@@ -1,4 +1,4 @@
-import 'package:client/home/view_models/sos_view_models.dart';
+import 'package:client/sos/view_models/sos_view_models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 

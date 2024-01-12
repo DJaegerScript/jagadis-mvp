@@ -1,6 +1,6 @@
 import 'package:client/common/components/text_field_component.dart';
 import 'package:client/common/models/common_response.dart';
-import 'package:client/home/view_models/guardian_view_models.dart';
+import 'package:client/sos/view_models/guardian_view_models.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

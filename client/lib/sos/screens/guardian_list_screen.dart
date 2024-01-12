@@ -1,7 +1,7 @@
-import 'package:client/home/components/collapse_guardian_button_component.dart';
-import 'package:client/home/components/guardian_list_component.dart';
-import 'package:client/home/components/reset_guardian_component.dart';
-import 'package:client/home/view_models/guardian_view_models.dart';
+import 'package:client/sos/components/collapse_guardian_button_component.dart';
+import 'package:client/sos/components/guardian_list_component.dart';
+import 'package:client/sos/components/reset_guardian_component.dart';
+import 'package:client/sos/view_models/guardian_view_models.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

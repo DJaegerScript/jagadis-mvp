@@ -1,6 +1,6 @@
 import 'package:client/common/services/utility_service.dart';
-import 'package:client/home/components/card_body_component.dart';
-import 'package:client/home/components/remove_guardian_dialog_component.dart';
+import 'package:client/sos/components/card_body_component.dart';
+import 'package:client/sos/components/remove_guardian_dialog_component.dart';
 import 'package:flutter/material.dart';
 
 class GuardianCardComponent extends StatelessWidget {

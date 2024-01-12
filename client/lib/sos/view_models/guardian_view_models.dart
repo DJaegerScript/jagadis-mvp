@@ -2,9 +2,9 @@ import 'package:client/authentication/screens/login_screen.dart';
 import 'package:client/common/models/common_response.dart';
 import 'package:client/common/models/user_session.dart';
 import 'package:client/common/services/secure_storage_service.dart';
-import 'package:client/home/models/get_all_guardian_response.dart';
-import 'package:client/home/services/guardian_service.dart';
 import 'package:client/main.dart';
+import 'package:client/sos/models/get_all_guardian_response.dart';
+import 'package:client/sos/services/guardian_service.dart';
 import 'package:flutter/material.dart';
 
 class GuardianViewModel extends ChangeNotifier {

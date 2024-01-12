@@ -5,7 +5,7 @@ import 'package:client/authentication/services/authentication_service.dart';
 import 'package:client/common/components/text_field_component.dart';
 import 'package:client/common/models/common_response.dart';
 import 'package:client/common/services/secure_storage_service.dart';
-import 'package:client/home/screens/home_screen.dart';
+import 'package:client/sos/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'registration_screen.dart';

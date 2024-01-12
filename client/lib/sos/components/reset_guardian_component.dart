@@ -1,5 +1,5 @@
-import 'package:client/home/components/reset_guardian_dialog_component.dart';
-import 'package:client/home/view_models/guardian_view_models.dart';
+import 'package:client/sos/components/reset_guardian_dialog_component.dart';
+import 'package:client/sos/view_models/guardian_view_models.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
