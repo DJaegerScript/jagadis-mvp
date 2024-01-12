@@ -39,6 +39,7 @@ dependencies:
   path: ^1.8.3
   flutter_secure_storage: ^9.0.0
   synchronized: ^3.1.0+1
+  marquee: ^2.2.3
   flutter_svg: ^2.0.9
   dotted_border: ^2.1.0
   provider: ^6.1.1
@@ -82,6 +83,10 @@ flutter:
     - assets/images/jagadis_insignia.svg
     - assets/images/jagadis_wordmark.svg
     - assets/images/list_empty_state.png
+    - assets/images/placeholder_avatar.png
+    - assets/images/female.png
+    - assets/images/male.png
+    - assets/images/male_placeholder_avatar.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
