@@ -152,7 +152,7 @@ func (h *HandlerStruct) EnterStandbyMode(ctx *fiber.Ctx) error {
 		return common.HandleException(ctx, fiber.StatusForbidden, "Compromised request")
 	}
 
-	err, requestBody := common.ParseBody(ctx, h.Validate, new(EnterStandByModeRequestDTO))
+	err, requestBody := common.ParseBody(ctx, h.Validate, new(AlertRequestDTO))
 	if err != nil {
 		return common.HandleException(ctx, fiber.StatusBadRequest, "Invalid request body")
 	}
@@ -174,7 +174,6 @@ func (h *HandlerStruct) EnterStandbyMode(ctx *fiber.Ctx) error {
 
 /*
  * TODO:
- * - Validate update for action that already has that action
  * - Should create update for long/lat
  */
 func (h *HandlerStruct) UpdateAlert(ctx *fiber.Ctx) error {
@@ -187,10 +186,14 @@ func (h *HandlerStruct) UpdateAlert(ctx *fiber.Ctx) error {
 		return common.HandleException(ctx, fiber.StatusForbidden, "Compromised request")
 	}
 
-	alertId := uuid.FromStringOrNil(ctx.Params("alertId"))
+	err, requestBody := common.ParseBody(ctx, h.Validate, new(AlertRequestDTO))
+	if err != nil {
+		return common.HandleException(ctx, fiber.StatusBadRequest, "Invalid request body")
+	}
+
 	action := ctx.Query("action")
 
-	err, statusCode, message := h.Service.UpdateAlert(action, alertId, userId)
+	err, statusCode, message := h.Service.UpdateAlert(action, requestBody, userId)
 	if err != nil {
 		return common.HandleException(ctx, statusCode, message)
 	}

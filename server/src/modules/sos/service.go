@@ -2,6 +2,7 @@ package sos
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofrs/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -14,8 +15,8 @@ type Service interface {
 	GetAllGuardians(userId uuid.UUID) (err error, statusCode int, guardians []GetAllGuardiansResponseDTO, message string)
 	RemoveGuardian(guardianId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string)
 	ResetGuardian(userId uuid.UUID) (err error, statusCode int, message string)
-	EnterStandbyMode(location *EnterStandByModeRequestDTO, userId uuid.UUID) (err error, statusCode int, message string)
-	UpdateAlert(action string, alertId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string)
+	EnterStandbyMode(location *AlertRequestDTO, userId uuid.UUID) (err error, statusCode int, message string)
+	UpdateAlert(action string, location *AlertRequestDTO, userId uuid.UUID) (err error, statusCode int, message string)
 }
 
 type ServiceStruct struct {
@@ -83,8 +84,8 @@ func (s *ServiceStruct) ResetGuardian(userId uuid.UUID) (err error, statusCode i
 	return s.SOSRepo.DeleteByUserId(userId)
 }
 
-func (s *ServiceStruct) EnterStandbyMode(location *EnterStandByModeRequestDTO, userId uuid.UUID) (err error, statusCode int, message string) {
-	err, statusCode, alerts, message := s.SOSRepo.FindAlertByUserId(userId)
+func (s *ServiceStruct) EnterStandbyMode(location *AlertRequestDTO, userId uuid.UUID) (err error, statusCode int, message string) {
+	err, statusCode, alerts, message := s.SOSRepo.FindAlertByUserId(userId, "STANDBY")
 	if err != nil {
 		return err, statusCode, message
 	}
@@ -104,11 +105,9 @@ func (s *ServiceStruct) EnterStandbyMode(location *EnterStandByModeRequestDTO, u
 
 	var alertedGuardians []AlertedGuardianDTO
 	for _, guardian := range guardians {
-		_, _, guardianDetail, _ := s.UserRepo.FindUserByPhoneNumber(guardian.ContactNumber)
-
 		alertedGuardians = append(alertedGuardians, AlertedGuardianDTO{
 			ContactNumber: guardian.ContactNumber,
-			Name:          guardianDetail.Name.String,
+			Name:          guardian.Name.String,
 		})
 	}
 
@@ -126,6 +125,20 @@ func (s *ServiceStruct) EnterStandbyMode(location *EnterStandByModeRequestDTO, u
 	return err, statusCode, message
 }
 
-func (s *ServiceStruct) UpdateAlert(action string, alertId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string) {
-	return s.SOSRepo.UpdateAlert(action, userId, alertId)
+func (s *ServiceStruct) UpdateAlert(action string, location *AlertRequestDTO, userId uuid.UUID) (err error, statusCode int, message string) {
+	err, statusCode, alerts, message := s.SOSRepo.FindAlertByUserId(userId, "STANDBY")
+	if err != nil {
+		return err, statusCode, message
+	}
+
+	if len(alerts) <= 0 {
+		return err, fiber.StatusNotFound, "Tidak ada sinyal yang standby!"
+	}
+
+	if action == "TRACK" {
+		fmt.Println(location.Latitude)
+		fmt.Println(location.Longitude)
+	}
+
+	return s.SOSRepo.UpdateAlert(action, location, alerts[0].ID)
 }

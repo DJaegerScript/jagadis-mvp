@@ -12,9 +12,9 @@ type GetAllGuardiansResponseDTO struct {
 	Name          string    `json:"name,omitempty"`
 }
 
-type EnterStandByModeRequestDTO struct {
-	Longitude float64 `json:"longitude"`
-	Latitude  float64 `json:"latitude"`
+type AlertRequestDTO struct {
+	Longitude float64 `json:"longitude" validate:"required"`
+	Latitude  float64 `json:"latitude" validate:"required"`
 }
 
 type AlertedGuardianDTO struct {
