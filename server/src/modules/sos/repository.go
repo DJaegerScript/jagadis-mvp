@@ -18,10 +18,11 @@ type Repo interface {
 	FindAllByUserId(userId uuid.UUID) (err error, statusCode int, guardians []Guardians, message string)
 	DeleteById(guardianId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string)
 	DeleteByUserId(userId uuid.UUID) (err error, statusCode int, message string)
-	SaveAlert(location *AlertRequestDTO, userId uuid.UUID, alertedGuardians []byte) (err error, statusCode int, message string)
+	SaveAlert(location *AlertRequestDTO, userId uuid.UUID, alertedGuardians []byte) (err error, statusCode int, alertId uuid.UUID, message string)
 	FindAlertByUserId(userId uuid.UUID, action string) (err error, statusCode int, alerts []Alerts, message string)
 	UpdateAlert(action string, location *AlertRequestDTO, alertId uuid.UUID) (err error, statusCode int, message string)
 	FindAlertByGuardian(status string, phoneNumber string) (err error, statusCode int, alerts []AlertDTO, message string)
+	FindAlertById(id uuid.UUID) (err error, statusCode int, alerts AlertDTO, message string)
 }
 
 type RepoStruct struct {
@@ -46,7 +47,7 @@ func (r *RepoStruct) Save(phoneNumber string, userId uuid.UUID, name string) (er
 		).ToSql()
 	if err != nil {
 		zap.L().Error("Error building query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, "Oops! Terjadi kesalahan"
 	}
 
 	ctx := context.Background()
@@ -58,7 +59,7 @@ func (r *RepoStruct) Save(phoneNumber string, userId uuid.UUID, name string) (er
 				return err, fiber.StatusConflict, "Contact number already registered!"
 			}
 		}
-		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, "Oops! Terjadi kesalahan"
 	}
 
 	return nil, fiber.StatusCreated, ""
@@ -72,7 +73,7 @@ func (r *RepoStruct) FindAllByUserId(userId uuid.UUID) (err error, statusCode in
 		).ToSql()
 	if err != nil {
 		zap.L().Error("Error building query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, guardians, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, guardians, "Oops! Terjadi kesalahan"
 	}
 
 	ctx := context.Background()
@@ -80,7 +81,7 @@ func (r *RepoStruct) FindAllByUserId(userId uuid.UUID) (err error, statusCode in
 	rows, err := r.DB.Query(ctx, query, args...)
 	if err != nil {
 		zap.L().Error("Error executing query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, guardians, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, guardians, "Oops! Terjadi kesalahan"
 	}
 
 	for rows.Next() {
@@ -111,7 +112,7 @@ func (r *RepoStruct) DeleteById(guardianId uuid.UUID, userId uuid.UUID) (err err
 		).ToSql()
 	if err != nil {
 		zap.L().Error("Error building query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, "Oops! Terjadi kesalahan"
 	}
 
 	ctx := context.Background()
@@ -119,7 +120,7 @@ func (r *RepoStruct) DeleteById(guardianId uuid.UUID, userId uuid.UUID) (err err
 	res, err := r.DB.Exec(ctx, query, args...)
 	if err != nil {
 		zap.L().Error("Error executing query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, "Oops! Terjadi kesalahan"
 	}
 
 	if res.RowsAffected() <= 0 {
@@ -138,42 +139,47 @@ func (r *RepoStruct) DeleteByUserId(userId uuid.UUID) (err error, statusCode int
 		).ToSql()
 	if err != nil {
 		zap.L().Error("Error building query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, "Oops! Terjadi kesalahan"
 	}
 
 	ctx := context.Background()
 
 	if _, err = r.DB.Exec(ctx, query, args...); err != nil {
 		zap.L().Error("Error executing query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, "Oops! Terjadi kesalahan"
 	}
 
 	return nil, fiber.StatusOK, ""
 }
 
-func (r *RepoStruct) SaveAlert(location *AlertRequestDTO, userId uuid.UUID, alertedGuardians []byte) (err error, statusCode int, message string) {
+func (r *RepoStruct) SaveAlert(location *AlertRequestDTO, userId uuid.UUID, alertedGuardians []byte) (err error, statusCode int, alertId uuid.UUID, message string) {
 	query, args, err := r.psql.Insert("alerts").
-		Columns("user_id", "latest_longitude", "latest_latitude", "guardians", "standby_at").
+		//Columns("user_id", "latest_longitude", "latest_latitude", "guardians", "standby_at").
+		Columns("user_id", "status", "latest_longitude", "latest_latitude", "guardians", "standby_at", "activated_at").
 		Values(
 			userId,
+			//"ACTIVATED",
+			"ACTIVATED",
 			&location.Longitude,
 			&location.Latitude,
 			alertedGuardians,
 			time.Now(),
-		).ToSql()
+			time.Now(),
+		).Suffix("RETURNING id").ToSql()
 	if err != nil {
 		zap.L().Error("Error building query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, alertId, "Oops! Terjadi kesalahan"
 	}
 
 	ctx := context.Background()
 
-	if _, err = r.DB.Exec(ctx, query, args...); err != nil {
+	err = r.DB.QueryRow(ctx, query, args...).Scan(&alertId)
+	if err != nil {
 		zap.L().Error("Error executing query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, alertId, "Oops! Terjadi kesalahan"
 	}
 
-	return nil, fiber.StatusCreated, ""
+	return nil, fiber.StatusCreated, alertId, ""
 }
 
 func (r *RepoStruct) FindAlertByUserId(userId uuid.UUID, action string) (err error, statusCode int, alerts []Alerts, message string) {
@@ -194,7 +200,7 @@ func (r *RepoStruct) FindAlertByUserId(userId uuid.UUID, action string) (err err
 		Where(conditions).ToSql()
 	if err != nil {
 		zap.L().Error("Error building query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, alerts, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, alerts, "Oops! Terjadi kesalahan"
 	}
 
 	ctx := context.Background()
@@ -202,7 +208,7 @@ func (r *RepoStruct) FindAlertByUserId(userId uuid.UUID, action string) (err err
 	rows, err := r.DB.Query(ctx, query, args...)
 	if err != nil {
 		zap.L().Error("Error executing query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, alerts, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, alerts, "Oops! Terjadi kesalahan"
 	}
 
 	for rows.Next() {
@@ -264,21 +270,20 @@ func (r *RepoStruct) UpdateAlert(action string, location *AlertRequestDTO, alert
 
 	if err != nil {
 		zap.L().Error("Error building query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, "Oops! Terjadi kesalahan"
 	}
 
 	ctx := context.Background()
 
 	if _, err = r.DB.Exec(ctx, query, args...); err != nil {
 		zap.L().Error("Error executing query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, "Oops! Terjadi kesalahan"
 	}
 
 	return nil, fiber.StatusOK, ""
 }
 
 func (r *RepoStruct) FindAlertByGuardian(status string, phoneNumber string) (err error, statusCode int, alerts []AlertDTO, message string) {
-
 	query, args, err := r.psql.Select("alerts.*, u.name, u.phone_number").
 		From("alerts").
 		Join("public.users u ON alerts.user_id = u.id").
@@ -286,7 +291,7 @@ func (r *RepoStruct) FindAlertByGuardian(status string, phoneNumber string) (err
 		ToSql()
 	if err != nil {
 		zap.L().Error("Error building query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, alerts, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, alerts, "Oops! Terjadi kesalahan"
 	}
 
 	ctx := context.Background()
@@ -294,7 +299,7 @@ func (r *RepoStruct) FindAlertByGuardian(status string, phoneNumber string) (err
 	rows, err := r.DB.Query(ctx, query, args...)
 	if err != nil {
 		zap.L().Error("Error executing query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, alerts, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, alerts, "Oops! Terjadi kesalahan"
 	}
 
 	for rows.Next() {
@@ -315,14 +320,14 @@ func (r *RepoStruct) FindAlertByGuardian(status string, phoneNumber string) (err
 		)
 		if err != nil {
 			zap.L().Error("Error scanning row data", zap.Error(err))
-			return err, fiber.StatusInternalServerError, alerts, "Oops! Something went wrong"
+			return err, fiber.StatusInternalServerError, alerts, "Oops! Terjadi kesalahan"
 		}
 
 		var alertedGuardians []AlertedGuardianDTO
 		err = json.Unmarshal(alert.Guardians, &alertedGuardians)
 		if err != nil {
 			zap.L().Error("Error unmarshalling guardian", zap.Error(err))
-			return err, fiber.StatusInternalServerError, nil, "Oops! Something went wrong"
+			return err, fiber.StatusInternalServerError, nil, "Oops! Terjadi kesalahan"
 		}
 
 		for _, guardian := range alertedGuardians {
@@ -334,4 +339,38 @@ func (r *RepoStruct) FindAlertByGuardian(status string, phoneNumber string) (err
 	}
 
 	return nil, fiber.StatusOK, alerts, ""
+}
+
+func (r *RepoStruct) FindAlertById(id uuid.UUID) (err error, statusCode int, alert AlertDTO, message string) {
+	query, args, err := r.psql.Select("alerts.*, u.name, u.phone_number").
+		From("alerts").
+		Join("public.users u ON alerts.user_id = u.id").
+		Where(sq.Eq{"alerts.id": id}).
+		ToSql()
+	if err != nil {
+		zap.L().Error("Error building query", zap.Error(err))
+		return err, fiber.StatusInternalServerError, alert, "Oops! Terjadi kesalahan"
+	}
+
+	ctx := context.Background()
+
+	err = r.DB.QueryRow(ctx, query, args...).Scan(
+		&alert.ID,
+		&alert.UserId,
+		&alert.Status,
+		&alert.LatestLongitude,
+		&alert.LatestLatitude,
+		&alert.Guardians,
+		&alert.StandByAt,
+		&alert.ActivatedAt,
+		&alert.TurnedOffAt,
+		&alert.Name,
+		&alert.PhoneNumber,
+	)
+	if err != nil {
+		zap.L().Error("Error executing query", zap.Error(err))
+		return err, fiber.StatusInternalServerError, alert, "Oops! Terjadi kesalahan"
+	}
+
+	return nil, fiber.StatusOK, alert, ""
 }

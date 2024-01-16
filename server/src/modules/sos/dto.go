@@ -17,8 +17,8 @@ type GetAllGuardiansResponseDTO struct {
 }
 
 type AlertRequestDTO struct {
-	Longitude float64 `json:"longitude" validate:"required"`
-	Latitude  float64 `json:"latitude" validate:"required"`
+	Longitude float64 `json:"longitude,omitempty" validate:"required"`
+	Latitude  float64 `json:"latitude,omitempty" validate:"required"`
 }
 
 type AlertedGuardianDTO struct {
@@ -27,14 +27,21 @@ type AlertedGuardianDTO struct {
 }
 
 type GetAllActivatedAlertResponseDTO struct {
-	ID          uuid.UUID `json:"id"`
+	ID uuid.UUID `json:"id"`
+	// TODO: init this
+	UserID      uuid.UUID `json:"user_id,omitempty"`
 	Name        string    `json:"name,omitempty"`
-	PhoneNumber string    `json:"phone_number"`
-	ActivatedAt time.Time `json:"activated_at"`
+	PhoneNumber string    `json:"phone_number,omitempty"`
+	ActivatedAt time.Time `json:"activated_at,omitempty"`
 }
 
 type AlertDTO struct {
 	Alerts
 	Name        sql.NullString `json:"name"`
 	PhoneNumber string         `json:"phone_number"`
+}
+
+type TrackAlertResponseDTO struct {
+	Location AlertRequestDTO                 `json:"location"`
+	User     GetAllActivatedAlertResponseDTO `json:"user"`
 }

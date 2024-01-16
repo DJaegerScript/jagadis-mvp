@@ -1,11 +1,14 @@
 package sos
 
 import (
+	"encoding/json"
 	"github.com/go-playground/validator/v10"
+	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofrs/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"jagadis/src/modules/common"
+	"log"
 )
 
 type Handler interface {
@@ -16,6 +19,7 @@ type Handler interface {
 	EnterStandbyMode(ctx *fiber.Ctx) error
 	UpdateAlert(ctx *fiber.Ctx) error
 	GetActivatedAlert(ctx *fiber.Ctx) error
+	TrackAlert(ctx *websocket.Conn) error
 }
 
 type HandlerStruct struct {
@@ -158,7 +162,7 @@ func (h *HandlerStruct) EnterStandbyMode(ctx *fiber.Ctx) error {
 		return common.HandleException(ctx, fiber.StatusBadRequest, "Invalid request body")
 	}
 
-	err, statusCode, message := h.Service.EnterStandbyMode(requestBody, userId)
+	err, statusCode, alertId, message := h.Service.EnterStandbyMode(requestBody, userId)
 	if err != nil || statusCode == fiber.StatusNotFound || statusCode == fiber.StatusConflict {
 		return common.HandleException(ctx, statusCode, message)
 	}
@@ -168,8 +172,11 @@ func (h *HandlerStruct) EnterStandbyMode(ctx *fiber.Ctx) error {
 	return ctx.Status(statusCode).JSON(fiber.Map{
 		"isSuccess":  true,
 		"statusCode": statusCode,
-		"message":    "Successfully entering standby mode!",
-		"content":    nil,
+		//"message":    "Berhasil memasukin mode standby!",
+		"message": "Berhasil mengirim SOS!",
+		"content": fiber.Map{
+			"alertId": alertId,
+		},
 	})
 }
 
@@ -230,4 +237,35 @@ func (h *HandlerStruct) GetActivatedAlert(ctx *fiber.Ctx) error {
 			"alerts": content,
 		},
 	})
+}
+
+func (h *HandlerStruct) TrackAlert(ctx *websocket.Conn) {
+
+	var (
+		mt  int
+		msg []byte
+		err error
+	)
+	for {
+		if mt, msg, err = ctx.ReadMessage(); err != nil {
+			log.Println("read:", err)
+			break
+		}
+		log.Printf("recv: %s", msg)
+
+		var location AlertRequestDTO
+		err = json.Unmarshal(msg, &location)
+
+		userId := uuid.FromStringOrNil(ctx.Params("userId"))
+		alertId := uuid.FromStringOrNil(ctx.Params("alertId"))
+
+		_, _, content, _ := h.Service.TrackAlert(userId, alertId, &location)
+
+		msg, _ = json.Marshal(content)
+
+		if err = ctx.WriteMessage(mt, msg); err != nil {
+			log.Println("write:", err)
+			break
+		}
+	}
 }

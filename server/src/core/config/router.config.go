@@ -1,6 +1,8 @@
 package config
 
 import (
+	"fmt"
+	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
@@ -42,6 +44,14 @@ func (s *Server) SetupRouter() {
 			"content":    nil,
 		})
 	})
+
+	s.Router.Get("/ws", websocket.New(func(c *websocket.Conn) {
+
+		fmt.Println("test")
+
+		// websocket.Conn bindings https://pkg.go.dev/github.com/fasthttp/websocket?tab=doc#pkg-index
+
+	}))
 
 	s.Router.Mount("/auth", s.AuthRouter(authenticator))
 	s.Router.Mount("/user", s.UserRouter(authenticator))
@@ -85,6 +95,7 @@ func (s *Server) SOSRouter(authenticator *middleware.Authenticator) *fiber.App {
 	sosRouter.Get("/:userId/alert", authenticator.TokenAuthenticator, sosHandler.GetActivatedAlert)
 	sosRouter.Post("/:userId/alert", authenticator.TokenAuthenticator, sosHandler.EnterStandbyMode)
 	sosRouter.Put("/:userId/alert", authenticator.TokenAuthenticator, sosHandler.UpdateAlert)
+	sosRouter.Get("/:userId/alert/:alertId", websocket.New(sosHandler.TrackAlert))
 
 	return sosRouter
 }
