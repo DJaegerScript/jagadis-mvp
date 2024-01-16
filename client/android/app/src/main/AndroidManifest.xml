@@ -13,7 +13,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="JaGadis">
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.client.MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:exported="true"
             android:hardwareAccelerated="true"
@@ -42,7 +42,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="API KEY" />
+            android:value="AIzaSyBtXWQ-lr_-pT7apgXYa-s565mh9rC4T3k" />
 
         <service
             android:name="id.flutter.flutter_background_service.BackgroundService"

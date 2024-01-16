@@ -29,12 +29,14 @@ class GetAllActivatedAlertResponse {
 
 class Alert {
   String id;
+  String userId;
   String? name;
   String phoneNumber;
   DateTime activatedAt;
 
   Alert({
     required this.id,
+    required this.userId,
     this.name,
     required this.phoneNumber,
     required this.activatedAt,
@@ -42,6 +44,7 @@ class Alert {
 
   factory Alert.fromJson(Map<String, dynamic> json) => Alert(
         id: json["id"],
+        userId: json["user_id"],
         name: json["name"],
         phoneNumber: json["phone_number"],
         activatedAt: DateTime.parse(json["activated_at"]),
@@ -49,6 +52,7 @@ class Alert {
 
   Map<String, dynamic> toJson() => {
         "id": id,
+        "user_id": userId,
         "name": name,
         "phone_number": phoneNumber,
         "activated_at": activatedAt.toIso8601String(),

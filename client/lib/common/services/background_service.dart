@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:jagadis/common/services/utility_service.dart';
-import 'package:jagadis/sos/view_models/sos_view_models.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:jagadis/common/services/utility_service.dart';
 
 class BackgroundService {
   static const notificationChannelId = 'my_foreground';
@@ -44,8 +43,7 @@ class BackgroundService {
 
           notificationChannelId: notificationChannelId,
           // this must match with notification channel you created above.
-          initialNotificationTitle: 'AWESOME SERVICE',
-          initialNotificationContent: 'Initializing',
+          initialNotificationTitle: 'Sedang bersiap...',
           foregroundServiceNotificationId: notificationId,
         ),
         iosConfiguration: IosConfiguration());
@@ -57,11 +55,14 @@ class BackgroundService {
     DartPluginRegistrant.ensureInitialized();
 
     service.on('stopService').listen((event) async {
+      // WebsocketService.close(channel);
       await service.stopSelf();
     });
 
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
         FlutterLocalNotificationsPlugin();
+
+    // WebSocketChannel channel = await WebsocketService.init();
 
     // bring to foreground
     Timer.periodic(const Duration(seconds: 10), (timer) async {
@@ -69,8 +70,8 @@ class BackgroundService {
         if (await service.isForegroundService()) {
           await flutterLocalNotificationsPlugin.show(
             notificationId,
-            'COOL SERVICE',
-            'Awesome ${DateTime.now()}',
+            'JaGadis menjaga mu!',
+            'Buka JaGadis apabila kamu merasa dalam bahaya!',
             const NotificationDetails(
               android: AndroidNotificationDetails(
                 notificationChannelId,
@@ -83,7 +84,7 @@ class BackgroundService {
 
           Position position = await UtilityService.getCurrentPosition();
 
-          await SOSViewModel().updateAlert(position, "TRACK");
+          print("${position.longitude}, ${position.latitude}");
         }
       }
     });

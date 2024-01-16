@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:jagadis/common/models/user_session.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:jagadis/common/models/user_session.dart';
 import 'package:synchronized/synchronized.dart';
 
 class SecureStorageService {
@@ -15,6 +15,10 @@ class SecureStorageService {
 
   static Future<String?> read(String key) async {
     return await _secureStorage.read(key: key);
+  }
+
+  static Future<void> destroy(String key) async {
+    await _secureStorage.delete(key: key);
   }
 
   static Future<void> destroyAll() async {

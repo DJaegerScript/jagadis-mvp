@@ -1,7 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:jagadis/sos/components/alert_card_component.dart';
 import 'package:jagadis/sos/models/get_all_activated_alert_response.dart';
 import 'package:jagadis/sos/view_models/sos_view_models.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_shadow/simple_shadow.dart';
 
@@ -11,13 +11,13 @@ class AlertListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (content) => SOSViewModel(),
+      create: (content) => SOSViewModel(false, null),
       child: Consumer<SOSViewModel>(builder: (context, viewModel, child) {
         return FutureBuilder(
           future: viewModel.getAllActivatedAlert(),
           builder: (BuildContext context,
               AsyncSnapshot<GetAllActivatedAlertResponse> snapshot) {
-            if (snapshot.hasData) {
+            if (snapshot.data != null) {
               List<Alert>? alerts = snapshot.data?.alerts;
 
               if (alerts != null && alerts.isNotEmpty) {
@@ -29,6 +29,7 @@ class AlertListScreen extends StatelessWidget {
                     itemBuilder: (context, index) => Column(children: [
                       AlertCardComponent(
                         id: alerts[index].id,
+                        userId: alerts[index].userId,
                         phoneNumber: alerts[index].phoneNumber,
                         name: alerts[index].name,
                         activatedAt: alerts[index].activatedAt,

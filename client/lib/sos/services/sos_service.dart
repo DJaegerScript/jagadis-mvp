@@ -1,5 +1,6 @@
 import 'package:jagadis/common/models/common_response.dart';
 import 'package:jagadis/common/services/http_service.dart';
+import 'package:jagadis/sos/models/enter_standby_mode_response.dart';
 import 'package:jagadis/sos/models/get_all_activated_alert_response.dart';
 
 class SOSService {
@@ -15,12 +16,13 @@ class SOSService {
     return data;
   }
 
-  static Future<CommonResponse> enterStandbyMode(
+  static Future<CommonResponse<EnterStandbyModeResponse>> enterStandbyMode(
       Map<String, double> bodyRequest, String userId) async {
     dynamic response =
         await HttpService().post("sos/$userId/alert", bodyRequest);
 
-    CommonResponse data = CommonResponse.fromJson(response);
+    CommonResponse<EnterStandbyModeResponse> data = CommonResponse.fromJson(
+        response, (json) => EnterStandbyModeResponse.fromJson(json));
 
     return data;
   }

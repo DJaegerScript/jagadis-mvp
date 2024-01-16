@@ -9,19 +9,26 @@ class AlertCardComponent extends StatelessWidget {
       required this.activatedAt,
       this.name,
       required this.phoneNumber,
-      required this.id});
+      required this.id,
+      required this.userId});
 
   final DateTime activatedAt;
   final String? name;
   final String phoneNumber;
+  final String userId;
   final String id;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(8),
-      onTap: () => Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const TrackingScreen())),
+      onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => TrackingScreen(
+                    alertId: id,
+                    userId: userId,
+                  ))),
       child: CardBodyComponent(
           name: name ?? UtilityService.formatPhoneNumber(phoneNumber),
           info: UtilityService.formatDate(activatedAt),
