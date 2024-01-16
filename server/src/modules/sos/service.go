@@ -14,9 +14,10 @@ type Service interface {
 	GetAllGuardians(userId uuid.UUID) (err error, statusCode int, guardians []GetAllGuardiansResponseDTO, message string)
 	RemoveGuardian(guardianId uuid.UUID, userId uuid.UUID) (err error, statusCode int, message string)
 	ResetGuardian(userId uuid.UUID) (err error, statusCode int, message string)
-	EnterStandbyMode(location *AlertRequestDTO, userId uuid.UUID) (err error, statusCode int, message string)
+	EnterStandbyMode(location *AlertRequestDTO, userId uuid.UUID) (err error, statusCode int, alertId uuid.UUID, message string)
 	UpdateAlert(action string, location *AlertRequestDTO, userId uuid.UUID) (err error, statusCode int, message string)
 	GetAllActivatedAlert(userId uuid.UUID) (err error, statusCode int, dto []GetAllActivatedAlertResponseDTO, message string)
+	TrackAlert(userId uuid.UUID, alertId uuid.UUID, location *AlertRequestDTO) (err error, statusCode int, dto TrackAlertResponseDTO, message string)
 }
 
 type ServiceStruct struct {
@@ -84,23 +85,28 @@ func (s *ServiceStruct) ResetGuardian(userId uuid.UUID) (err error, statusCode i
 	return s.SOSRepo.DeleteByUserId(userId)
 }
 
-func (s *ServiceStruct) EnterStandbyMode(location *AlertRequestDTO, userId uuid.UUID) (err error, statusCode int, message string) {
-	err, statusCode, alerts, message := s.SOSRepo.FindAlertByUserId(userId, "STANDBY")
+func (s *ServiceStruct) EnterStandbyMode(location *AlertRequestDTO, userId uuid.UUID) (err error, statusCode int, alertId uuid.UUID, message string) {
+	// TODO: Uncomment this when migrating flutter to kotlin
+	//err, statusCode, alerts, message := s.SOSRepo.FindAlertByUserId(userId, "STANDBY")
+	err, statusCode, alerts, message := s.SOSRepo.FindAlertByUserId(userId, "ACTIVATED")
 	if err != nil {
-		return err, statusCode, message
+		return err, statusCode, alertId, message
 	}
 
+	//if len(alerts) > 0 {
+	//	return err, fiber.StatusConflict, "SOS sudah berada di mode standby!"
+	//}
 	if len(alerts) > 0 {
-		return err, fiber.StatusConflict, "Alert already in standby mode!"
+		return err, fiber.StatusConflict, alertId, "SOS sudah active!"
 	}
 
 	err, statusCode, guardians, message := s.SOSRepo.FindAllByUserId(userId)
 	if err != nil {
-		return err, statusCode, message
+		return err, statusCode, alertId, message
 	}
 
 	if guardians == nil {
-		return err, fiber.StatusNotFound, "Insert guardians first!"
+		return err, fiber.StatusNotFound, alertId, "Masukan kontak yang dipercaya terlelbih dahulu!"
 	}
 
 	var alertedGuardians []AlertedGuardianDTO
@@ -114,25 +120,25 @@ func (s *ServiceStruct) EnterStandbyMode(location *AlertRequestDTO, userId uuid.
 	alertedGuardianPayload, err := json.Marshal(alertedGuardians)
 	if err != nil {
 		zap.L().Error("Error marshaling guardian dto", zap.Error(err))
-		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, alertId, "Oops! Terjadi kesalahan"
 	}
 
-	err, statusCode, message = s.SOSRepo.SaveAlert(location, userId, alertedGuardianPayload)
+	err, statusCode, alertId, message = s.SOSRepo.SaveAlert(location, userId, alertedGuardianPayload)
 	if err != nil {
-		return err, statusCode, message
+		return err, statusCode, alertId, message
 	}
 
-	return err, statusCode, message
+	return err, statusCode, alertId, message
 }
 
 func (s *ServiceStruct) UpdateAlert(action string, location *AlertRequestDTO, userId uuid.UUID) (err error, statusCode int, message string) {
-	err, statusCode, alerts, message := s.SOSRepo.FindAlertByUserId(userId, "STANDBY")
+	err, statusCode, alerts, message := s.SOSRepo.FindAlertByUserId(userId, "ACTIVATED")
 	if err != nil {
 		return err, statusCode, message
 	}
 
 	if len(alerts) <= 0 {
-		return err, fiber.StatusNotFound, "Tidak ada sinyal yang standby!"
+		return err, fiber.StatusNotFound, "Tidak ada sos yang menyala!"
 	}
 
 	return s.SOSRepo.UpdateAlert(action, location, alerts[0].ID)
@@ -155,6 +161,7 @@ func (s *ServiceStruct) GetAllActivatedAlert(userId uuid.UUID) (err error, statu
 		for _, alert := range alerts {
 			dto = append(dto, GetAllActivatedAlertResponseDTO{
 				ID:          alert.ID,
+				UserID:      alert.UserId,
 				ActivatedAt: alert.ActivatedAt.Time,
 				Name:        alert.Name.String,
 				PhoneNumber: alert.PhoneNumber,
@@ -163,4 +170,30 @@ func (s *ServiceStruct) GetAllActivatedAlert(userId uuid.UUID) (err error, statu
 	}
 
 	return nil, fiber.StatusOK, dto, "Activated alert retrieved successfully!"
+}
+
+func (s *ServiceStruct) TrackAlert(userId uuid.UUID, alertId uuid.UUID, location *AlertRequestDTO) (err error, statusCode int, dto TrackAlertResponseDTO, message string) {
+
+	err, statusCode, alert, message := s.SOSRepo.FindAlertById(alertId)
+	if err != nil {
+		return err, statusCode, dto, message
+	}
+
+	err, statusCode, message = s.SOSRepo.UpdateAlert("TRACKING", location, alert.ID)
+	if err != nil {
+		return err, statusCode, dto, message
+	}
+
+	dto = TrackAlertResponseDTO{
+		User: GetAllActivatedAlertResponseDTO{
+			ID:          alert.ID,
+			UserID:      userId,
+			Name:        alert.Name.String,
+			PhoneNumber: alert.PhoneNumber,
+			ActivatedAt: alert.ActivatedAt.Time,
+		},
+		Location: *location,
+	}
+
+	return nil, fiber.StatusOK, dto, "Lokasi berhasil di-update!"
 }
