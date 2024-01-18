@@ -30,54 +30,57 @@ This platform can be used after the user logs into their registered account. To 
 
 ## Screenshots:
 
-1. **Login Screen**
+1. **Splash Screen**  
+   ![Splash_Screen](image/README/Screenshot_20240112_231406.jpg)  
 
-   ![Login_Screen](Image/README/login_screen.png)
+2. **Login Screen**
 
-2. **Register Screen**
+   ![Login_Screen](image/README/login_screen.png)
 
-   ![Register_Screen](Image/README/register_screen.png)
+3. **Register Screen**
 
-3. **Profile Screen**
+   ![Register_Screen](image/README/register_screen.png)
 
-   ![Profil_Kamu](Image/README/profil_kamu.png)
+4. **Profile Screen**
 
-4. **Edit Profile Screen**
+   ![Profil_Kamu](image/README/profil_kamu.png)
 
-   ![Ubah_Profil_Screen](Image/README/ubah_profil.png)
+5. **Edit Profile Screen**
 
-5. **Home Screen**
+   ![Ubah_Profil_Screen](image/README/ubah_profil.png)
+
+6. **Home Screen**
 
    ![Home_Screen](image/README/1705071810236.png)
 
-6. **Contact Registration Dialogue**
+7. **Contact Registration Dialogue**
 
    ![1705071905139](image/README/1705071905139.png)
 
-7. **Contact Sheet Expanded**
+8. **Contact Sheet Expanded**
 
    ![1705072128127](image/README/1705072128127.png)
 
-8. **Delete Contact Dialogue**
+9. **Delete Contact Dialogue**
 
    ![1705072208177](image/README/1705072208177.png)
 
-9. **Delete All Contact Dialogue**
+10. **Delete All Contact Dialogue**
 
    ![Alt text](iamge/README/image.png)
 
-10. **Home Screen (Standby Mode Activated)**
+11. **Home Screen (Standby Mode Activated)**
 
 ![1705072032349](image/README/1705072032349.png)
 
-11. **Tracking Screen (Empty)**
+12. **Tracking Screen (Empty)**
 
 ![1705072624828](image/README/1705072624828.png)
 
-12. **Tracking Screen**
+13. **Tracking Screen**
 
 ![1705072648659](image/README/1705072648659.png)
 
-13. **Location Screen**
+14. **Location Screen**
 
 ![1705074059467](image/README/1705074059467.png)
