@@ -60,11 +60,11 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
             -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "\
-            mkdir -p /path/to/remote/jagadis && \
-            scp jagadis/.env /path/to/remote/.env && \
-            scp docker-compose.yml /path/to/remote/docker-compose.yml && \
-            scp -r migration /path/to/remote/migration && \
-            cd /path/to/remote && \
+            mkdir -p jagadis && \
+            scp .env jagadis/.env && \
+            scp ./server/docker-compose.yml jagadis/docker-compose.yml && \
+            scp -r ./server/src/db jagadis/db && \
+            cd jagadis && \
             docker-compose up -d && \
             cd migration && \
             go run migrate.go"
