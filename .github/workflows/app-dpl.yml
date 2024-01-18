@@ -20,7 +20,7 @@ jobs:
           java-version: '12.x'
 
       - name: Change Directory to Flutter Project
-        run: cd flutter_app
+        run: cd client
 
       - name: Decode google-services.json
         env:
