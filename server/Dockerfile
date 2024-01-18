@@ -5,18 +5,14 @@ FROM golang:latest
 WORKDIR /app
 
 # Copy go.mod and go.sum to download dependencies
-COPY go.mod .
-COPY go.sum .
+COPY ./server/go.mod .
+COPY ./server/go.sum .
 
 # Download dependencies
 RUN go mod download
 
 # Copy the entire application source code into the container
-COPY . .
-
-# # Change directory to ./src/db and run go run migrate.go
-# WORKDIR /app/src/db
-# RUN go run migrate.go
+COPY ./server .
 
 # Change back to the root project directory
 WORKDIR /app
