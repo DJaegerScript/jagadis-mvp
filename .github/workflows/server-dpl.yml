@@ -57,14 +57,14 @@ jobs:
             slackingdjaeger/jagadis-server:${{ github.sha }}
 
       - name: SSH to update .env, docker-compose.yml, and run migrations on the server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            mkdir -p jagadis
-            scp .env ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/.env
-            scp ./server/docker-compose.yml ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/docker-compose.yml
-            scp -r ./server/src/db ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/db
-            ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd jagadis && docker-compose up -d && cd db && go run migrate.go"
+        run: |
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "\
+            mkdir -p /path/to/remote/jagadis && \
+            scp jagadis/.env /path/to/remote/.env && \
+            scp docker-compose.yml /path/to/remote/docker-compose.yml && \
+            scp -r migration /path/to/remote/migration && \
+            cd /path/to/remote && \
+            docker-compose up -d && \
+            cd migration && \
+            go run migrate.go"
