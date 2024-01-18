@@ -19,28 +19,30 @@ jobs:
         with:
           java-version: '12.x'
 
-      - name: Change Directory to Flutter Project
-        run: cd client
-
-      - name: Decode google-services.json
+      - name: Create Service Account
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: echo "$GOOGLE_SERVICES_JSON" > ./client/android/app/google-services.json
 
-      - run: sed -i "s/MAPS_API_KEY/${{ secrets.MAPS_API_KEY }}/g" ./client/android/app/src/main/AndroidManifest.xml
+      - name: Apply GMAPS API
+        run: sed -i "s/MAPS_API_KEY/${{ secrets.MAPS_API_KEY }}/g" ./client/android/app/src/main/AndroidManifest.xml
+
       - uses: subosito/flutter-action@v1
         with:
           channel: 'stable'
-      - run: cd client && flutter pub get
-      - run: cd client && flutter build apk --dart-define=API_URL=${{ secrets.API_URL }} --dart-define=FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }} --dart-define=FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
+
+      - name: Build APK
+        run: cd client && flutter pub get && flutter build apk --dart-define=API_URL=${{ secrets.API_URL }} --dart-define=FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }} --dart-define=FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
+
       - uses: actions/upload-artifact@v1
         with:
           name: release-apk
           path: ./client/build/app/outputs/apk/release/app-release.apk
+
       - name: Upload to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{secrets.FIREBASE_APP_ID}}
           serviceCredentialsFileContent: ${{secrets.CREDENTIAL_FILE_CONTENT}}
           groups: testers
-          file: ./client/build/app/outputs/flutter-apk/app.apk
+          file: ./client/build/app/outputs/flutter-apk/app-release.apk
