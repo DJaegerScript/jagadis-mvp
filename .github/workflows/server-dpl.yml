@@ -56,9 +56,6 @@ jobs:
             slackingdjaeger/jagadis-server:latest
             slackingdjaeger/jagadis-server:${{ github.sha }}
 
-      - name: Update known_hosts file
-        run: ssh-keyscan -t rsa ${{ secrets.SSH_HOST }} >> $HOME/.ssh/known_hosts
-
       - name: SSH to update .env, docker-compose.yml, and run migrations on the server
         uses: appleboy/ssh-action@master
         with:
