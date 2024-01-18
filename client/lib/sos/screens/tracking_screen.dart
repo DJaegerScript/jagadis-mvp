@@ -1,8 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:jagadis/common/services/websocket_service.dart';
+import 'package:jagadis/sos/components/victim_info_sheet_component.dart';
+import 'package:jagadis/sos/models/track_alert_response.dart';
+import 'package:jagadis/sos/view_models/sos_view_models.dart';
+import 'package:provider/provider.dart';
 
 class TrackingScreen extends StatefulWidget {
   const TrackingScreen(
@@ -16,30 +17,7 @@ class TrackingScreen extends StatefulWidget {
 }
 
 class _TrackingScreenState extends State<TrackingScreen> {
-  late WebsocketService websocket;
-  final StreamController<String> _streamController = StreamController<String>();
-
   late GoogleMapController mapController;
-
-  @override
-  void initState() {
-    super.initState();
-
-    websocket = WebsocketService(widget.alertId, widget.userId);
-
-    websocket.getChannel().stream.listen((event) {
-      print(event);
-    });
-  }
-
-  @override
-  void dispose() {
-    websocket.closeConnection();
-    _streamController.close();
-    super.dispose();
-  }
-
-  final LatLng _center = const LatLng(45.521563, -122.677433);
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -56,18 +34,48 @@ class _TrackingScreenState extends State<TrackingScreen> {
               fontWeight: FontWeight.w700,
             )),
       ),
-      body: Stack(
-        children: [
-          GoogleMap(
-            onMapCreated: _onMapCreated,
-            initialCameraPosition: CameraPosition(
-              target: _center,
-              zoom: 75.0,
-            ),
-          ),
-          // VictimInfoSheetComponent(
-          //     name: name, phoneNumber: phoneNumber, activatedAt: activatedAt)
-        ],
+      body: ChangeNotifierProvider(
+        create: (context) => SOSViewModel(false, null),
+        child: Consumer<SOSViewModel>(
+          builder: (context, viewModel, child) {
+            return FutureBuilder(
+                future: viewModel.trackAlert(widget.userId, widget.alertId),
+                builder: (BuildContext context,
+                    AsyncSnapshot<TrackAlertResponse> snapshot) {
+                  if (snapshot.data == null) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    TrackAlertResponse data = snapshot.data!;
+
+                    return Stack(
+                      children: [
+                        GoogleMap(
+                          onMapCreated: _onMapCreated,
+                          initialCameraPosition: CameraPosition(
+                            target: LatLng(data.location.latitude,
+                                data.location.longitude),
+                            zoom: 45.0,
+                          ),
+                          markers: {
+                            Marker(
+                              markerId: MarkerId(data.user.userId),
+                              position: LatLng(data.location.latitude,
+                                  data.location.longitude),
+                            )
+                          },
+                        ),
+                        VictimInfoSheetComponent(
+                            name: data.user.name,
+                            phoneNumber: data.user.phoneNumber,
+                            activatedAt: data.user.activatedAt)
+                      ],
+                    );
+                  }
+                });
+          },
+        ),
       ),
     );
   }

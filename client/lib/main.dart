@@ -1,11 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:jagadis/common/services/background_service.dart';
+import 'package:jagadis/firebase_options.dart';
 import 'package:jagadis/sos/screens/splash_screen.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await BackgroundService.initializeService();
+void main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   initializeDateFormatting("id_ID", null).then((_) {
     runApp(const App());
   });

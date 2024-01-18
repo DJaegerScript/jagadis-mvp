@@ -95,7 +95,7 @@ func (s *Server) SOSRouter(authenticator *middleware.Authenticator) *fiber.App {
 	sosRouter.Get("/:userId/alert", authenticator.TokenAuthenticator, sosHandler.GetActivatedAlert)
 	sosRouter.Post("/:userId/alert", authenticator.TokenAuthenticator, sosHandler.EnterStandbyMode)
 	sosRouter.Put("/:userId/alert", authenticator.TokenAuthenticator, sosHandler.UpdateAlert)
-	sosRouter.Get("/:userId/alert/:alertId", websocket.New(sosHandler.TrackAlert))
+	sosRouter.Get("/:userId/alert/:alertId", authenticator.TokenAuthenticator, sosHandler.TrackAlert)
 
 	return sosRouter
 }

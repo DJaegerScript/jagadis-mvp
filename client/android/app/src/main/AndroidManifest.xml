@@ -12,6 +12,13 @@
     <application
         android:icon="@mipmap/ic_launcher"
         android:label="JaGadis">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="MAPS_API_KEY" />
+
+        <!--            android:value="AIzaSyBtXWQ-lr_-pT7apgXYa-s565mh9rC4T3k" />-->
+
         <activity
             android:name="com.example.client.MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
@@ -40,9 +47,6 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBtXWQ-lr_-pT7apgXYa-s565mh9rC4T3k" />
 
         <service
             android:name="id.flutter.flutter_background_service.BackgroundService"

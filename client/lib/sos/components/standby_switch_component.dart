@@ -1,10 +1,4 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:jagadis/common/services/secure_storage_service.dart';
-import 'package:jagadis/common/services/utility_service.dart';
 import 'package:jagadis/sos/view_models/sos_view_models.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +22,16 @@ class _StandbySwitchComponentState extends State<StandbySwitchComponent> {
     return Consumer<SOSViewModel>(
       builder: (context, viewModel, child) {
         return GestureDetector(
-          onTap: () async => viewModel.handleSwitch(),
+          onTap: () async {
+            String message = await viewModel.handleSwitch();
+
+            Future.delayed(Duration.zero)
+                .then((value) => ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(message),
+                      ),
+                    ));
+          },
           child: AnimatedContainer(
             width: 246,
             height: 127,

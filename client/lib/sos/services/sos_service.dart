@@ -2,6 +2,7 @@ import 'package:jagadis/common/models/common_response.dart';
 import 'package:jagadis/common/services/http_service.dart';
 import 'package:jagadis/sos/models/enter_standby_mode_response.dart';
 import 'package:jagadis/sos/models/get_all_activated_alert_response.dart';
+import 'package:jagadis/sos/models/track_alert_response.dart';
 
 class SOSService {
   static Future<CommonResponse<GetAllActivatedAlertResponse>>
@@ -33,6 +34,16 @@ class SOSService {
         .put("sos/$userId/alert?action=$action", bodyRequest);
 
     CommonResponse data = CommonResponse.fromJson(response);
+
+    return data;
+  }
+
+  static Future<CommonResponse<TrackAlertResponse>> trackAlert(
+      String userId, String alertId) async {
+    dynamic response = await HttpService().get("sos/$userId/alert/$alertId");
+
+    CommonResponse<TrackAlertResponse> data = CommonResponse.fromJson(
+        response, (json) => TrackAlertResponse.fromJson(json));
 
     return data;
   }

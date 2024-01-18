@@ -11,7 +11,7 @@ import 'package:path/path.dart' as path;
 
 class HttpService {
   // TODO: make dynamic from .env
-  static const String _baseUrl = "https://22b6-182-253-127-167.ngrok-free.app";
+  static const String _baseUrl = String.fromEnvironment("API_URL");
   static final Map<String, String> headers = {
     "Content-Type": "application/json",
   };

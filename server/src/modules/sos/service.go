@@ -17,7 +17,7 @@ type Service interface {
 	EnterStandbyMode(location *AlertRequestDTO, userId uuid.UUID) (err error, statusCode int, alertId uuid.UUID, message string)
 	UpdateAlert(action string, location *AlertRequestDTO, userId uuid.UUID) (err error, statusCode int, message string)
 	GetAllActivatedAlert(userId uuid.UUID) (err error, statusCode int, dto []GetAllActivatedAlertResponseDTO, message string)
-	TrackAlert(userId uuid.UUID, alertId uuid.UUID, location *AlertRequestDTO) (err error, statusCode int, dto TrackAlertResponseDTO, message string)
+	TrackAlert(userId uuid.UUID, alertId uuid.UUID) (err error, statusCode int, dto TrackAlertResponseDTO, message string)
 }
 
 type ServiceStruct struct {
@@ -172,14 +172,9 @@ func (s *ServiceStruct) GetAllActivatedAlert(userId uuid.UUID) (err error, statu
 	return nil, fiber.StatusOK, dto, "Activated alert retrieved successfully!"
 }
 
-func (s *ServiceStruct) TrackAlert(userId uuid.UUID, alertId uuid.UUID, location *AlertRequestDTO) (err error, statusCode int, dto TrackAlertResponseDTO, message string) {
+func (s *ServiceStruct) TrackAlert(userId uuid.UUID, alertId uuid.UUID) (err error, statusCode int, dto TrackAlertResponseDTO, message string) {
 
 	err, statusCode, alert, message := s.SOSRepo.FindAlertById(alertId)
-	if err != nil {
-		return err, statusCode, dto, message
-	}
-
-	err, statusCode, message = s.SOSRepo.UpdateAlert("TRACKING", location, alert.ID)
 	if err != nil {
 		return err, statusCode, dto, message
 	}
@@ -192,8 +187,11 @@ func (s *ServiceStruct) TrackAlert(userId uuid.UUID, alertId uuid.UUID, location
 			PhoneNumber: alert.PhoneNumber,
 			ActivatedAt: alert.ActivatedAt.Time,
 		},
-		Location: *location,
+		Location: AlertRequestDTO{
+			Longitude: alert.LatestLongitude,
+			Latitude:  alert.LatestLatitude,
+		},
 	}
 
-	return nil, fiber.StatusOK, dto, "Lokasi berhasil di-update!"
+	return nil, fiber.StatusOK, dto, "!"
 }

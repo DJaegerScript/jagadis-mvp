@@ -2,18 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:jagadis/common/services/utility_service.dart';
 
 class VictimInfoSheetComponent extends StatelessWidget {
-  final String name;
+  final String? name;
   final String phoneNumber;
   final DateTime activatedAt;
 
   const VictimInfoSheetComponent(
       {super.key,
-      required this.name,
+      this.name,
       required this.phoneNumber,
       required this.activatedAt});
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> userProfile = [
+      Text(UtilityService.formatPhoneNumber(phoneNumber),
+          style: const TextStyle(color: Color(0xFF79747E), fontSize: 16)),
+      Text(UtilityService.formatDate(activatedAt),
+          style: const TextStyle(color: Color(0xFF79747E), fontSize: 16)),
+    ];
+
+    if (name != null) {
+      userProfile.add(Text(name!,
+          style: const TextStyle(
+              color: Color(0xFF170015),
+              fontWeight: FontWeight.w600,
+              fontSize: 20)));
+    }
+
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
@@ -57,19 +72,7 @@ class VictimInfoSheetComponent extends StatelessWidget {
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(name,
-                          style: const TextStyle(
-                              color: Color(0xFF170015),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 20)),
-                      Text(UtilityService.formatPhoneNumber(phoneNumber),
-                          style: const TextStyle(
-                              color: Color(0xFF79747E), fontSize: 16)),
-                      Text(UtilityService.formatDate(activatedAt),
-                          style: const TextStyle(
-                              color: Color(0xFF79747E), fontSize: 16)),
-                    ],
+                    children: userProfile,
                   )
                 ],
               ),

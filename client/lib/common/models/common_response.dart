@@ -2,13 +2,13 @@ import 'dart:convert';
 
 class CommonResponse<T> {
   String message;
-  T content;
+  T? content;
   int statusCode;
   bool isSuccess;
 
   CommonResponse({
     required this.message,
-    required this.content,
+    this.content,
     required this.statusCode,
     required this.isSuccess,
   });

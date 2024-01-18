@@ -1,14 +1,11 @@
 package sos
 
 import (
-	"encoding/json"
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofrs/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"jagadis/src/modules/common"
-	"log"
 )
 
 type Handler interface {
@@ -19,7 +16,7 @@ type Handler interface {
 	EnterStandbyMode(ctx *fiber.Ctx) error
 	UpdateAlert(ctx *fiber.Ctx) error
 	GetActivatedAlert(ctx *fiber.Ctx) error
-	TrackAlert(ctx *websocket.Conn) error
+	TrackAlert(ctx *fiber.Ctx) error
 }
 
 type HandlerStruct struct {
@@ -239,33 +236,25 @@ func (h *HandlerStruct) GetActivatedAlert(ctx *fiber.Ctx) error {
 	})
 }
 
-func (h *HandlerStruct) TrackAlert(ctx *websocket.Conn) {
-
-	var (
-		mt  int
-		msg []byte
-		err error
-	)
-	for {
-		if mt, msg, err = ctx.ReadMessage(); err != nil {
-			log.Println("read:", err)
-			break
-		}
-		log.Printf("recv: %s", msg)
-
-		var location AlertRequestDTO
-		err = json.Unmarshal(msg, &location)
-
-		userId := uuid.FromStringOrNil(ctx.Params("userId"))
-		alertId := uuid.FromStringOrNil(ctx.Params("alertId"))
-
-		_, _, content, _ := h.Service.TrackAlert(userId, alertId, &location)
-
-		msg, _ = json.Marshal(content)
-
-		if err = ctx.WriteMessage(mt, msg); err != nil {
-			log.Println("write:", err)
-			break
-		}
+func (h *HandlerStruct) TrackAlert(ctx *fiber.Ctx) error {
+	userId, err := common.GetSession(ctx)
+	if err != nil {
+		return common.HandleException(ctx, fiber.StatusInternalServerError, "Oops! Something went wrong")
 	}
+
+	alertId := uuid.FromStringOrNil(ctx.Params("alertId"))
+
+	err, statusCode, content, message := h.Service.TrackAlert(userId, alertId)
+	if err != nil {
+		return common.HandleException(ctx, statusCode, message)
+	}
+
+	statusCode = fiber.StatusOK
+
+	return ctx.Status(statusCode).JSON(fiber.Map{
+		"isSuccess":  true,
+		"statusCode": statusCode,
+		"message":    "Lokasi berhasil didapatkan!",
+		"content":    content,
+	})
 }

@@ -1,15 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:jagadis/common/models/common_response.dart';
 import 'package:jagadis/common/models/user_session.dart';
 import 'package:jagadis/common/services/secure_storage_service.dart';
 import 'package:jagadis/common/services/utility_service.dart';
-import 'package:jagadis/main.dart';
 import 'package:jagadis/sos/models/enter_standby_mode_response.dart';
 import 'package:jagadis/sos/models/get_all_activated_alert_response.dart';
+import 'package:jagadis/sos/models/track_alert_response.dart';
 import 'package:jagadis/sos/services/sos_service.dart';
 
 class SOSViewModel extends ChangeNotifier {
@@ -44,14 +43,13 @@ class SOSViewModel extends ChangeNotifier {
         await SOSService.getAllActivatedAlert(user.id);
 
     if (response.isSuccess) {
-      return response.content;
+      return response.content!;
     } else {
       throw response.message;
     }
   }
 
-  Future<(EnterStandbyModeResponse, String, String)> enterStandbyMode(
-      Position position) async {
+  Future<String> enterStandbyMode(Position position) async {
     Map<String, double> body = {
       "latitude": position.latitude,
       "longitude": position.longitude,
@@ -67,9 +65,9 @@ class SOSViewModel extends ChangeNotifier {
         await SOSService.enterStandbyMode(body, user.id);
 
     if (response.isSuccess) {
-      return (response.content, user.id, "Standby mode diaktifkan!");
+      return "Standby mode diaktifkan!";
     } else {
-      throw (null, null, response.message);
+      throw response.message;
     }
   }
 
@@ -95,20 +93,24 @@ class SOSViewModel extends ChangeNotifier {
     }
   }
 
-  void handleSwitch() async {
+  Future<TrackAlertResponse> trackAlert(String userId, String alertId) async {
+    CommonResponse<TrackAlertResponse> response =
+        await SOSService.trackAlert(userId, alertId);
+
+    if (response.isSuccess) {
+      return response.content!;
+    } else {
+      throw response.message;
+    }
+  }
+
+  Future<String> handleSwitch() async {
+    String message = "";
     try {
       Position position = await UtilityService.getCurrentPosition();
 
-      String message = "";
-      EnterStandbyModeResponse response;
-      String userId;
-
       if (!isStandby) {
-        (response, userId, message) = await enterStandbyMode(position);
-
-        await SecureStorageService.write("alertId", response.alertId);
-
-        await FlutterBackgroundService().startService();
+        message = await enterStandbyMode(position);
 
         if (animation.status == AnimationStatus.dismissed) {
           await controller?.forward();
@@ -126,17 +128,11 @@ class SOSViewModel extends ChangeNotifier {
 
         message = await updateAlert(position, "TURNED_OFF");
         await SecureStorageService.destroy("standbyStatus");
-
-        FlutterBackgroundService().invoke("stopService", null);
       }
 
       setIsStandby(!isStandby);
 
-      scaffoldMessengerKey.currentState?.showSnackBar(
-        SnackBar(
-          content: Text(message),
-        ),
-      );
+      return message;
     } catch (error) {
       if (!isStandby) {
         if (animation.status == AnimationStatus.dismissed) {
@@ -154,11 +150,7 @@ class SOSViewModel extends ChangeNotifier {
 
       setIsStandby(!isStandby);
 
-      scaffoldMessengerKey.currentState?.showSnackBar(
-        SnackBar(
-          content: Text("$error"),
-        ),
-      );
+      return "$error";
     }
   }
 }
