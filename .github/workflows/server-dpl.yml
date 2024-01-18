@@ -56,6 +56,9 @@ jobs:
             slackingdjaeger/jagadis-server:latest
             slackingdjaeger/jagadis-server:${{ github.sha }}
 
+      - name: Print SSH private key
+        run: echo "$DEPLOY_PRIVATE_KEY"
+
       - name: Set up SSH
         run: |
           which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
@@ -64,6 +67,12 @@ jobs:
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+
+      - name: Print SSH agent status
+        run: ssh-add -L
+
+      - name: Print SSH configuration
+        run: cat ~/.ssh/config
 
       - name: SSH to update .env, docker-compose.yml, and run migrations on the server
         uses: appleboy/ssh-action@master
