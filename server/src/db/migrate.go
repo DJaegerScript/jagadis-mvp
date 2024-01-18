@@ -3,11 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
-	"os"
 )
 
 var action string
@@ -23,7 +24,7 @@ func main() {
 		fmt.Println(err.Error())
 	}
 
-	dbUrl := os.Getenv("DATABASE_URL")
+	dbUrl := os.Getenv("DATABASE_MIGRATION_URL")
 
 	m, err := migrate.New(
 		"file://migrations/",
