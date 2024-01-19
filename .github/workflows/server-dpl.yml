@@ -69,7 +69,10 @@ jobs:
           ssh-keyscan -t rsa ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Debug id_rsa
-        run: echo "$HOME/.ssh/id_rsa"
+        run: cat $HOME/.ssh/id_rsa
+
+      - name: Debug authorized_keys
+        run: cat $HOME/.ssh/authorized_keys
 
       - name: SSH to update .env, docker-compose.yml, and run migrations on the server
         uses: appleboy/ssh-action@master
