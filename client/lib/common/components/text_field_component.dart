@@ -4,22 +4,22 @@ import 'package:flutter/services.dart';
 class TextFieldComponent extends StatelessWidget {
   const TextFieldComponent(
       {super.key,
-        required this.labelText,
-        this.hintText,
-        this.initialValue,
-        this.height,
-        this.keyboardType,
-        this.inputFormatter,
-        this.maxLines = 1,
-        this.isTextObscured = false,
-        this.isForPhone = false,
-        this.controller,
-        this.onTap,
-        required this.action,
-        required this.validator});
+      this.labelText,
+      this.hintText,
+      this.initialValue,
+      this.height,
+      this.keyboardType,
+      this.inputFormatter,
+      this.maxLines = 1,
+      this.isTextObscured = false,
+      this.isForPhone = false,
+      this.controller,
+      this.onTap,
+      required this.action,
+      required this.validator});
 
   final String? hintText;
-  final String labelText;
+  final String? labelText;
   final TextInputType? keyboardType;
   final void Function(String? value) action;
   final String? Function(String? value) validator;
@@ -51,42 +51,48 @@ class TextFieldComponent extends StatelessWidget {
         textAlignVertical: TextAlignVertical.top,
         controller: controller,
         onTap: onTap,
-        
+
         // Only numbers can be entered,
         // Only numbers can be entered
         decoration: InputDecoration(
-          prefixIcon: isForPhone ? Padding( 
-            padding: const EdgeInsets.only(right: 8, left: 1.5),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(60),
-                bottomLeft: Radius.circular(60),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: Container(
-                height: height,
-                width: 80,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(60),
-                    bottomLeft: Radius.circular(60),
-                  ),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.only(top: 15, bottom: 15),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      '+62',
-                      style: TextStyle(fontSize: 16),
-                      textAlign: TextAlign.center,
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Color(0xFFFF5C96)),
+            borderRadius: BorderRadius.circular(60),
+          ),
+          prefixIcon: isForPhone
+              ? Padding(
+                  padding: const EdgeInsets.only(right: 8, left: 1.5),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(60),
+                      bottomLeft: Radius.circular(60),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Container(
+                      height: height,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(60),
+                          bottomLeft: Radius.circular(60),
+                        ),
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.only(top: 15, bottom: 15),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            '+62',
+                            style: TextStyle(fontSize: 16),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),
-          ): null,
+                )
+              : null,
           hintText: hintText,
           labelText: labelText,
           alignLabelWithHint: true,
