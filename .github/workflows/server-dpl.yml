@@ -71,4 +71,4 @@ jobs:
           scp .env ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/.env
           scp ./server/docker-compose.yml ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/docker-compose.yml
           scp -r ./server/src/db/migrations ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/db
-          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd jagadis && sudo docker compose up -d && go version && cd db && go run migrate.go"
+          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd jagadis && sudo docker compose up -d && cd db && go run migrate.go"
