@@ -5,8 +5,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 
 class UtilityService {
-  static final Map<int, Function> _events = {};
-
   static Color generateRandomColor() {
     Random random = Random();
     double brightnessThreshold = 0.7; // Adjust this threshold as needed
