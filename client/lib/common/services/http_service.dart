@@ -10,7 +10,6 @@ import 'package:jagadis/main.dart';
 import 'package:path/path.dart' as path;
 
 class HttpService {
-  // TODO: make dynamic from .env
   static const String _baseUrl = String.fromEnvironment("API_URL");
   static final Map<String, String> headers = {
     "Content-Type": "application/json",
