@@ -1,0 +1,5 @@
+pre-commit:
+  commands:
+    clean-manifest:
+      glob: 'client/android/app/src/main/AndroidManifest.xml'
+      run: bash utility.sh clean
