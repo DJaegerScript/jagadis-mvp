@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:jagadis/authentication/components/auth_header_component.dart';
 import 'package:jagadis/authentication/components/auth_menu_component.dart';
 import 'package:jagadis/authentication/components/login_form_component.dart';
-import 'package:jagadis/authentication/components/login_header_component.dart';
 import 'package:jagadis/authentication/view_models/authentication_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +28,9 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 height: 4,
               ),
-              LoginHeaderComponent(),
+              AuthHeaderComponent(
+                  text:
+                      "Bersiaplah melindungi diri Anda. Atur tombol darurat dan gunakan fitur preventif!"),
               SizedBox(
                 height: 24,
               ),

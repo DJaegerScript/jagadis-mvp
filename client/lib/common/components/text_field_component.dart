@@ -38,11 +38,12 @@ class TextFieldComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-      width: MediaQuery.of(context).size.width,
-      // Using padding of 8 pixels
-      child: TextFormField(
+    double inputFieldWidth = MediaQuery.of(context).size.width;
+    double inputFieldHeight = height ?? 100;
+
+    List<Widget> textInputComponents = [
+      Expanded(
+          child: TextFormField(
         initialValue: initialValue,
         obscureText: isTextObscured,
         maxLines: maxLines,
@@ -57,47 +58,17 @@ class TextFieldComponent extends StatelessWidget {
         decoration: InputDecoration(
           focusedBorder: OutlineInputBorder(
             borderSide: const BorderSide(color: Color(0xFFFF5C96)),
-            borderRadius: BorderRadius.circular(60),
+            borderRadius: isForPhone
+                ? const BorderRadius.horizontal(right: Radius.circular(60))
+                : BorderRadius.circular(60),
           ),
-          prefixIcon: isForPhone
-              ? Padding(
-                  padding: const EdgeInsets.only(right: 8, left: 1.5),
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(60),
-                      bottomLeft: Radius.circular(60),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: Container(
-                      height: height,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(60),
-                          bottomLeft: Radius.circular(60),
-                        ),
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.only(top: 15, bottom: 15),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            '+62',
-                            style: TextStyle(fontSize: 16),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              : null,
           hintText: hintText,
-          labelText: labelText,
           alignLabelWithHint: true,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(60),
+            borderSide: const BorderSide(color: Color(0xFF79747E)),
+            borderRadius: isForPhone
+                ? const BorderRadius.horizontal(right: Radius.circular(60))
+                : BorderRadius.circular(60),
           ),
         ),
         // Added behavior when name is typed
@@ -105,7 +76,62 @@ class TextFieldComponent extends StatelessWidget {
         onSaved: handleAction,
         // Validator as form validation
         validator: validator,
-      ),
-    );
+      ))
+    ];
+
+    if (isForPhone) {
+      textInputComponents.insert(
+        0,
+        Container(
+          height: inputFieldHeight * 0.64,
+          width: inputFieldWidth * 0.15,
+          decoration: const BoxDecoration(
+              border: Border(
+                  left: BorderSide(color: Color(0xFF79747E)),
+                  bottom: BorderSide(color: Color(0xFF79747E)),
+                  top: BorderSide(color: Color(0xFF79747E))),
+              borderRadius: BorderRadius.horizontal(left: Radius.circular(60)),
+              color: Color(0xFFF5F2F5)),
+          child: const Center(
+            child: Text('+62'),
+          ),
+        ),
+      );
+    }
+
+    List<Widget> textFieldComponents = [
+      Expanded(
+          child: Row(
+        children: textInputComponents,
+      ))
+    ];
+
+    if (labelText != null) {
+      textFieldComponents.insert(
+        0,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: Text(labelText!,
+              style: const TextStyle(
+                  color: Color(0xFF170015),
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold)),
+        ),
+      );
+
+      textFieldComponents.insert(
+        1,
+        const SizedBox(
+          height: 8,
+        ),
+      );
+    }
+    return Container(
+        width: inputFieldWidth,
+        height: inputFieldHeight,
+        alignment: Alignment.topLeft,
+        child: Column(
+          children: textFieldComponents,
+        ));
   }
 }

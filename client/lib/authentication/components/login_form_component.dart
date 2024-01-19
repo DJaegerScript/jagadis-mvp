@@ -23,17 +23,8 @@ class _LoginFormComponentState extends State<LoginFormComponent> {
               key: _loginFormKey,
               child: Column(
                 children: [
-                  Container(
-                      alignment: Alignment.topLeft,
-                      child: const Text("Email",
-                          style: TextStyle(
-                              color: Color(0xFF170015),
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold))),
-                  const SizedBox(
-                    height: 8,
-                  ),
                   TextFieldComponent(
+                      labelText: "Email",
                       keyboardType: TextInputType.emailAddress,
                       hintText: "jane.doe@mail.com",
                       action: (String? value) =>
@@ -47,17 +38,8 @@ class _LoginFormComponentState extends State<LoginFormComponent> {
                   const SizedBox(
                     height: 24,
                   ),
-                  Container(
-                      alignment: Alignment.topLeft,
-                      child: const Text("Password",
-                          style: TextStyle(
-                              color: Color(0xFF170015),
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold))),
-                  const SizedBox(
-                    height: 8,
-                  ),
                   TextFieldComponent(
+                      labelText: "Password",
                       hintText: "Masukkan password mu!",
                       isTextObscured: true,
                       action: (String? value) =>
