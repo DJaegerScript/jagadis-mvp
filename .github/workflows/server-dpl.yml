@@ -82,7 +82,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             mkdir -p jagadis
-            scp .env ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/.env
-            scp ./server/docker-compose.yml ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/docker-compose.yml
-            scp -r ./server/src/db ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/db
-            ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd jagadis && docker-compose up -d && cd db && go run migrate.go"
+      - name: running script separately
+        run: |
+          scp .env ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/.env
+          scp ./server/docker-compose.yml ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/docker-compose.yml
+          scp -r ./server/src/db ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/db
+          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd jagadis && docker-compose up -d && cd db && go run migrate.go"
