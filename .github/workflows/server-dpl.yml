@@ -72,3 +72,12 @@ jobs:
           scp ./server/docker-compose.yml ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/docker-compose.yml
           scp -r ./server/src/db/migrations ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/db
           ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd jagadis && source ~/.bashrc && sudo docker compose up -d && cd db && go run migrate.go"
+
+      - name: Migrate Database
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd jagadis/db && go run migrate.go
