@@ -4,7 +4,7 @@ import 'package:jagadis/sos/components/add_guardian_dialog_component.dart';
 import 'package:jagadis/sos/components/empty_guardian_card_component.dart';
 import 'package:jagadis/sos/components/guardian_card_component.dart';
 import 'package:jagadis/sos/models/get_all_guardian_response.dart';
-import 'package:jagadis/sos/view_models/guardian_view_models.dart';
+import 'package:jagadis/sos/view_models/guardian_view_model.dart';
 import 'package:provider/provider.dart';
 
 class GuardianListComponent extends StatefulWidget {

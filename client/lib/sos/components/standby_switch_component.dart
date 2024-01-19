@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jagadis/sos/view_models/sos_view_models.dart';
+import 'package:jagadis/sos/view_models/sos_view_model.dart';
 import 'package:provider/provider.dart';
 
 class StandbySwitchComponent extends StatefulWidget {

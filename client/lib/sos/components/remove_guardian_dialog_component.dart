@@ -1,6 +1,6 @@
-import 'package:jagadis/common/models/common_response.dart';
-import 'package:jagadis/sos/view_models/guardian_view_models.dart';
 import 'package:flutter/material.dart';
+import 'package:jagadis/common/models/common_response.dart';
+import 'package:jagadis/sos/view_models/guardian_view_model.dart';
 import 'package:provider/provider.dart';
 
 class RemoveGuardianDialogComponent extends StatefulWidget {

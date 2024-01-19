@@ -3,7 +3,7 @@ import 'package:jagadis/common/services/secure_storage_service.dart';
 import 'package:jagadis/sos/components/activate_stanby_mode_title.dart';
 import 'package:jagadis/sos/components/activate_standby_mode_brief.dart';
 import 'package:jagadis/sos/components/standby_switch_component.dart';
-import 'package:jagadis/sos/view_models/sos_view_models.dart';
+import 'package:jagadis/sos/view_models/sos_view_model.dart';
 import 'package:provider/provider.dart';
 
 class SOSScreen extends StatefulWidget {

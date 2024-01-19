@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jagadis/sos/components/victim_info_sheet_component.dart';
 import 'package:jagadis/sos/models/track_alert_response.dart';
-import 'package:jagadis/sos/view_models/sos_view_models.dart';
+import 'package:jagadis/sos/view_models/sos_view_model.dart';
 import 'package:provider/provider.dart';
 
 class TrackingScreen extends StatefulWidget {
