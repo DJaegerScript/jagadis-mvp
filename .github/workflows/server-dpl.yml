@@ -79,7 +79,7 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
-          key: $HOME/.ssh/id_rsa
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             mkdir -p jagadis
             scp .env ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/.env
