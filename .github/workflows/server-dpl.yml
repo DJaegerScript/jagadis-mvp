@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'server/**'
 
 jobs:
-  build-and-push:
+  deploying-server:
     runs-on: ubuntu-latest
 
     steps:
