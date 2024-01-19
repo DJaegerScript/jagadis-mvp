@@ -21,14 +21,14 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" > .env
-          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
-          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
-          echo "DATABASE_MIGRATION_URL=${{ secrets.DATABASE_MIGRATION_URL }}" >> .env
-          echo "PORT=${{ secrets.PORT }}" >> .env
-          echo "ENVIRONMENT=${{ secrets.ENVIRONMENT }}" >> .env
-          echo "REDIS_URL=${{ secrets.REDIS_URL }}" >> .env
-          echo "WHITELIST_DOMAIN=${{ secrets.WHITELIST_DOMAIN }}" >> .env
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" > ./server/.env
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> ./server/.env
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> ./server/.env
+          echo "DATABASE_MIGRATION_URL=${{ secrets.DATABASE_MIGRATION_URL }}" >> ./server/.env
+          echo "PORT=${{ secrets.PORT }}" >> ./server/.env
+          echo "ENVIRONMENT=${{ secrets.ENVIRONMENT }}" >> ./server/.env
+          echo "REDIS_URL=${{ secrets.REDIS_URL }}" >> ./server/.env
+          echo "WHITELIST_DOMAIN=${{ secrets.WHITELIST_DOMAIN }}" >> ./server/.env
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
@@ -68,16 +68,15 @@ jobs:
       - name: Deploy server
         run: |
           ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "mkdir -p jagadis"
-          scp .env ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/.env
+          scp ./server/.env ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/.env
           scp ./server/docker-compose.yml ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/docker-compose.yml
-          scp -r ./server/src/db/migrations ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/db
           ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd jagadis && sudo docker compose up -d"
 
-      - name: Migrate Database
-        uses: appleboy/ssh-action@master
+      - name: Set up Go
+        uses: actions/setup-go@v2
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd jagadis/db && go run migrate.go
+          go-version: 1.21
+          cache: 'go'
+
+      - name: Migrate Database
+        run: cd server/src/db && go run migrate.go
