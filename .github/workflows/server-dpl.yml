@@ -56,9 +56,6 @@ jobs:
             slackingdjaeger/jagadis-server:latest
             slackingdjaeger/jagadis-server:${{ github.sha }}
 
-      - name: Debug Private Key
-        run: echo "${{ secrets.SSH_PRIVATE_KEY }}"
-
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
@@ -68,23 +65,10 @@ jobs:
           chmod 700 ~/.ssh/authorized_keys
           ssh-keyscan -t rsa ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Debug id_rsa
-        run: cat $HOME/.ssh/id_rsa
-
-      - name: Debug authorized_keys
-        run: cat $HOME/.ssh/authorized_keys
-
-      - name: SSH to update .env, docker-compose.yml, and run migrations on the server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            mkdir -p jagadis
-      - name: running script separately
+      - name: Deploy server
         run: |
+          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "mkdir -p jagadis"
           scp .env ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/.env
           scp ./server/docker-compose.yml ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/docker-compose.yml
-          scp -r ./server/src/db ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/db
+          scp -r ./server/src/db/migrations ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:jagadis/db
           ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd jagadis && sudo docker compose up -d && cd db && go run migrate.go"
