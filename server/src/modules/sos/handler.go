@@ -51,7 +51,7 @@ func (h *HandlerStruct) GuardianRegistration(ctx *fiber.Ctx) error {
 	}
 
 	err, statusCode, message := h.Service.RegisterGuardian(requestBody.ContactNumbers, userId)
-	if err != nil {
+	if err != nil || statusCode == fiber.StatusForbidden {
 		return common.HandleException(ctx, statusCode, message)
 	}
 
@@ -60,7 +60,7 @@ func (h *HandlerStruct) GuardianRegistration(ctx *fiber.Ctx) error {
 	return ctx.Status(statusCode).JSON(fiber.Map{
 		"isSuccess":  true,
 		"statusCode": statusCode,
-		"message":    "Guardian successfully registered!",
+		"message":    "Kontak berhasil diregistrasi!",
 		"content":    nil,
 	})
 }

@@ -45,7 +45,7 @@ func (s *ServiceStruct) RegisterGuardian(contactNumbers string, userId uuid.UUID
 	}
 
 	if userId == guardian.ID {
-		return err, fiber.StatusForbidden, "Must insert another user phone number!"
+		return nil, fiber.StatusForbidden, "Harus memasukkan nomor pengguna lain!"
 	}
 
 	err, statusCode, message = s.SOSRepo.Save(contactNumbers, userId, guardian.Name.String)
@@ -106,7 +106,7 @@ func (s *ServiceStruct) EnterStandbyMode(location *AlertRequestDTO, userId uuid.
 	}
 
 	if guardians == nil {
-		return err, fiber.StatusNotFound, alertId, "Masukan kontak yang dipercaya terlelbih dahulu!"
+		return err, fiber.StatusNotFound, alertId, "Masukan kontak yang dipercaya terlebih dahulu!"
 	}
 
 	var alertedGuardians []AlertedGuardianDTO

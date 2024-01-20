@@ -44,7 +44,7 @@ func (r *RepoStruct) SaveUser(email string, phoneNumber string, password string)
 	query, args, err := queryStatement.ToSql()
 	if err != nil {
 		zap.L().Error("Error building query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, "Oops! Terjadi kesalahan"
 	}
 
 	ctx := context.Background()
@@ -54,16 +54,16 @@ func (r *RepoStruct) SaveUser(email string, phoneNumber string, password string)
 		if pge, pgok := err.(*pgconn.PgError); pgok {
 			if pge.Code == "23505" {
 				if pge.ConstraintName == "users_phone_number_key" {
-					message = "Phone number already registered!"
+					message = "Nomor telpon telah didaftarkan!"
 				} else if pge.ConstraintName == "users_email_key" {
-					message = "Email number already registered!"
+					message = "Email telah didaftarkan!"
 				}
 
 				return err, fiber.StatusConflict, message
 			}
 		}
 
-		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, "Oops! Terjadi kesalahan"
 	}
 
 	return nil, fiber.StatusCreated, ""
@@ -84,14 +84,14 @@ func (r *RepoStruct) UpdateUser(user UpdateProfileRequestDTO, userId uuid.UUID) 
 		}).ToSql()
 	if err != nil {
 		zap.L().Error("Error building query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, "Oops! Terjadi kesalahan"
 	}
 
 	ctx := context.Background()
 
 	if _, err = r.DB.Exec(ctx, query, args...); err != nil {
 		zap.L().Error("Error executing query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, "Oops! Terjadi kesalahan"
 	}
 
 	return nil, fiber.StatusOK, ""
@@ -103,7 +103,7 @@ func (r *RepoStruct) FindUserById(userId uuid.UUID) (err error, statusCode int, 
 	}).ToSql()
 	if err != nil {
 		zap.L().Error("Error building query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, user, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, user, "Oops! Terjadi kesalahan"
 	}
 
 	ctx := context.Background()
@@ -123,10 +123,10 @@ func (r *RepoStruct) FindUserById(userId uuid.UUID) (err error, statusCode int, 
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			zap.L().Error("User not found", zap.Error(err))
-			return err, fiber.StatusNotFound, user, "User not found!"
+			return err, fiber.StatusNotFound, user, "Pengguna tidak ditemukan!"
 		}
 		zap.L().Error("Error executing query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, user, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, user, "Oops! Terjadi kesalahan"
 	}
 
 	return nil, fiber.StatusOK, user, ""
@@ -138,7 +138,7 @@ func (r *RepoStruct) FindUserByEmail(email string) (err error, statusCode int, u
 	}).ToSql()
 	if err != nil {
 		zap.L().Error("Error building query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, user, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, user, "Oops! Terjadi kesalahan"
 	}
 
 	ctx := context.Background()
@@ -158,10 +158,10 @@ func (r *RepoStruct) FindUserByEmail(email string) (err error, statusCode int, u
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			zap.L().Error("User not found", zap.Error(err))
-			return err, fiber.StatusNotFound, user, "User not found!"
+			return err, fiber.StatusNotFound, user, "Email tidak ditemukan!"
 		}
 		zap.L().Error("Error executing query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, user, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, user, "Oops! Terjadi kesalahan"
 	}
 
 	return nil, fiber.StatusOK, user, ""
@@ -173,7 +173,7 @@ func (r *RepoStruct) FindUserByPhoneNumber(phoneNumber string) (err error, statu
 	}).ToSql()
 	if err != nil {
 		zap.L().Error("Error building query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, user, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, user, "Oops! Terjadi kesalahan"
 	}
 
 	ctx := context.Background()
@@ -193,10 +193,10 @@ func (r *RepoStruct) FindUserByPhoneNumber(phoneNumber string) (err error, statu
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			zap.L().Error("User not found", zap.Error(err))
-			return err, fiber.StatusNotFound, user, "User not found!"
+			return err, fiber.StatusNotFound, user, "Nomor telpon tidak terdaftar!"
 		}
 		zap.L().Error("Error executing query", zap.Error(err))
-		return err, fiber.StatusInternalServerError, user, "Oops! Something went wrong"
+		return err, fiber.StatusInternalServerError, user, "Oops! Terjadi kesalahan"
 	}
 
 	return nil, fiber.StatusOK, user, ""
