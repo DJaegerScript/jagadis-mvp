@@ -104,53 +104,47 @@ class SOSViewModel extends ChangeNotifier {
     }
   }
 
-  Future<String> handleSwitch() async {
-    String message = "";
-    try {
-      Position position = await UtilityService.getCurrentPosition();
+  Future animateSwitch() async {
+    if (animation.status == AnimationStatus.dismissed) {
+      await controller?.forward();
+    } else {
+      await controller?.reverse();
+    }
+  }
 
-      if (!isStandby) {
-        message = await enterStandbyMode(position);
+  Future handleSwitch(Function(String) snackBar) async {
+    Position position = await UtilityService.getCurrentPosition();
 
-        if (animation.status == AnimationStatus.dismissed) {
-          await controller?.forward();
-        } else {
-          await controller?.reverse();
-        }
+    if (!isStandby) {
+      enterStandbyMode(position).then((value) {
+        SecureStorageService.write("standbyStatus", isStandby.toString());
+        snackBar(value);
+      }).catchError((error) async {
+        await animateSwitch();
 
-        await SecureStorageService.write("standbyStatus", isStandby.toString());
-      } else {
-        if (animation.status == AnimationStatus.dismissed) {
-          await controller?.forward();
-        } else {
-          await controller?.reverse();
-        }
+        setIsStandby(!isStandby);
 
-        message = await updateAlert(position, "TURNED_OFF");
-        await SecureStorageService.destroy("standbyStatus");
-      }
+        snackBar("$error");
+      });
 
-      setIsStandby(!isStandby);
-
-      return message;
-    } catch (error) {
-      if (!isStandby) {
-        if (animation.status == AnimationStatus.dismissed) {
-          await controller?.forward();
-        } else {
-          await controller?.reverse();
-        }
-      } else {
-        if (animation.status == AnimationStatus.dismissed) {
-          await controller?.forward();
-        } else {
-          await controller?.reverse();
-        }
-      }
+      await animateSwitch();
 
       setIsStandby(!isStandby);
+    } else {
+      updateAlert(position, "TURNED_OFF").then((value) {
+        SecureStorageService.destroy("standbyStatus");
+        snackBar(value);
+      }).catchError((error) async {
+        await animateSwitch();
 
-      return "$error";
+        setIsStandby(!isStandby);
+
+        snackBar("$error");
+      });
+
+      await animateSwitch();
+
+      setIsStandby(!isStandby);
     }
   }
 }

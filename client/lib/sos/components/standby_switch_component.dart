@@ -22,16 +22,13 @@ class _StandbySwitchComponentState extends State<StandbySwitchComponent> {
     return Consumer<SOSViewModel>(
       builder: (context, viewModel, child) {
         return GestureDetector(
-          onTap: () async {
-            String message = await viewModel.handleSwitch();
-
-            Future.delayed(Duration.zero)
-                .then((value) => ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(message),
-                      ),
-                    ));
-          },
+          onTap: () => viewModel.handleSwitch((message) =>
+              Future.delayed(Duration.zero)
+                  .then((value) => ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(message),
+                        ),
+                      ))),
           child: AnimatedContainer(
             width: 246,
             height: 127,
