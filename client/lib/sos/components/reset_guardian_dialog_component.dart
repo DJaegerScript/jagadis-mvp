@@ -25,7 +25,10 @@ class _ResetGuardianDialogComponent
         builder: (context, viewModel, child) {
           return AlertDialog(
             title: const Text("Hapus Semua Penerima Sinyal SOS",
-                style: TextStyle(color: Color(0xFF170015), fontSize: 16)),
+                style: TextStyle(
+                    color: Color(0xFF170015),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700)),
             content: viewModel.isLoading
                 ? const Row(
                     mainAxisAlignment: MainAxisAlignment.center,

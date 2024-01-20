@@ -55,6 +55,7 @@ class _GuardianListComponentState extends State<GuardianListComponent> {
             child: Consumer<GuardianViewModel>(
                 builder: (context, viewModel, child) {
               return Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
                     width: 38,

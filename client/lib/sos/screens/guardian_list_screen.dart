@@ -15,7 +15,9 @@ class GuardianListScreen extends StatefulWidget {
 }
 
 class _GuardianListScreenState extends State<GuardianListScreen> {
-  double _contactListHeight = 350;
+  double _contactListHeight = 250;
+  final double _initialContactListHeight = 250;
+  final double _thresholdContactListHeight = 300;
   bool _isExpanded = false;
 
   @override
@@ -39,18 +41,19 @@ class _GuardianListScreenState extends State<GuardianListScreen> {
               children: [
                 CollapseGuardianButtonComponent(collapseContact: () {
                   setState(() {
-                    _contactListHeight = 350;
+                    _contactListHeight = _initialContactListHeight;
                     _isExpanded = false;
                   });
                 }),
                 GuardianListComponent(
                   finaliseHeight: () {
                     setState(() {
-                      if (_contactListHeight > 400 && !_isExpanded) {
+                      if (_contactListHeight > _thresholdContactListHeight &&
+                          !_isExpanded) {
                         _contactListHeight = maxHeight;
                         _isExpanded = true;
                       } else {
-                        _contactListHeight = 350;
+                        _contactListHeight = _initialContactListHeight;
                         _isExpanded = false;
                       }
                     });
@@ -59,8 +62,8 @@ class _GuardianListScreenState extends State<GuardianListScreen> {
                     setState(() {
                       double height = maxHeight - positionY;
 
-                      if (height < 350) {
-                        _contactListHeight = 350;
+                      if (height < _initialContactListHeight) {
+                        _contactListHeight = _initialContactListHeight;
                       } else {
                         _contactListHeight = height;
                       }

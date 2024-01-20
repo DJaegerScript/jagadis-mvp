@@ -122,7 +122,7 @@ class TextFieldComponent extends StatelessWidget {
       textFieldComponents.insert(
         1,
         const SizedBox(
-          height: 8,
+          height: 2,
         ),
       );
     }

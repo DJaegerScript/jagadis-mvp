@@ -23,8 +23,12 @@ class _AddGuardianDialogComponent extends State<AddGuardianDialogComponent> {
       child: Consumer<GuardianViewModel>(
         builder: (context, viewModel, child) {
           return AlertDialog(
+            backgroundColor: Colors.white,
             title: const Text("Tambahkan Penerima Sinyal SOS",
-                style: TextStyle(color: Color(0xFF170015), fontSize: 16)),
+                style: TextStyle(
+                    color: Color(0xFF170015),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700)),
             content: viewModel.isLoading
                 ? const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -41,7 +45,7 @@ class _AddGuardianDialogComponent extends State<AddGuardianDialogComponent> {
                     child: TextFieldComponent(
                         keyboardType: TextInputType.phone,
                         labelText: "No. Handphone",
-                        hintText: "No. Handphone",
+                        hintText: "+62851xxxxxxxx",
                         action: (String? value) => value != null
                             ? viewModel.setPhoneNumber(value)
                             : null,
