@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:jagadis/common/components/empty_list_component.dart';
 import 'package:jagadis/sos/components/alert_card_component.dart';
 import 'package:jagadis/sos/models/get_all_activated_alert_response.dart';
 import 'package:jagadis/sos/view_models/sos_view_model.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_shadow/simple_shadow.dart';
 
 class AlertListScreen extends StatelessWidget {
   const AlertListScreen({super.key});
@@ -39,47 +39,12 @@ class AlertListScreen extends StatelessWidget {
                 ));
               }
 
-              return Padding(
-                padding: const EdgeInsetsDirectional.symmetric(horizontal: 10),
-                child: SizedBox(
-                  width: 259,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SimpleShadow(
-                          opacity: 0.25,
-                          offset: const Offset(5, 5),
-                          sigma: 7,
-                          child:
-                              Image.asset("assets/images/list_empty_state.png"),
-                        ),
-                        const SizedBox(
-                          height: 14,
-                        ),
-                        const Text(
-                          "Tidak ada pesan SOS",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 20,
-                              color: Color(0xFF170015)),
-                        ),
-                        const Text(
-                          "Tidak ada pesan SOS diterima. Semoga orang terdekat anda dalam keadaan baik-baik saja",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 16,
-                              color: Color(0xFF79747E)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
+              return const EmptyListComponent(
+                  title: "Tidak ada pesan SOS",
+                  text:
+                      "Tidak ada pesan SOS diterima. Semoga orang terdekat anda dalam keadaan baik-baik saja");
             } else {
-              return const Expanded(
-                  child: Center(child: CircularProgressIndicator()));
+              return const Center(child: CircularProgressIndicator());
             }
           },
         );
